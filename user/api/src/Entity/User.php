@@ -1,0 +1,303 @@
+<?php
+
+namespace App\Entity;
+
+use App\Util\AppUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
+
+/**
+ * @ApiResource
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
+ * @ORM\Table(name="user__user")
+ * @ORM\HasLifecycleCallbacks()
+ */
+class User implements UserInterface
+{
+    /**
+     * @var int|null The User Id
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
+     * @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+        $this->organisationUsers = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+    
+    /**
+     * @ORM\OneToMany(
+     *     targetEntity="OrganisationUser",
+     *     mappedBy="user", cascade={"persist"}, orphanRemoval=true
+     * )
+     *
+     * @var \Doctrine\Common\Collections\Collection $organisationUsers ;
+     */
+    private $organisationUsers;
+    
+    public function addOrganisationUser(OrganisationUser $orgUser){
+        $this->organisationUsers->add($orgUser);
+        $orgUser->setUser($this);
+    }
+    
+    public function removeOrganisationUser(OrganisationUser $orgUser){
+        $this->organisationUsers->removeElement($orgUser);
+        $orgUser->setUser(null);
+    }
+
+    /**
+     * @ORM\Column(type="string", length=180, unique=true)
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email."
+     * )
+     */
+    private $email;
+
+    /**
+     * @var array
+     * @ORM\Column(type="magenta_json")
+     */
+    private $roles = [];
+
+    /**
+     * @var string The Universally Unique Id
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     */
+    private $uuid;
+
+    /**
+     * @var string The hashed password
+     * @ORM\Column(type="string")
+     * @Assert\NotBlank()
+     */
+    private $password;
+
+    /**
+     * @var string|null Login username
+     *
+     * @ORM\Column(nullable=true)
+     */
+    private $username = '';
+    /**
+     * @var string|null Login with ID Number (NRIC)
+     *
+     * @ORM\Column(nullable=true)
+     */
+    private $idNumber = '';
+
+    /**
+     * @var string|null Login with phone number
+     * @ORM\Column(nullable=true)
+     */
+    private $phone = '';
+
+    /**
+     * @var \DateTime|null Login with DOB
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $birthDate;
+
+    /**
+     * @var \DateTime|null
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
+    {
+        return (string) $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param string|null $username
+     */
+    public function setUsername(?string $username): void
+    {
+        $this->username = $username;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getIdNumber(): ?string
+    {
+        return $this->idNumber;
+    }
+
+    /**
+     * @param string|null $idNumber
+     */
+    public function setIdNumber(?string $idNumber): void
+    {
+        $this->idNumber = $idNumber;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @param string|null $phone
+     */
+    public function setPhone(?string $phone): void
+    {
+        $this->phone = $phone;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getBirthDate(): ?\DateTime
+    {
+        return $this->birthDate;
+    }
+
+    /**
+     * @param \DateTime|null $birthDate
+     */
+    public function setBirthDate(?\DateTime $birthDate): void
+    {
+        $this->birthDate = $birthDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid(): string
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @param string $uuid
+     */
+    public function setUuid(string $uuid): void
+    {
+        $this->uuid = $uuid;
+    }
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getCreatedAt(): ?\DateTime
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @param \DateTime|null $createdAt
+     */
+    public function setCreatedAt(?\DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
+    }
+    
+    /**
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getOrganisationUsers(): \Doctrine\Common\Collections\Collection
+    {
+        return $this->organisationUsers;
+    }
+    
+    /**
+     * @param \Doctrine\Common\Collections\Collection $organisationUsers
+     */
+    public function setOrganisationUsers(\Doctrine\Common\Collections\Collection $organisationUsers): void
+    {
+        $this->organisationUsers = $organisationUsers;
+    }
+}

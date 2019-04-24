@@ -1,0 +1,16 @@
+parameters:
+    application_name: 'user'
+
+    aws_sdk.config.default:
+      version: 'latest'
+      region: 'ap-southeast-1'
+
+    aws_sdk.credentials.default:
+        credentials:
+            key: 'AKIARCMP7TH5QUWUYKCH'
+            secret: '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'
+
+    aws_sdk.credentials.sns:
+        credentials:
+            key: 'AKIARCMP7TH52M3GP2BW'
+            secret: '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'
