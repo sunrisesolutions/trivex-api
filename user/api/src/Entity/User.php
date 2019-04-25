@@ -6,11 +6,15 @@ use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
- * @ApiResource
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="user__user")
  * @ORM\HasLifecycleCallbacks()
@@ -43,6 +47,17 @@ class User implements UserInterface
     }
 
     /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function initiateData()
+    {
+        if (empty($this->roles)) {
+            $this->roles[] = 'ROLE_USER';
+        }
+    }
+
+    /**
      * @see UserInterface
      */
     public function getSalt()
@@ -70,28 +85,31 @@ class User implements UserInterface
 
         return array_unique($roles);
     }
-    
+
     /**
      * @ORM\OneToMany(
      *     targetEntity="OrganisationUser",
      *     mappedBy="user", cascade={"persist"}, orphanRemoval=true
      * )
      *
-     * @var \Doctrine\Common\Collections\Collection $organisationUsers ;
+     * @var \Doctrine\Common\Collections\Collection ;
      */
     private $organisationUsers;
-    
-    public function addOrganisationUser(OrganisationUser $orgUser){
+
+    public function addOrganisationUser(OrganisationUser $orgUser)
+    {
         $this->organisationUsers->add($orgUser);
         $orgUser->setUser($this);
     }
-    
-    public function removeOrganisationUser(OrganisationUser $orgUser){
+
+    public function removeOrganisationUser(OrganisationUser $orgUser)
+    {
         $this->organisationUsers->removeElement($orgUser);
         $orgUser->setUser(null);
     }
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=180, unique=true)
      * @Assert\Email(
      *     message = "The email '{{ value }}' is not a valid email."
@@ -108,38 +126,45 @@ class User implements UserInterface
     /**
      * @var string The Universally Unique Id
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      */
     private $uuid;
 
     /**
      * @var string The hashed password
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
      */
     private $password;
 
     /**
+     * @var string|null
+     * @Groups({"write"})
+     * @Assert\NotBlank()
+     */
+    private $plainPassword;
+
+    /**
      * @var string|null Login username
-     *
-     * @ORM\Column(nullable=true)
+     * @Groups({"read", "write"})
+     * @ORM\Column(nullable=true, unique=true)
      */
     private $username = '';
     /**
      * @var string|null Login with ID Number (NRIC)
-     *
+     * @Groups({"read", "write"})
      * @ORM\Column(nullable=true)
      */
     private $idNumber = '';
 
     /**
      * @var string|null Login with phone number
+     * @Groups({"read", "write"})
      * @ORM\Column(nullable=true)
      */
     private $phone = '';
 
     /**
      * @var \DateTime|null Login with DOB
+     * @Groups({"read", "write"})
      * @ORM\Column(type="date", nullable=true)
      */
     private $birthDate;
@@ -284,7 +309,7 @@ class User implements UserInterface
     {
         $this->createdAt = $createdAt;
     }
-    
+
     /**
      * @return \Doctrine\Common\Collections\Collection
      */
@@ -292,12 +317,28 @@ class User implements UserInterface
     {
         return $this->organisationUsers;
     }
-    
+
     /**
      * @param \Doctrine\Common\Collections\Collection $organisationUsers
      */
     public function setOrganisationUsers(\Doctrine\Common\Collections\Collection $organisationUsers): void
     {
         $this->organisationUsers = $organisationUsers;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    /**
+     * @param string|null $plainPassword
+     */
+    public function setPlainPassword(?string $plainPassword): void
+    {
+        $this->plainPassword = $plainPassword;
     }
 }

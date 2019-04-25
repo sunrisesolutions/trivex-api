@@ -58,11 +58,6 @@ security:
 #                authenticators:
 #                    - lexik_jwt_authentication.jwt_token_authenticator
 
-        refresh:
-            pattern:  ^/token/refresh
-            stateless: true
-            anonymous: true
-
         login:
             pattern:  ^/authentication_token
             stateless: true
@@ -83,6 +78,10 @@ security:
                 authenticators:
                     - App\Security\NricBirthdayPhoneAuthenticator
 
+        refresh:
+            pattern:  ^/token/refresh
+            stateless: true
+            anonymous: true
 
         main:
             stateless: true
@@ -93,4 +92,4 @@ security:
                     - lexik_jwt_authentication.jwt_token_authenticator
     access_control:
         # ...
-        - { path: ^/api/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }

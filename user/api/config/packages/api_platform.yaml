@@ -8,7 +8,7 @@ parameters:
 api_platform:
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
-    title: Hello API Platform
+    title: User API
     version: 1.0.0
     # Varnish integration, remove if unwanted
 #    http_cache:
