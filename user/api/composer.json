@@ -17,6 +17,7 @@
         "symfony/mercure-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
         "symfony/security-bundle": "4.2.*",
+        "symfony/swiftmailer-bundle": "^3.2",
         "symfony/yaml": "4.2.*"
     },
     "require-dev": {
