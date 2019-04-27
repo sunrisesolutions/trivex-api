@@ -145,7 +145,7 @@ class User implements UserInterface
     /**
      * @var string|null Login username
      * @Groups({"read", "write"})
-     * @ORM\Column(nullable=true, unique=true, length=512)
+     * @ORM\Column(nullable=true, unique=true, length=128)
      */
     private $username = '';
     /**
