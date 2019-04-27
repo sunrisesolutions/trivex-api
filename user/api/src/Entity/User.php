@@ -12,6 +12,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * @ApiResource(
+ *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
@@ -125,7 +126,7 @@ class User implements UserInterface
 
     /**
      * @var string The Universally Unique Id
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", unique=true)
      */
     private $uuid;
 
