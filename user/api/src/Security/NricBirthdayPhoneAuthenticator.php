@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Entity\Organisation;
 use App\Entity\OrganisationUser;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 use Lexik\Bundle\JWTAuthenticationBundle\Response\JWTAuthenticationSuccessResponse;
@@ -33,19 +34,18 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     private $passwordEncoder;
     protected $jwtManager;
     protected $dispatcher;
-    
+
     public function __construct(EntityManagerInterface $entityManager, RouterInterface $router, CsrfTokenManagerInterface $csrfTokenManager, UserPasswordEncoderInterface $passwordEncoder, JWTTokenManagerInterface $jwtManager, EventDispatcherInterface $dispatcher)
     {
         $this->entityManager = $entityManager;
         $this->router = $router;
         $this->csrfTokenManager = $csrfTokenManager;
         $this->passwordEncoder = $passwordEncoder;
-        
+
         $this->jwtManager = $jwtManager;
         $this->dispatcher = $dispatcher;
-        
     }
-    
+
     public function supports(Request $request)
     {
 //        return 'app_login' === $request->attributes->get('_route')
@@ -54,22 +54,29 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
             && !empty($request->request->get('birth-date'))
             && !empty($request->request->get('id-number'))
             && !empty($request->request->get('phone'))
-            
+
             && $request->isMethod('POST');
     }
-    
+
     public function getCredentials(Request $request)
     {
+        $orgCode = $request->request->get('org-code');
+
+        if (!empty($orgCode)) {
+            $org = $this->entityManager->getRepository(Organisation::class)->findOneBy(['code' => $orgCode]);
+            $request->attributes->set('orgUid', $org->getUuid());
+        }
+
         $credentials = [
-            'org-code' => $request->request->get('org-code'),
+            'org-code' => $orgCode,
             'phone' => $request->request->get('phone'),
             'id-number' => $request->request->get('id-number'),
             'birth-date' => \DateTime::createFromFormat('Y-m-d', $request->request->get('birth-date')),
         ];
-        
+
         return $credentials;
     }
-    
+
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         $users = $this->entityManager->getRepository(User::class)->findBy([
@@ -88,52 +95,52 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
                 }
             }
         }
-        
+
         if (empty($user)) {
             // fail authentication with a custom error
 //            throw new \Exception('aaaaaaaaaaaaaaaaaaaa');
             throw new CustomUserMessageAuthenticationException('Login not valid.');
         }
-        
+
         return $user;
     }
-    
+
     public function checkCredentials($credentials, UserInterface $user)
     {
 //        return $this->passwordEncoder->isPasswordValid($user, $credentials['password']);
         return true;
     }
-    
+
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
         return $this->handleAuthenticationSuccess($token->getUser());
     }
-    
+
     public function handleAuthenticationSuccess(UserInterface $user, $jwt = null)
     {
         if (null === $jwt) {
             $jwt = $this->jwtManager->create($user);
         }
-        
+
         $response = new JWTAuthenticationSuccessResponse($jwt);
         $event = new AuthenticationSuccessEvent(['token' => $jwt], $user, $response);
-        
+
         if ($this->dispatcher instanceof ContractsEventDispatcherInterface) {
             $this->dispatcher->dispatch($event, Events::AUTHENTICATION_SUCCESS);
         } else {
             $this->dispatcher->dispatch(Events::AUTHENTICATION_SUCCESS, $event);
         }
-        
+
         $response->setData($event->getData());
-        
+
         return $response;
     }
-    
+
     protected function getLoginUrl()
     {
         return $this->router->generate('app_login');
     }
-    
+
     /**
      * Returns a response that directs the user to authenticate.
      *
@@ -162,10 +169,10 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
             // you might translate this message
             'message' => 'Authentication Required',
         ];
-        
+
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
-    
+
     /**
      * Called when authentication executed, but failed (e.g. wrong username password).
      *
@@ -184,7 +191,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     {
         throw new CustomUserMessageAuthenticationException('Invalid credentials !');
     }
-    
+
     /**
      * Does this method support remember me cookies?
      *
