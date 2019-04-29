@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @Route("/bean")
+ * @Route("/bean", condition="'%kernel.environment%' === 'dev'")
  */
 class BeanPlaygroundController
 {

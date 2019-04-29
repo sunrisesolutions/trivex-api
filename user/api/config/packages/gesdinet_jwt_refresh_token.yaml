@@ -1,3 +1,5 @@
 gesdinet_jwt_refresh_token:
     ttl_update: true
     firewall: main
+    user_identity_field: uuid
+    user_provider: App\Security\UuidUserProvider

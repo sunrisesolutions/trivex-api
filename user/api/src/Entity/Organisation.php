@@ -27,15 +27,7 @@ class Organisation
     {
         $this->organisationUsers = new ArrayCollection();
     }
-    /**
-     * @ORM\PrePersist
-     */
-    public function initiateUuid()
-    {
-        if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
-        }
-    }
+
     /**
      * @return int|null
      */
