@@ -18,6 +18,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Person
 {
+    const GENDER_MALE = 'MALE';
+    const GENDER_FEMALE = 'FEMALE';
+
     /**
      * @var int|null The Event Id
      * @ORM\Id()
