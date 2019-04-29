@@ -94,6 +94,9 @@
     "easyrdf/easyrdf": {
         "version": "0.9.1"
     },
+    "egulias/email-validator": {
+        "version": "2.1.7"
+    },
     "fig/link-util": {
         "version": "1.0.0"
     },
@@ -138,6 +141,9 @@
         "files": [
             "config/packages/lexik_jwt_authentication.yaml"
         ]
+    },
+    "monolog/monolog": {
+        "version": "1.24.0"
     },
     "mtdowling/jmespath.php": {
         "version": "2.4.0"
@@ -192,6 +198,9 @@
     },
     "ralouphie/getallheaders": {
         "version": "2.0.5"
+    },
+    "swiftmailer/swiftmailer": {
+        "version": "v6.2.1"
     },
     "symfony/asset": {
         "version": "v4.2.4"
@@ -306,8 +315,28 @@
             "config/packages/mercure.yaml"
         ]
     },
+    "symfony/monolog-bridge": {
+        "version": "v4.2.7"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.1",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.1",
+            "ref": "18ebf5a940573a20de06f9c4060101eeb438cf3d"
+        },
+        "files": [
+            "config/packages/dev/monolog.yaml",
+            "config/packages/prod/monolog.yaml",
+            "config/packages/test/monolog.yaml"
+        ]
+    },
     "symfony/options-resolver": {
         "version": "v4.2.4"
+    },
+    "symfony/polyfill-intl-idn": {
+        "version": "v1.11.0"
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.11.0"
@@ -371,6 +400,20 @@
     },
     "symfony/stopwatch": {
         "version": "v4.2.4"
+    },
+    "symfony/swiftmailer-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "3db029c03e452b4a23f7fc45cec7c922c2247eb8"
+        },
+        "files": [
+            "config/packages/dev/swiftmailer.yaml",
+            "config/packages/swiftmailer.yaml",
+            "config/packages/test/swiftmailer.yaml"
+        ]
     },
     "symfony/twig-bridge": {
         "version": "v4.2.4"

@@ -6,11 +6,16 @@ use App\Util\AppUtil;
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
  * @ORM\Table(name="event__event")
@@ -68,6 +73,7 @@ class Event
     private $organisation;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
     private $name;
@@ -83,48 +89,69 @@ class Event
     private $deletedAt;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $startedAt;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $endedAt;
 
     /**
+     * @Groups({"read"})
      * @ORM\Column(type="string", length=255)
      */
     private $uuid;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
     private $timezone;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255)
      */
     private $title;
 
     /**
+     * @Groups({"read", "write"})
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $subtitle;
 
     /**
+     * @Groups({"read", "write"})
      * An event can only be enabled up until its end time (endedAt). It can however be disabled (enabled=false) before its start time (startedAt).
      * @ORM\Column(type="boolean", options={"default":true})
      */
     private $enabled = true;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @Groups({"read"})
+     * @ORM\Column(type="boolean", options={"default":false})
      */
-    private $deleted;
+    private $deleted = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Attendee", mappedBy="event")
+     */
+    private $attendees;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Registration", mappedBy="event")
+     */
+    private $registrations;
 
     public function __construct()
     {
+        $this->attendees = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+        $this->registrations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -272,6 +299,68 @@ class Event
     public function setDeletedAt(?\DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Attendee[]
+     */
+    public function getAttendees(): Collection
+    {
+        return $this->attendees;
+    }
+
+    public function addAttendee(Attendee $attendee): self
+    {
+        if (!$this->attendees->contains($attendee)) {
+            $this->attendees[] = $attendee;
+            $attendee->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttendee(Attendee $attendee): self
+    {
+        if ($this->attendees->contains($attendee)) {
+            $this->attendees->removeElement($attendee);
+            // set the owning side to null (unless already changed)
+            if ($attendee->getEvent() === $this) {
+                $attendee->setEvent(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Registration[]
+     */
+    public function getRegistrations(): Collection
+    {
+        return $this->registrations;
+    }
+
+    public function addRegistration(Registration $registration): self
+    {
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations[] = $registration;
+            $registration->setEvent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): self
+    {
+        if ($this->registrations->contains($registration)) {
+            $this->registrations->removeElement($registration);
+            // set the owning side to null (unless already changed)
+            if ($registration->getEvent() === $this) {
+                $registration->setEvent(null);
+            }
+        }
 
         return $this;
     }
