@@ -37,9 +37,7 @@ security:
                 class: App\Entity\User
                 property: email
         jwt:
-            lexik_jwt:
-                class: Lexik\Bundle\JWTAuthenticationBundle\Security\User\JWTUser
-        # used to reload user from session & other features (e.g. switch_user)
+            lexik_jwt: ~
 
     firewalls:
         dev:
