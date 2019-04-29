@@ -126,7 +126,7 @@ class User implements UserInterface
 
     /**
      * @var string The Universally Unique Id
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", length=191, unique=true)
      */
     private $uuid;
 
