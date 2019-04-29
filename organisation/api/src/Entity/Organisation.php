@@ -4,14 +4,17 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
-use Aws\Credentials\Credentials;
-use Aws\S3\S3Client;
+use App\Util\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\OrganisationRepository")
  * @ORM\Table(name="organisation__organisation")
@@ -30,6 +33,22 @@ class Organisation
      */
     private $id;
 
+    private function buildLogoPath()
+    {
+        return strtolower(AppUtil::APP_NAME).'/logo/'.$this->uuid.'-'.$this->logoName;
+    }
+
+    public function setLogoName(?string $logoName): self
+    {
+        if (!empty($this->logoName) && $this->logoName !== $logoName) {
+            AwsS3Util::getInstance()->deleteObject($this->buildLogoPath());
+        }
+
+        $this->logoName = $logoName;
+
+        return $this;
+    }
+
     /**
      * @ORM\PrePersist
      */
@@ -40,64 +59,47 @@ class Organisation
         }
     }
 
-    public function getLogoUrlFromAws()
+    /**
+     * @Groups({"read"})
+     * @return mixed|string|null
+     */
+    public function getLogoReadUrl()
     {
-        if (empty($this->hasLogo)) {
+        if (empty($this->logoName)) {
             return null;
         }
+        $path = $this->buildLogoPath();
+        return AwsS3Util::getInstance()->getObjectReadUrl($path);
 
-        $accessKey = getenv('S3_ACCESS_KEY');
-        $secretKey = getenv('S3_SECRET_KEY');
-        $region = getenv('S3_REGION');
-        $bucket = getenv('S3_BUCKET');
-        $directory = getenv('SE_DIRECTORY');
-        $version = AppUtil::SDK_VERSION;
-
-        $credentials = new Credentials($accessKey, $secretKey);
-
-        $path = $directory.'/'.strtolower(AppUtil::APP_NAME).'/logo/'.$this->uuid;
-
-        //Creating a presigned request
-        $s3Client = new S3Client([
-//            'profile' => 'default',
-            'region' => $region,
-            'version' => $version,
-            'credentials' => $credentials,
-        ]);
-
-        $cmd = $s3Client->getCommand('GetObject', [
-            'Bucket' => $bucket,
-            'Key' => $path,
-        ]);
-
-        $request = $s3Client->createPresignedRequest($cmd, '+7 days');
-        $url = (string) $request->getUri();
-
-        return $url;
     }
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read"})
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $foundedOn;
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $type;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="string", length=128)
+     * @Groups({"read", "write"})
      */
     private $name;
 
@@ -117,9 +119,12 @@ class Organisation
     private $children;
 
     /**
-     * @ORM\Column(type="boolean", options={"default": false})
+     * File name of the logo.
+     *
+     * @ORM\Column(type="string", length=25, nullable=true)
+     * @Groups({"read", "write"})
      */
-    private $hasLogo = false;
+    private $logoName;
 
     public function __construct()
     {
@@ -246,15 +251,8 @@ class Organisation
         return $this;
     }
 
-    public function getHasLogo(): ?bool
+    public function getLogoName(): ?string
     {
-        return $this->hasLogo;
-    }
-
-    public function setHasLogo(bool $hasLogo): self
-    {
-        $this->hasLogo = $hasLogo;
-
-        return $this;
+        return $this->logoName;
     }
 }

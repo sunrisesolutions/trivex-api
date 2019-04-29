@@ -4,8 +4,7 @@ namespace App\Util;
 
 class AppUtil
 {
-    const APP_NAME = 'ORGANISATION';
-    const SDK_VERSION = 'latest';
+    const APP_NAME = 'ORG';
 
     public static function generateUuid($prefix = self::APP_NAME)
     {
