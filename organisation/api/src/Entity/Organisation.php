@@ -137,6 +137,16 @@ class Organisation
      */
     private $individualMembers;
 
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $code;
+
+    /**
+     * @ORM\Column(type="string", length=128, nullable=true)
+     */
+    private $subdomain;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -295,6 +305,30 @@ class Organisation
                 $individualMember->setOrganisation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCode(): ?string
+    {
+        return $this->code;
+    }
+
+    public function setCode(string $code): self
+    {
+        $this->code = $code;
+
+        return $this;
+    }
+
+    public function getSubdomain(): ?string
+    {
+        return $this->subdomain;
+    }
+
+    public function setSubdomain(?string $subdomain): self
+    {
+        $this->subdomain = $subdomain;
 
         return $this;
     }

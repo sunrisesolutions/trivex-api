@@ -34,6 +34,16 @@ class Person
      */
     private $name;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $jobTitle;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $employerName;
+
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
@@ -95,6 +105,30 @@ class Person
     public function setName(?string $name): self
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getJobTitle(): ?string
+    {
+        return $this->jobTitle;
+    }
+
+    public function setJobTitle(?string $jobTitle): self
+    {
+        $this->jobTitle = $jobTitle;
+
+        return $this;
+    }
+
+    public function getEmployerName(): ?string
+    {
+        return $this->employerName;
+    }
+
+    public function setEmployerName(?string $employerName): self
+    {
+        $this->employerName = $employerName;
 
         return $this;
     }

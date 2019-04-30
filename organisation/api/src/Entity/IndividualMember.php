@@ -58,7 +58,8 @@ class IndividualMember
      */
     public function getPersonData()
     {
-        return ['name' => $this->person->getName()];
+        $person = $this->person;
+        return ['name' => $person->getName(), 'jobTitle' => $person->getJobTitle(), 'employerName' => $person->getEmployerName()];
     }
 
     /**
