@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -23,6 +25,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class IndividualMember
 {
+    const TYPE_SUBSCRIPTION = 'SUBSCRIPTION';
+
     /**
      * @var int|null The Event Id
      * @ORM\Id()
@@ -59,6 +63,7 @@ class IndividualMember
     public function getPersonData()
     {
         $person = $this->person;
+
         return ['name' => $person->getName(), 'jobTitle' => $person->getJobTitle(), 'employerName' => $person->getEmployerName()];
     }
 
@@ -94,6 +99,16 @@ class IndividualMember
      * @Groups({"read"})
      */
     private $accessToken;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="individualMember")
+     */
+    private $roles;
+
+    public function __construct()
+    {
+        $this->roles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -156,6 +171,37 @@ class IndividualMember
     public function setAccessToken(string $accessToken): self
     {
         $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->setIndividualMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+            // set the owning side to null (unless already changed)
+            if ($role->getIndividualMember() === $this) {
+                $role->setIndividualMember(null);
+            }
+        }
 
         return $this;
     }

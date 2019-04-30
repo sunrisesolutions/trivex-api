@@ -61,11 +61,15 @@ class Organisation
     {
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid();
+            if (empty($this->code)) {
+                $this->code = $this->uuid;
+            }
         }
     }
 
     /**
      * @Groups({"read"})
+     *
      * @return mixed|string|null
      */
     public function getLogoReadUrl()
@@ -74,8 +78,8 @@ class Organisation
             return null;
         }
         $path = $this->buildLogoPath();
-        return AwsS3Util::getInstance()->getObjectReadUrl($path);
 
+        return AwsS3Util::getInstance()->getObjectReadUrl($path);
     }
 
     /**
@@ -138,7 +142,7 @@ class Organisation
     private $individualMembers;
 
     /**
-     * @ORM\Column(type="string", length=64)
+     * @ORM\Column(type="string", length=64, nullable=true)
      */
     private $code;
 
