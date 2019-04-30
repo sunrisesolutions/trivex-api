@@ -61,40 +61,43 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     public function getCredentials(Request $request)
     {
         $orgCode = $request->request->get('org-code');
-
-        if (!empty($orgCode)) {
-            $org = $this->entityManager->getRepository(Organisation::class)->findOneBy(['code' => $orgCode]);
-            $request->attributes->set('orgUid', $org->getUuid());
-        }
-
+        $uid = 0;
         $credentials = [
             'org-code' => $orgCode,
             'phone' => $request->request->get('phone'),
             'id-number' => $request->request->get('id-number'),
             'birth-date' => \DateTime::createFromFormat('Y-m-d', $request->request->get('birth-date')),
         ];
+        if (!empty($orgCode)) {
+            $org = $this->entityManager->getRepository(Organisation::class)->findOneBy(['code' => $orgCode]);
+            $request->attributes->set('orgUid', $org->getUuid());
+            $users = $this->entityManager->getRepository(User::class)->findBy([
+                'phone' => $credentials['phone'],
+                'idNumber' => $credentials['id-number'],
+                'birthDate' => $credentials['birth-date'],
+            ]);
+            $user = null;
+            /** @var User $u */
+            foreach ($users as $u) {
+                $ous = $u->getOrganisationUsers();
+                /** @var OrganisationUser $ou */
+                foreach ($ous as $ou) {
+                    if ($ou->getOrganisation()->getCode() === $credentials['org-code']) {
+                        $uid = $u->getId();
+                        $request->attributes->set('imUid', $ou->getUuid());
+                    }
+                }
+            }
+        }
+
+        $credentials['user-id'] = $uid;
 
         return $credentials;
     }
 
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        $users = $this->entityManager->getRepository(User::class)->findBy([
-            'phone' => $credentials['phone'],
-            'idNumber' => $credentials['id-number'],
-            'birthDate' => $credentials['birth-date'],
-        ]);
-        $user = null;
-        /** @var User $u */
-        foreach ($users as $u) {
-            $ous = $u->getOrganisationUsers();
-            /** @var OrganisationUser $ou */
-            foreach ($ous as $ou) {
-                if ($ou->getOrganisation()->getCode() === $credentials['org-code']) {
-                    $user = $u;
-                }
-            }
-        }
+        $user = $this->entityManager->getRepository(User::class)->find($credentials['user-id']);
 
         if (empty($user)) {
             // fail authentication with a custom error
@@ -158,7 +161,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
      *
      *     return new Response('Auth header required', 401);
      *
-     * @param Request $request The request that resulted in an AuthenticationException
+     * @param Request                 $request       The request that resulted in an AuthenticationException
      * @param AuthenticationException $authException The exception that started the authentication process
      *
      * @return Response
@@ -182,7 +185,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
      * If you return null, the request will continue, but the user will
      * not be authenticated. This is probably not what you want to do.
      *
-     * @param Request $request
+     * @param Request                 $request
      * @param AuthenticationException $exception
      *
      * @return Response|null

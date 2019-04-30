@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Entity;
+
+use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Book\Book;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * @ORM\Entity()
  * @ORM\Table(name="user__organisations_users")
@@ -19,7 +19,7 @@ class OrganisationUser
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
-    
+
     /**
      * @return int|null
      */
@@ -27,21 +27,26 @@ class OrganisationUser
     {
         return $this->id;
     }
-    
+
     /**
      * @var Organisation|null
      * @ORM\ManyToOne(targetEntity="Organisation", inversedBy="organisationUsers")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="CASCADE")
      */
     private $organisation;
-    
+
     /**
      * @var User|null
      * @ORM\ManyToOne(targetEntity="User", inversedBy="organisationUsers")
      * @ORM\JoinColumn(name="id_user", referencedColumnName="id", onDelete="CASCADE")
      */
     private $user;
-    
+
+    /**
+     * @ORM\Column(type="string", length=191, nullable=true)
+     */
+    private $uuid;
+
     /**
      * @return Organisation|null
      */
@@ -49,7 +54,7 @@ class OrganisationUser
     {
         return $this->organisation;
     }
-    
+
     /**
      * @param mixed $organisation
      */
@@ -57,7 +62,7 @@ class OrganisationUser
     {
         $this->organisation = $organisation;
     }
-    
+
     /**
      * @return mixed
      */
@@ -65,7 +70,7 @@ class OrganisationUser
     {
         return $this->user;
     }
-    
+
     /**
      * @param mixed $user
      */
@@ -73,6 +78,16 @@ class OrganisationUser
     {
         $this->user = $user;
     }
-    
-    
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
 }

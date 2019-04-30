@@ -23,8 +23,6 @@ class JWTCreatedListener
 
     /**
      * @param JWTCreatedEvent $event
-     *
-     * @return void
      */
     public function onJWTCreated(JWTCreatedEvent $event)
     {
@@ -35,6 +33,8 @@ class JWTCreatedListener
         $payload['ip'] = $request->getClientIp();
 
         $payload['org'] = $request->attributes->get('orgUid');
+        $payload['im'] = $request->attributes->get('imUid');
+
 //        $payload['uuid'] = $user->getUuid();
 
         $event->setData($payload);
