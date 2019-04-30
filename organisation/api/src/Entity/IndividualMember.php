@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
- *         "get"={"access_control"="is_granted('ROLE_ADMIN')"},
+ *         "get",
  *         "post"={"access_control"="is_granted('ROLE_ADMIN')"}
  *     },
  *     normalizationContext={"groups"={"read"}},
@@ -37,7 +37,7 @@ class IndividualMember
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_IM');
         }
     }
 
@@ -47,7 +47,7 @@ class IndividualMember
     public function initiateAccessToken()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(sprintf('IMT_%s_%s', $this->organisation->getId(), $this->person->getId()));
+            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT_%s_%s', $this->organisation->getId(), $this->person->getId()));
         }
     }
 

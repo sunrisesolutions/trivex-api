@@ -3,7 +3,8 @@ security:
     providers:
         in_memory: { memory: ~ }
         jwt:
-            lexik_jwt: ~
+            lexik_jwt:
+                class: App\Security\JWTUser
 
     firewalls:
         dev:
