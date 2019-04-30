@@ -18,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\IndividualMemberRepository")
+ * @ORM\Table(name="organisation__individual_member")
  * @ORM\HasLifecycleCallbacks()
  */
 class IndividualMember
@@ -49,6 +50,15 @@ class IndividualMember
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT_%s_%s', $this->organisation->getId(), $this->person->getId()));
         }
+    }
+
+    /**
+     * @return array
+     * @Groups({"read"})
+     */
+    public function getPersonData()
+    {
+        return ['name' => $this->person->getName()];
     }
 
     /**

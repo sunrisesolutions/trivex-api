@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
+ * @ORM\Table(name="organisation__person")
  */
 class Person
 {
@@ -27,6 +28,11 @@ class Person
      * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="person")
      */
     private $individualMembers;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $name;
 
     public function __construct()
     {
@@ -77,6 +83,18 @@ class Person
                 $individualMember->setPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
