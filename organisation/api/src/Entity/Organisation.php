@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
 use App\Util\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,6 +14,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     collectionOperations={
+ *         "get"={"access_control"="is_granted('ROLE_ADMIN')"},
+ *         "post"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
@@ -126,9 +131,16 @@ class Organisation
      */
     private $logoName;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="organisation")
+     * @ApiSubresource()
+     */
+    private $individualMembers;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
+        $this->individualMembers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -254,5 +266,36 @@ class Organisation
     public function getLogoName(): ?string
     {
         return $this->logoName;
+    }
+
+    /**
+     * @return Collection|IndividualMember[]
+     */
+    public function getIndividualMembers(): Collection
+    {
+        return $this->individualMembers;
+    }
+
+    public function addIndividualMember(IndividualMember $individualMember): self
+    {
+        if (!$this->individualMembers->contains($individualMember)) {
+            $this->individualMembers[] = $individualMember;
+            $individualMember->setOrganisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndividualMember(IndividualMember $individualMember): self
+    {
+        if ($this->individualMembers->contains($individualMember)) {
+            $this->individualMembers->removeElement($individualMember);
+            // set the owning side to null (unless already changed)
+            if ($individualMember->getOrganisation() === $this) {
+                $individualMember->setOrganisation(null);
+            }
+        }
+
+        return $this;
     }
 }
