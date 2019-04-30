@@ -2,17 +2,23 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Boolean;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\AttendeeRepository")
+ * @ORM\Table(name="event__attendee")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Attendee
 {
-    const TYPE_INDIVIDUAL = 'INDIVIDUAL';
-
     /**
      * @var int|null The Event Id
      * @ORM\Id()
@@ -39,6 +45,7 @@ class Attendee
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="attendees")
+     * @Groups({"read", "write"})
      */
     private $event;
 
@@ -48,22 +55,13 @@ class Attendee
     private $createdAt;
 
     /**
-     * @ORM\Column(type="string", length=64, options={"default": "INDIVIDUAL"})
-     */
-    private $type = self::TYPE_INDIVIDUAL;
-
-    /**
-     * @ORM\Column(type="boolean", nullable=true)
-     */
-    private $member;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $uuid;
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Registration", mappedBy="attendee", cascade={"persist", "remove"})
+     * @Groups({"read", "write"})
      */
     private $registration;
 
@@ -108,30 +106,6 @@ class Attendee
         return $this;
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
-    public function setType(string $type): self
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    public function getMember(): ?bool
-    {
-        return $this->member;
-    }
-
-    public function setMember(?bool $member): self
-    {
-        $this->member = $member;
-
-        return $this;
-    }
-
     public function getUuid(): ?string
     {
         return $this->uuid;
@@ -154,7 +128,7 @@ class Attendee
         $this->registration = $registration;
 
         // set (or unset) the owning side of the relation if necessary
-        $newAttendee = $registration === null ? null : $this;
+        $newAttendee = null === $registration ? null : $this;
         if ($newAttendee !== $registration->getAttendee()) {
             $registration->setAttendee($newAttendee);
         }

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
@@ -144,6 +145,7 @@ class Event
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Registration", mappedBy="event")
+     * @ApiSubresource()
      */
     private $registrations;
 

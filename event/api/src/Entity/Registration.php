@@ -2,16 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\RegistrationRepository")
+ * @ORM\Table(name="event__registration")
  */
 class Registration
 {
     const GENDER_MALE = 'MALE';
     const GENDER_FEMALE = 'FEMALE';
+
+    const ATTENDEE_INDIVIDUAL = 'INDIVIDUAL_MEMBER';
+    const ATTENDEE_MEMBER_INDIVIDUAL = 'INDIVIDUAL_NON_MEMBER';
+
+    const LOCATION_ONLINE = 'ONLINE';
+    const LOCATION_VENUE = 'VENUE';
 
     /**
      * @var int|null The Event Id
@@ -24,6 +37,7 @@ class Registration
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Attendee", inversedBy="registration", cascade={"persist", "remove"})
+     * @ApiSubresource()
      */
     private $attendee;
 
@@ -51,6 +65,16 @@ class Registration
      * @ORM\Column(type="string", length=255)
      */
     private $uuid;
+
+    /**
+     * @ORM\Column(type="string", length=64, options={"default": "INDIVIDUAL_MEMBER"})
+     */
+    private $attendeeType = self::ATTENDEE_INDIVIDUAL;
+
+    /**
+     * @ORM\Column(type="string", length=64, options={"default": "VENUE"})
+     */
+    private $locationType = self::LOCATION_VENUE;
 
     /**
      * @var Event
@@ -216,7 +240,6 @@ class Registration
         return $this;
     }
 
-
     public function getMiddleName(): ?string
     {
         return $this->middleName;
@@ -252,4 +275,29 @@ class Registration
 
         return $this;
     }
+
+    public function getAttendeeType(): ?string
+    {
+        return $this->attendeeType;
+    }
+
+    public function setAttendeeType(string $type): self
+    {
+        $this->attendeeType = $type;
+
+        return $this;
+    }
+
+    public function getLocationType(): ?string
+    {
+        return $this->locationType;
+    }
+
+    public function setLocationType(string $type): self
+    {
+        $this->locationType = $type;
+
+        return $this;
+    }
+
 }
