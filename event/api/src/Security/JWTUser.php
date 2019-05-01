@@ -12,10 +12,13 @@ final class JWTUser extends \Lexik\Bundle\JWTAuthenticationBundle\Security\User\
 
     private $orgUuid;
 
-    public function __construct($username, array $roles, $org)
+    private $imUuid;
+
+    public function __construct($username, array $roles, $org, $im)
     {
         parent::__construct($username, $roles);
         $this->orgUuid = $org;
+        $this->imUuid = $im;
     }
 
     public static function createFromPayload($username, array $payload)
@@ -23,7 +26,8 @@ final class JWTUser extends \Lexik\Bundle\JWTAuthenticationBundle\Security\User\
         return new self(
             $username,
             $payload['roles'], // Added by default
-            $payload['org']  // Custom
+            $payload['org'],  // Custom
+            $payload['im']  // Custom
         );
     }
 
@@ -33,5 +37,13 @@ final class JWTUser extends \Lexik\Bundle\JWTAuthenticationBundle\Security\User\
     public function getOrgUuid()
     {
         return $this->orgUuid;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getImUuid()
+    {
+        return $this->imUuid;
     }
 }

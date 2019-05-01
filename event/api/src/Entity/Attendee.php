@@ -10,6 +10,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
+ *     collectionOperations={
+ *         "get"={"access_control"="is_granted('ROLE_USER')"},
+ *         "post"
+ *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
@@ -28,6 +32,11 @@ class Attendee
      */
     private $id;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
     /**
      * @ORM\PrePersist
      */
@@ -39,23 +48,13 @@ class Attendee
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="attendees")
-     */
-    private $person;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="attendees")
-     * @Groups({"read", "write"})
-     */
-    private $event;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("read")
      */
     private $uuid;
 
@@ -78,18 +77,6 @@ class Attendee
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
-
-        return $this;
-    }
-
-    public function getEvent(): ?Event
-    {
-        return $this->event;
-    }
-
-    public function setEvent(?Event $event): self
-    {
-        $this->event = $event;
 
         return $this;
     }

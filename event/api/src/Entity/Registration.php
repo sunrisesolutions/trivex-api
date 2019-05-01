@@ -6,6 +6,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ApiResource(
@@ -14,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity(repositoryClass="App\Repository\RegistrationRepository")
  * @ORM\Table(name="event__registration")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Registration
 {
@@ -47,7 +50,7 @@ class Registration
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_REG');
         }
     }
 
@@ -63,6 +66,7 @@ class Registration
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("read")
      */
     private $uuid;
 
@@ -79,6 +83,7 @@ class Registration
     /**
      * @var Event
      * @ORM\ManyToOne(targetEntity="App\Entity\Event", inversedBy="registrations")
+     * @Groups({"read", "write"})
      */
     private $event;
 
@@ -89,41 +94,52 @@ class Registration
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $middleName;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $birthDate;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Groups({"read", "write"})
      */
     private $givenName;
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $familyName;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $gender;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read", "write"})
+     * @Assert\Email(
+     *     message = "The email '{{ value }}' is not a valid email."
+     * )
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=25, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read", "write"})
      */
     private $accessToken;
 

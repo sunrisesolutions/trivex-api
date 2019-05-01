@@ -139,11 +139,6 @@ class Event
     private $deleted = false;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Attendee", mappedBy="event")
-     */
-    private $attendees;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Registration", mappedBy="event")
      * @ApiSubresource()
      */
@@ -151,7 +146,6 @@ class Event
 
     public function __construct()
     {
-        $this->attendees = new ArrayCollection();
         $this->createdAt = new \DateTime();
         $this->registrations = new ArrayCollection();
     }
@@ -301,37 +295,6 @@ class Event
     public function setDeletedAt(?\DateTimeInterface $deletedAt): self
     {
         $this->deletedAt = $deletedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Attendee[]
-     */
-    public function getAttendees(): Collection
-    {
-        return $this->attendees;
-    }
-
-    public function addAttendee(Attendee $attendee): self
-    {
-        if (!$this->attendees->contains($attendee)) {
-            $this->attendees[] = $attendee;
-            $attendee->setEvent($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAttendee(Attendee $attendee): self
-    {
-        if ($this->attendees->contains($attendee)) {
-            $this->attendees->removeElement($attendee);
-            // set the owning side to null (unless already changed)
-            if ($attendee->getEvent() === $this) {
-                $attendee->setEvent(null);
-            }
-        }
 
         return $this;
     }

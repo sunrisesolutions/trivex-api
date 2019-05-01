@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OrganisationRepository")
  * @ORM\Table(name="event__organisation")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Organisation
 {
@@ -31,9 +32,15 @@ class Organisation
      */
     private $events;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="organisation")
+     */
+    private $individualMembers;
+
     public function __construct()
     {
         $this->events = new ArrayCollection();
+        $this->individualMembers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -78,6 +85,37 @@ class Organisation
             // set the owning side to null (unless already changed)
             if ($event->getOrganisation() === $this) {
                 $event->setOrganisation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|IndividualMember[]
+     */
+    public function getIndividualMembers(): Collection
+    {
+        return $this->individualMembers;
+    }
+
+    public function addIndividualMember(IndividualMember $individualMember): self
+    {
+        if (!$this->individualMembers->contains($individualMember)) {
+            $this->individualMembers[] = $individualMember;
+            $individualMember->setOrganisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndividualMember(IndividualMember $individualMember): self
+    {
+        if ($this->individualMembers->contains($individualMember)) {
+            $this->individualMembers->removeElement($individualMember);
+            // set the owning side to null (unless already changed)
+            if ($individualMember->getOrganisation() === $this) {
+                $individualMember->setOrganisation(null);
             }
         }
 

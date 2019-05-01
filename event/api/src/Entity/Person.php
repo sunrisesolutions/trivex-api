@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
+ * @ORM\Table(name="event__person")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Person
 {
@@ -41,19 +43,19 @@ class Person
     private $phoneNumber;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Attendee", mappedBy="person")
-     */
-    private $attendees;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Registration", mappedBy="person")
      */
     private $registrations;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="person")
+     */
+    private $individualMembers;
+
     public function __construct()
     {
-        $this->attendees = new ArrayCollection();
         $this->registrations = new ArrayCollection();
+        $this->individualMembers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,37 +112,6 @@ class Person
     }
 
     /**
-     * @return Collection|Attendee[]
-     */
-    public function getAttendees(): Collection
-    {
-        return $this->attendees;
-    }
-
-    public function addAttendee(Attendee $attendee): self
-    {
-        if (!$this->attendees->contains($attendee)) {
-            $this->attendees[] = $attendee;
-            $attendee->setPerson($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAttendee(Attendee $attendee): self
-    {
-        if ($this->attendees->contains($attendee)) {
-            $this->attendees->removeElement($attendee);
-            // set the owning side to null (unless already changed)
-            if ($attendee->getPerson() === $this) {
-                $attendee->setPerson(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Registration[]
      */
     public function getRegistrations(): Collection
@@ -165,6 +136,37 @@ class Person
             // set the owning side to null (unless already changed)
             if ($registration->getPerson() === $this) {
                 $registration->setPerson(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|IndividualMember[]
+     */
+    public function getIndividualMembers(): Collection
+    {
+        return $this->individualMembers;
+    }
+
+    public function addIndividualMember(IndividualMember $individualMember): self
+    {
+        if (!$this->individualMembers->contains($individualMember)) {
+            $this->individualMembers[] = $individualMember;
+            $individualMember->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndividualMember(IndividualMember $individualMember): self
+    {
+        if ($this->individualMembers->contains($individualMember)) {
+            $this->individualMembers->removeElement($individualMember);
+            // set the owning side to null (unless already changed)
+            if ($individualMember->getPerson() === $this) {
+                $individualMember->setPerson(null);
             }
         }
 
