@@ -42,7 +42,7 @@ class Organisation
      * @Assert\NotBlank()
      */
     private $uuid;
-    
+
     /**
      * @var string code
      * @ORM\Column(type="string")
@@ -103,7 +103,7 @@ class Organisation
     {
         $this->organisationUsers = $organisationUsers;
     }
-    
+
     /**
      * @return string
      */
@@ -111,7 +111,7 @@ class Organisation
     {
         return $this->code;
     }
-    
+
     /**
      * @param string $code
      */

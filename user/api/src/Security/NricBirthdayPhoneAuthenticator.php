@@ -68,6 +68,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
             'id-number' => $request->request->get('id-number'),
             'birth-date' => \DateTime::createFromFormat('Y-m-d', $request->request->get('birth-date')),
         ];
+
         if (!empty($orgCode)) {
             $org = $this->entityManager->getRepository(Organisation::class)->findOneBy(['code' => $orgCode]);
             $request->attributes->set('orgUid', $org->getUuid());
