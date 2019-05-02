@@ -67,6 +67,7 @@ class IndividualMemberAccessTokenAuthenticator extends AbstractGuardAuthenticato
             $org = $im->getOrganisation();
 
             $request->attributes->set('orgUid', $org->getUuid());
+            $request->attributes->set('imUid', $im->getUuid());
 
             $uid = $user->getId();
         }
