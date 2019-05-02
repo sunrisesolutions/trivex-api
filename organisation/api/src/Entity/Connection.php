@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\ConnectionRepository")
- * @ORM\Table(name="event__connection")
+ * @ORM\Table(name="organisation__connection")
  * @ORM\HasLifecycleCallbacks()
  */
 class Connection
