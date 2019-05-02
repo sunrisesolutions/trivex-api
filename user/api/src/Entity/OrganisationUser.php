@@ -48,6 +48,11 @@ class OrganisationUser
     private $uuid;
 
     /**
+     * @ORM\Column(type="string", length=191, nullable=true)
+     */
+    private $accessToken;
+
+    /**
      * @return Organisation|null
      */
     public function getOrganisation()
@@ -87,6 +92,18 @@ class OrganisationUser
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
+
+        return $this;
+    }
+
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    public function setAccessToken(?string $accessToken): self
+    {
+        $this->accessToken = $accessToken;
 
         return $this;
     }

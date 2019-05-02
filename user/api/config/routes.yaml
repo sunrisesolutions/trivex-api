@@ -9,6 +9,11 @@ nric_phone_birthday_auth:
   path: /login/nric-phone-birthdate
   methods: ['POST']
 
+individual_member_access_token_auth:
+  path: /login/individual-member-access-token
+  methods: ['POST']
+
+
 gesdinet_jwt_refresh_token:
   path:       /token/refresh
   controller: gesdinet.jwtrefreshtoken::refresh

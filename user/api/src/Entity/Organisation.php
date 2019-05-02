@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,6 +23,17 @@ class Organisation
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /** @return User */
+    public function findUserByAccessToken($accessToken){
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('accessToken',$accessToken))
+//            ->orderBy(array('username' => Criteria::ASC))
+            ->setFirstResult(0)
+            ->setMaxResults(1);
+
+        return $this->organisationUsers->matching($criteria)->first();
+    }
 
     public function __construct()
     {

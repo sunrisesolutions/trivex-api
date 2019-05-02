@@ -77,6 +77,14 @@ security:
                 authenticators:
                     - App\Security\NricBirthdayPhoneAuthenticator
 
+        access_token:
+            pattern:  ^/login/individual-member-access-token
+            stateless: true
+            provider: app_user_provider
+            guard:
+                authenticators:
+                    - App\Security\IndividualMemberAccessTokenAuthenticator
+
         refresh:
             pattern:  ^/token/refresh
             stateless: true
