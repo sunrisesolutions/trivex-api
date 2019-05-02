@@ -42,7 +42,7 @@ class IndividualMember
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_IM');
+            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IM_%s_%s', $this->organisation->getId(), $this->person->getId()));
         }
     }
 
