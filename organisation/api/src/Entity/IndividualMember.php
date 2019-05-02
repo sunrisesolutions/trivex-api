@@ -66,7 +66,15 @@ class IndividualMember
 
         return ['name' => $person->getName(), 'jobTitle' => $person->getJobTitle(), 'employerName' => $person->getEmployerName()];
     }
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="fromMember")
+     */
+    private $fromConnections;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="toMember")
+     */
+    private $toConnections;
     /**
      * @var string
      * @ORM\Column(type="string", length=191)
@@ -108,6 +116,8 @@ class IndividualMember
     public function __construct()
     {
         $this->roles = new ArrayCollection();
+        $this->fromConnections = new ArrayCollection();
+        $this->toConnections = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -200,6 +210,67 @@ class IndividualMember
             // set the owning side to null (unless already changed)
             if ($role->getIndividualMember() === $this) {
                 $role->setIndividualMember(null);
+            }
+        }
+
+        return $this;
+    }
+    /**
+     * @return Collection|Connection[]
+     */
+    public function getFromConnections(): Collection
+    {
+        return $this->fromConnections;
+    }
+
+    public function addFromConnection(Connection $fromConnection): self
+    {
+        if (!$this->fromConnections->contains($fromConnection)) {
+            $this->fromConnections[] = $fromConnection;
+            $fromConnection->setFromMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFromConnection(Connection $fromConnection): self
+    {
+        if ($this->fromConnections->contains($fromConnection)) {
+            $this->fromConnections->removeElement($fromConnection);
+            // set the owning side to null (unless already changed)
+            if ($fromConnection->getFromMember() === $this) {
+                $fromConnection->setFromMember(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Connection[]
+     */
+    public function getToConnections(): Collection
+    {
+        return $this->toConnections;
+    }
+
+    public function addToConnection(Connection $toConnection): self
+    {
+        if (!$this->toConnections->contains($toConnection)) {
+            $this->toConnections[] = $toConnection;
+            $toConnection->setToMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeToConnection(Connection $toConnection): self
+    {
+        if ($this->toConnections->contains($toConnection)) {
+            $this->toConnections->removeElement($toConnection);
+            // set the owning side to null (unless already changed)
+            if ($toConnection->getToMember() === $this) {
+                $toConnection->setToMember(null);
             }
         }
 
