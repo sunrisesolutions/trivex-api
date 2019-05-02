@@ -27,6 +27,7 @@ class PersonFixtures extends Fixture
         $person->setPhoneNumber('0369140916');
         $person->setBirthDate(new \DateTime('04-10-1987'));
 
+
         $manager->persist($person);
 
         $manager->flush();

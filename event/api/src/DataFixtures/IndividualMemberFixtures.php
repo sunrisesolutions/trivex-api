@@ -12,7 +12,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-class OrganisationFixtures extends Fixture implements DependentFixtureInterface
+class IndividualMemberFixtures extends Fixture implements DependentFixtureInterface
 {
     private $passwordEncoder;
 
@@ -26,12 +26,26 @@ class OrganisationFixtures extends Fixture implements DependentFixtureInterface
 
     public function load(ObjectManager $manager)
     {
-        $org = new Organisation();
-        $org->setCode('magenta');
-        $org->setUuid(self::FIRST_ORG);
-        $manager->persist($org);
-        $manager->flush();
+        $orgRepo = $manager->getRepository(Organisation::class);
+        $org = $orgRepo->findOneBy(['uuid' => OrganisationFixtures::FIRST_ORG]);
 
+        $ou = new IndividualMember();
+        $org->addIndividualMember($ou);
+
+        $personRepo = $manager->getRepository(Person::class);
+        $person = $personRepo->findOneBy(['uuid' => PersonFixtures::FIRST_PERSON,
+        ]);
+
+        $person->addIndividualMember($ou);
+        $org->addIndividualMember($ou);
+
+        $ou->setUuid(sprintf(self::FIRST_MEMBER_STRING, $org->getId(), $person->getId()));
+
+
+        $manager->persist($person);
+        $manager->persist($ou);
+
+        $manager->flush();
     }
 
     /**
@@ -43,7 +57,7 @@ class OrganisationFixtures extends Fixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            PersonFixtures::class
+            OrganisationFixtures::class
         ];
     }
 }

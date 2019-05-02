@@ -28,7 +28,7 @@ class Person
     private $uuid;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
@@ -51,6 +51,11 @@ class Person
      * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="person")
      */
     private $individualMembers;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $birthDate;
 
     public function __construct()
     {
@@ -169,6 +174,18 @@ class Person
                 $individualMember->setPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
 
         return $this;
     }
