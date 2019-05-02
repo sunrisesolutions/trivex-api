@@ -15,7 +15,7 @@ class OrganisationFixtures extends Fixture implements DependentFixtureInterface
     private $passwordEncoder;
 
     const FIRST_ORG = 'ORG-5dd3c0ba00f40-103827042019';
-    const FIRST_MEMBER_STRING = 'ORG_IM_%s_%s-5dd3c0ba00f40-103827042019';
+    const FIRST_MEMBER_STRING = 'ORG_IM_1_1-5dd3c0ba00f40-103827042019';
 
     public function __construct(UserPasswordEncoderInterface $passwordEncoder)
     {
