@@ -104,7 +104,6 @@ class IndividualMember
     /**
      * @var string
      * @ORM\Column(type="string", length=191)
-     * @Groups({"read"})
      */
     private $accessToken;
 
