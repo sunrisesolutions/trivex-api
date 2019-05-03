@@ -4,17 +4,20 @@ namespace App\Controller;
 
 use App\Entity\IndividualMember;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Psr\Container\ContainerInterface;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class SendEmailToIndividualMember
 {
     private $mailer;
     private $registry;
+    private $container;
 
-    public function __construct(RegistryInterface $registry, \Swift_Mailer $mailer)
+    public function __construct(RegistryInterface $registry, \Swift_Mailer $mailer, ContainerInterface $container)
     {
         $this->mailer = $mailer;
         $this->registry = $registry;
+        $this->container = $container;
     }
 
     public function __invoke(IndividualMember $data): IndividualMember
@@ -43,6 +46,12 @@ class SendEmailToIndividualMember
                 ;
 
                 $this->mailer->send($message);
+
+                $spool = $this->mailer->getTransport()->getSpool();
+                $transport = $this->container->get('swiftmailer.mailer.smtp_mailer.transport.real');
+                if ($spool and $transport) $spool->flushQueue($transport);
+
+
             }
         }
         return $data;
