@@ -19,7 +19,7 @@ class SendEmailToIndividualMember
 
         $message = (new \Swift_Message($data->emailSubject))
             ->setFrom('no-reply@magentapulse.com')
-            ->setTo($data->getPerson()->getEmail())
+            ->setTo($data->emailTo)
             ->setBody(
                 $data->emailBody,
                 'text/html'

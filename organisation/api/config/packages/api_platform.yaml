@@ -7,7 +7,9 @@ parameters:
 
 api_platform:
     mapping:
-        paths: ['%kernel.project_dir%/src/Entity']
+#        paths: ['%kernel.project_dir%/src/Entity']
+        paths: ['%kernel.project_dir%/src/Entity', '%kernel.project_dir%/config/packages/api_platform/resources.yaml']
+
     title: Organisation API
     version: 1.0.0
     # Varnish integration, remove if unwanted

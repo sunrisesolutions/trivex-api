@@ -15,17 +15,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_ADMIN')"}
- *     },
- *     itemOperations={
- *     "get",
+ *         "post"={"access_control"="is_granted('ROLE_ADMIN')"},
  *     "post_email"={
- *         "access_control"="is_granted('ROLE_USER')",
  *         "method"="POST",
- *         "path"="/individual_members/{id}/email",
+ *         "path"="/individual_members/email",
  *         "controller"=SendEmailToIndividualMember::class,
  *         "normalization_context"={"groups"={"email"}},
-
  *         "denormalization_context"={"groups"={"email"}},
  *     }
  *     },
@@ -48,6 +43,12 @@ class IndividualMember
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @var int
+     * @Groups({"email"})
+     */
+    public $emailTo;
 
     /**
      * @var string

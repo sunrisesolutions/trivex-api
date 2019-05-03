@@ -1,0 +1,17 @@
+# api/config/api_platform/resources.yaml
+#resources:
+#    App\Entity\IndividualMember:
+##        shortName: 'User'                   # optional
+#        description: 'RegistrationConfirmationEmail' # optional
+##        iri: 'http://schema.org/User'       # optional
+##            post: ~
+#        itemOperations:
+#            get: ~
+#            post_publication:
+#                method: POST
+#                path: /individual_members/{id}/email
+#                controller: App\Controller\SendEmailToIndividualMember
+#                normalization_context:
+#                    groups: ['email']
+#                denormalization_context:
+#                    groups: ['email']
