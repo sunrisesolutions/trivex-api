@@ -1,18 +1,17 @@
 <?php
 
-
 namespace App\Controller;
-
 
 use App\Entity\IndividualMember;
 use Doctrine\Bundle\DoctrineBundle\Registry;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class SendEmailToIndividualMember
 {
     private $mailer;
     private $registry;
 
-    public function __construct(Registry $registry, \Swift_Mailer $mailer)
+    public function __construct(RegistryInterface $registry, \Swift_Mailer $mailer)
     {
         $this->mailer = $mailer;
         $this->registry = $registry;
