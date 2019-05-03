@@ -47,9 +47,9 @@ class SendEmailToIndividualMember
 
                 $this->mailer->send($message);
 
-                $spool = $this->mailer->getTransport()->getSpool();
-                $transport = $this->container->get('swiftmailer.mailer.smtp_mailer.transport.real');
-                if ($spool and $transport) $spool->flushQueue($transport);
+//                $spool = $this->mailer->getTransport()->getSpool();
+//                $transport = $this->container->get('swiftmailer.mailer.smtp_mailer.transport.real');
+//                if ($spool and $transport) $spool->flushQueue($transport);
 
 
             }
