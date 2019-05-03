@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -60,6 +61,17 @@ class User implements UserInterface
         if (empty($this->roles)) {
             $this->roles[] = 'ROLE_USER';
         }
+    }
+
+    /** @return OrganisationUser */
+    public function findOrgUserByUuid($uuid){
+        $criteria = Criteria::create()
+            ->where(Criteria::expr()->eq('uuid',$uuid))
+//            ->orderBy(array('username' => Criteria::ASC))
+            ->setFirstResult(0)
+            ->setMaxResults(1);
+
+        return $this->organisationUsers->matching($criteria)->first();
     }
 
     /**

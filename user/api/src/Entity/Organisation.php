@@ -32,7 +32,11 @@ class Organisation
             ->setFirstResult(0)
             ->setMaxResults(1);
 
-        return $this->organisationUsers->matching($criteria)->first();
+        /** @var OrganisationUser $ou */
+        if(empty($ou = $this->organisationUsers->matching($criteria)->first())){
+            return null;
+        }
+        return $ou->getUser();
     }
 
     public function __construct()

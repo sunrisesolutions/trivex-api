@@ -117,14 +117,8 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return $this->handleAuthenticationSuccess($token->getUser());
-    }
-
-    public function handleAuthenticationSuccess(UserInterface $user, $jwt = null)
-    {
-        if (null === $jwt) {
-            $jwt = $this->jwtManager->create($user);
-        }
+        $user = $token->getUser();
+        $jwt = $this->jwtManager->create($user);
 
         $response = new JWTAuthenticationSuccessResponse($jwt);
         $event = new AuthenticationSuccessEvent(['token' => $jwt], $user, $response);
@@ -135,7 +129,10 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
             $this->dispatcher->dispatch(Events::AUTHENTICATION_SUCCESS, $event);
         }
 
-        $response->setData($event->getData());
+        $data = $event->getData();
+        $data['im_id'] = $user->findOrgUserByUuid($request->attributes->get('imUid'))->getId();
+        $data['im_access_token'] = $user->findOrgUserByUuid($request->attributes->get('imUid'))->getAccessToken();
+        $response->setData($data);
 
         return $response;
     }
@@ -162,7 +159,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
      *
      *     return new Response('Auth header required', 401);
      *
-     * @param Request                 $request       The request that resulted in an AuthenticationException
+     * @param Request $request The request that resulted in an AuthenticationException
      * @param AuthenticationException $authException The exception that started the authentication process
      *
      * @return Response
@@ -186,7 +183,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
      * If you return null, the request will continue, but the user will
      * not be authenticated. This is probably not what you want to do.
      *
-     * @param Request                 $request
+     * @param Request $request
      * @param AuthenticationException $exception
      *
      * @return Response|null

@@ -8,10 +8,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ApiResource(
+ *     shortName="IndividualMember",
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
- *         "get"={"access_control"="is_granted('ROLE_ADMIN')"},
- *         "post"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *         "get"={"access_control"="is_granted('ROLE_ADMIN')"}
  *     },
  *     itemOperations={
  *         "get"={"access_control"="is_granted('ROLE_USER') and object.user.uuid == user.uuid"}

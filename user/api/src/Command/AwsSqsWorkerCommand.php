@@ -105,15 +105,13 @@ class AwsSqsWorkerCommand extends Command
 
     private function handleInterruption(): void
     {
-//        pcntl_async_signals(true);
-
-//        pcntl_signal(SIGINT, function () {
-//            throw new AwsSqsWorkerException('Process has been terminated with the "ctrl+c" signal.');
-//        });
-
-//        pcntl_signal(SIGTERM, function () {
-//            throw new AwsSqsWorkerException('Process has been terminated with the "kill" signal.');
-//        });
+        pcntl_async_signals(true);
+        pcntl_signal(SIGINT, function () {
+            throw new AwsSqsWorkerException('Process has been terminated with the "ctrl+c" signal.');
+        });
+        pcntl_signal(SIGTERM, function () {
+            throw new AwsSqsWorkerException('Process has been terminated with the "kill" signal.');
+        });
     }
 
     private function handleMemory(string $queue, int $limit): void
