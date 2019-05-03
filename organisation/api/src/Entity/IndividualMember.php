@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
+use App\Util\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -37,6 +38,15 @@ class IndividualMember
     private $id;
 
     /**
+     * @Groups({"read"})
+     * @return mixed|string
+     */
+    public function getProfilePicture()
+    {
+        return AwsS3Util::getInstance()->getObjectReadUrl(sprintf('/trivesg_prod/organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->id));
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function initiateUuid()
@@ -66,6 +76,7 @@ class IndividualMember
 
         return ['name' => $person->getName(), 'jobTitle' => $person->getJobTitle(), 'employerName' => $person->getEmployerName()];
     }
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="fromMember")
      */
@@ -214,6 +225,7 @@ class IndividualMember
 
         return $this;
     }
+
     /**
      * @return Collection|Connection[]
      */

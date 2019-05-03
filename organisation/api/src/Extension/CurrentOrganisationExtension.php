@@ -39,8 +39,10 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->join($rootAlias.'.organisation', 'organisation');
-        $queryBuilder->andWhere('organisation.uuid = :current_object');
+        $queryBuilder->andWhere('organisation.uuid like :current_object');
         $queryBuilder->setParameter('current_object', $objectUuid);
+
+//        echo $queryBuilder->getQuery()->getSQL();
     }
 
     private function supportClass($class)
