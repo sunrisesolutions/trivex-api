@@ -25,7 +25,7 @@ class SendEmailToIndividualMember
 
 //        /** @var IndividualMember $member */
 //        $member = $this->registry->getRepository(IndividualMember::class)->find($data->emailTo);
-        if (!empty($member)) {
+        if (!empty($data)) {
             if (!empty($toEmail = $data->getPerson()->getEmail())) {
                 $message = (new \Swift_Message($data->emailSubject))
                     ->setFrom('no-reply@magentapulse.com')
