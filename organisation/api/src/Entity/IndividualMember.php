@@ -43,7 +43,7 @@ class IndividualMember
      */
     public function getProfilePicture()
     {
-        return AwsS3Util::getInstance()->getObjectReadUrl(sprintf('/organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->id));
+        return AwsS3Util::getInstance()->getObjectReadUrl(sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->id));
     }
 
     /**
