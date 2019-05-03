@@ -49,12 +49,6 @@ class IndividualMember
     private $id;
 
     /**
-     * @var int
-     * @Groups({"email"})
-     */
-    public $emailTo;
-
-    /**
      * @var string
      * @Groups({"email"})
      */
