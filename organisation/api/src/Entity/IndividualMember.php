@@ -17,9 +17,12 @@ use App\Controller\SendEmailToIndividualMember;
  *     collectionOperations={
  *         "get",
  *         "post"={"access_control"="is_granted('ROLE_ADMIN')"},
- *     "post_email"={
- *         "method"="POST",
- *         "path"="/individual_members/email",
+ *     },
+ *     itemOperations={
+ *     "get",
+ *     "put_email"={
+ *         "method"="PUT",
+ *         "path"="/individual_members/{id}/email",
  *         "controller"=SendEmailToIndividualMember::class,
  *         "normalization_context"={"groups"={"email"}},
  *         "denormalization_context"={"groups"={"email"}},

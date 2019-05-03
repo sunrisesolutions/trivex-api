@@ -20,10 +20,10 @@ class SendEmailToIndividualMember
     public function __invoke(IndividualMember $data): IndividualMember
     {
 
-        /** @var IndividualMember $member */
-        $member = $this->registry->getRepository(IndividualMember::class)->find($data->emailTo);
+//        /** @var IndividualMember $member */
+//        $member = $this->registry->getRepository(IndividualMember::class)->find($data->emailTo);
         if (!empty($member)) {
-            if (!empty($toEmail = $member->getPerson()->getEmail())) {
+            if (!empty($toEmail = $data->getPerson()->getEmail())) {
                 $message = (new \Swift_Message($data->emailSubject))
                     ->setFrom('no-reply@magentapulse.com')
                     ->setTo($toEmail)
