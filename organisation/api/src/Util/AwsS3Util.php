@@ -26,7 +26,7 @@ class AwsS3Util
         $secretKey = getenv('S3_SECRET_KEY');
         $region = getenv('S3_REGION');
         $bucket = getenv('S3_BUCKET');
-        $directory = getenv('SE_DIRECTORY');
+        $directory = getenv('S3_DIRECTORY');
         $version = self::SDK_VERSION;
         $path = $directory.'/'.$path;
 
@@ -62,7 +62,7 @@ class AwsS3Util
         $secretKey = getenv('S3_SECRET_KEY');
         $region = getenv('S3_REGION');
         $bucket = getenv('S3_BUCKET');
-        $directory = getenv('SE_DIRECTORY');
+        $directory = getenv('S3_DIRECTORY');
         $version = self::SDK_VERSION;
 
         $credentials = new Credentials($accessKey, $secretKey);
