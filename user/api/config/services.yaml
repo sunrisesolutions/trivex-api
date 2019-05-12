@@ -33,7 +33,6 @@ services:
         arguments:
             $config: '%aws_sdk.config.default%'
             $credentials: '%aws_sdk.credentials.default%'
-            $applicationName: '%application_name%'
             $env: '%kernel.environment%'
 #        calls:
 #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
@@ -42,12 +41,9 @@ services:
         arguments:
             $config: '%aws_sdk.config.default%'
             $credentials: '%aws_sdk.credentials.sns%'
-            $applicationName: '%application_name%'
             $env: '%kernel.environment%'
 #        calls:
 #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
-
-
 
     App\Command\AwsSqsWorkerCommand:
         tags:

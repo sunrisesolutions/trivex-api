@@ -12,23 +12,23 @@ use Aws\Sqs\SqsClient;
 class AwsSqsUtil implements AwsSqsUtilInterface
 {
     private $queuePrefix = 'INANZZZ_';
-    
+
     /** @var SqsClient */
     private $client;
     private $sdk;
     private $applicationName;
     private $env;
-    
-    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $applicationName, string $env)
+
+    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env)
     {
         $this->client = $sdk->createSqs($config + $credentials);
         $this->sdk = $sdk;
-        $this->applicationName = $applicationName;
+        $this->applicationName = AppUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
     }
-    
-    
+
+
     /**
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#createqueue
      */
@@ -55,7 +55,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
 
         return $queues;
     }
-    
+
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#getqueueurl
      */
@@ -65,7 +65,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
         $result = $this->client->getQueueUrl([
             'QueueName' => $this->createQueueName($name),
         ]);
-        
+
         return $result->get('QueueUrl');
     }
 
@@ -112,16 +112,14 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     {
         $this->client->deleteQueue(['QueueUrl' => $url]);
     }
-    
-    
-  
-    
+
+
     public function createClient(iterable $config, iterable $credentials): void
     {
-        $this->client = $this->sdk->createSqs($config+$credentials);
+        $this->client = $this->sdk->createSqs($config + $credentials);
     }
-    
-    
+
+
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#receivemessage
      */
@@ -132,7 +130,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             'QueueUrl' => $url,
             'MaxNumberOfMessages' => 1,
         ]);
-        
+
         $message = null;
         if (null !== $result->get('Messages')) {
             $message = new Message();
@@ -141,10 +139,10 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             $message->body = $result->get('Messages')[0]['Body'];
             $message->receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];
         }
-        
+
         return $message;
     }
-    
+
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#deletemessage
      */
@@ -155,7 +153,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             'ReceiptHandle' => $message->receiptHandle,
         ]);
     }
-    
+
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#changemessagevisibility
      */
@@ -167,7 +165,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             'VisibilityTimeout' => 30,
         ]);
     }
-    
+
     private function createQueueName(string $name, bool $isDeadLetter = null): string
     {
         return sprintf(

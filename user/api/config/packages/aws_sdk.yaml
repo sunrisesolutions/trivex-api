@@ -1,6 +1,4 @@
 parameters:
-    application_name: 'user'
-
     aws_sdk.config.default:
       version: 'latest'
       region: 'ap-southeast-1'

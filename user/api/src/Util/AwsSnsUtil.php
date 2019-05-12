@@ -17,12 +17,12 @@ class AwsSnsUtil
     private $applicationName;
     private $env;
 
-    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $applicationName, string $env)
+    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env)
     {
         $this->client = $sdk->createSns($config + $credentials);
 
         $this->sdk = $sdk;
-        $this->applicationName = $applicationName;
+        $this->applicationName = AppUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
     }

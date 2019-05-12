@@ -98,10 +98,10 @@ class IndividualMemberAccessTokenAuthenticator extends AbstractGuardAuthenticato
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
     {
-        return $this->handleAuthenticationSuccess($token->getUser());
+        return $this->handleAuthenticationSuccess($request, $token->getUser());
     }
 
-    public function handleAuthenticationSuccess(UserInterface $user, $jwt = null)
+    public function handleAuthenticationSuccess(Request $request, UserInterface $user, $jwt = null)
     {
         if (null === $jwt) {
             $jwt = $this->jwtManager->create($user);
@@ -116,7 +116,10 @@ class IndividualMemberAccessTokenAuthenticator extends AbstractGuardAuthenticato
             $this->dispatcher->dispatch(Events::AUTHENTICATION_SUCCESS, $event);
         }
 
-        $response->setData($event->getData());
+        $data = $event->getData();
+        $data['im_id'] = $user->findOrgUserByUuid($request->attributes->get('imUid'))->getId();
+        $data['im_access_token'] = $user->findOrgUserByUuid($request->attributes->get('imUid'))->getAccessToken();
+        $response->setData($data);
 
         return $response;
     }
