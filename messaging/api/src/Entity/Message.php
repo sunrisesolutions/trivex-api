@@ -4,9 +4,18 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     collectionOperations={
+ *         "get"={"access_control"="is_granted('ROLE_ADMIN')"},
+ *         "post"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *     },
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
  * @ORM\Table(name="messaging__message")
  * @ORM\HasLifecycleCallbacks()
@@ -22,26 +31,31 @@ class Message
 
     /**
      * @ORM\Column(type="string", length=191)
+     * @Groups("read")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdAt;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="messages")
+     * @Groups({"read", "write"})
      */
     private $conversation;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="messages")
+     * @Groups("read")
      */
     private $organisation;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="messages")
+     * @Groups("read")
      */
     private $sender;
 
