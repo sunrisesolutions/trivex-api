@@ -26,6 +26,11 @@ class Message
      */
     private $id;
 
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
     /**
      * @ORM\PrePersist
      */
