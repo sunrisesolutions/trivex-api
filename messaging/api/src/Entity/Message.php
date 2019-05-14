@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -24,6 +25,19 @@ class Message
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+            if (empty($this->code)) {
+                $this->code = $this->uuid;
+            }
+        }
+    }
 
     /**
      * @ORM\Column(type="string", length=191)
