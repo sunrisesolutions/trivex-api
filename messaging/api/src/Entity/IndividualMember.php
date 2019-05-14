@@ -20,6 +20,15 @@ class IndividualMember
      */
     private $id;
 
+    public function isMessageDelivered(Message $message)
+    {
+        if (empty($this->getMessageDelivery($message))) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * @ORM\Column(type="string", length=191)
      */
