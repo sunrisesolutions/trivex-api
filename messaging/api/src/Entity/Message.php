@@ -4,8 +4,11 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Exception\UnsupportedException;
 
 /**
  * @ApiResource(
@@ -19,6 +22,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Message
 {
+    const STATUS_DRAFT = 'MESSAGE_DRAFT';
+    const STATUS_NEW = 'MESSAGE_NEW';
+    const STATUS_DELIVERY_IN_PROGRESS = 'DELIVERY_IN_PROGRESS';
+    const STATUS_DELIVERY_SUCCESSFUL = 'DELIVERY_SUCCESSFUL';
+    const STATUS_RECEIVED = 'MESSAGE_RECEIVED';
+    const STATUS_READ = 'MESSAGE_READ';
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -29,6 +39,36 @@ class Message
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+        $this->status = self::STATUS_DRAFT;
+        $this->deliveries = new ArrayCollection();
+    }
+
+    public function commitDeliveries()
+    {
+        $deliveries = [];
+        if (in_array($this->status, [self::STATUS_NEW, self::STATUS_DELIVERY_IN_PROGRESS])) {
+            if (empty($this->conversation)) {
+                $members = $this->organisation->getIndividualMembersByPage();
+                if (empty($members)) {
+                    return false;
+                }
+            } else {
+                throw new UnsupportedException('Not yet implemented');
+//                $members = $this->conversation->getParticipants();
+//                $this->status = self::STATUS_DELIVERY_SUCCESSFUL;
+            }
+
+            /** @var IndividualMember $member */
+            foreach ($members as $member) {
+                $recipient = $member;
+                $delivery = Delivery::createInstance($this, $recipient);
+                $deliveries[] = $delivery;
+            }
+        } else {
+            return false;
+        }
+
+        return $deliveries;
     }
 
     /**
@@ -57,12 +97,14 @@ class Message
     private $createdAt;
 
     /**
+     * @var Conversation
      * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="messages")
      * @Groups({"read", "write"})
      */
     private $conversation;
 
     /**
+     * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="messages")
      * @Groups("read")
      */
@@ -85,6 +127,17 @@ class Message
      * @Groups({"read", "write"})
      */
     private $body;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $status;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Delivery", mappedBy="message")
+     */
+    private $deliveries;
 
     public function getId(): ?int
     {
@@ -171,6 +224,49 @@ class Message
     public function setBody(?string $body): self
     {
         $this->body = $body;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?string $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Delivery[]
+     */
+    public function getDeliveries(): Collection
+    {
+        return $this->deliveries;
+    }
+
+    public function addDelivery(Delivery $delivery): self
+    {
+        if (!$this->deliveries->contains($delivery)) {
+            $this->deliveries[] = $delivery;
+            $delivery->setMessage($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDelivery(Delivery $delivery): self
+    {
+        if ($this->deliveries->contains($delivery)) {
+            $this->deliveries->removeElement($delivery);
+            // set the owning side to null (unless already changed)
+            if ($delivery->getMessage() === $this) {
+                $delivery->setMessage(null);
+            }
+        }
 
         return $this;
     }

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,6 +20,33 @@ class Delivery
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    public static function createInstance(Message $message, IndividualMember $recipient)
+    {
+        $d = new Delivery();
+        $d->message = $message;
+        $d->recipient = $recipient;
+
+        return $d;
+    }
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_DELIV_'.$this->message->getId().'_'.$this->recipient->getId());
+            if (empty($this->code)) {
+                $this->code = $this->uuid;
+            }
+        }
+    }
 
     /**
      * @ORM\Column(type="string", length=191)
@@ -39,6 +67,18 @@ class Delivery
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @var Message
+     * @ORM\ManyToOne(targetEntity="App\Entity\Message", inversedBy="deliveries")
+     */
+    private $message;
+
+    /**
+     * @var IndividualMember
+     * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="deliveries")
+     */
+    private $recipient;
 
     public function getId(): ?int
     {
@@ -89,6 +129,30 @@ class Delivery
     public function setUpdatedAt(?\DateTimeInterface $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getMessage(): ?Message
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?Message $message): self
+    {
+        $this->message = $message;
+
+        return $this;
+    }
+
+    public function getRecipient(): ?IndividualMember
+    {
+        return $this->recipient;
+    }
+
+    public function setRecipient(?IndividualMember $recipient): self
+    {
+        $this->recipient = $recipient;
 
         return $this;
     }

@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,12 +14,20 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class IndividualMember
 {
+    private $messageDeliveryCache = [];
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+        $this->deliveries = new ArrayCollection();
+    }
 
     public function isMessageDelivered(Message $message)
     {
@@ -27,6 +36,25 @@ class IndividualMember
         }
 
         return true;
+    }
+
+    public function getMessageDelivery(Message $message)
+    {
+        if (array_key_exists($message->getId(), $this->messageDeliveryCache)) {
+            if ($this->messageDeliveryCache[$message->getId()]) {
+                return $this->messageDeliveryCache[$message->getId()];
+            }
+        }
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+
+        $c->where($expr->eq('message', $message));
+        $deliveries = $this->deliveries->matching($c);
+        if ($deliveries->count() > 0) {
+            return $this->messageDeliveryCache[$message->getId()] = $deliveries->first();
+        }
+
+        return null;
     }
 
     /**
@@ -44,10 +72,15 @@ class IndividualMember
      */
     private $messages;
 
-    public function __construct()
-    {
-        $this->messages = new ArrayCollection();
-    }
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="participants")
+     */
+    private $conversation;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Delivery", mappedBy="recipient")
+     */
+    private $deliveries;
 
     public function getId(): ?int
     {
@@ -103,6 +136,49 @@ class IndividualMember
             // set the owning side to null (unless already changed)
             if ($message->getSender() === $this) {
                 $message->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getConversation(): ?Conversation
+    {
+        return $this->conversation;
+    }
+
+    public function setConversation(?Conversation $conversation): self
+    {
+        $this->conversation = $conversation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Delivery[]
+     */
+    public function getDeliveries(): Collection
+    {
+        return $this->deliveries;
+    }
+
+    public function addDelivery(Delivery $delivery): self
+    {
+        if (!$this->deliveries->contains($delivery)) {
+            $this->deliveries[] = $delivery;
+            $delivery->setRecipient($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDelivery(Delivery $delivery): self
+    {
+        if ($this->deliveries->contains($delivery)) {
+            $this->deliveries->removeElement($delivery);
+            // set the owning side to null (unless already changed)
+            if ($delivery->getRecipient() === $this) {
+                $delivery->setRecipient(null);
             }
         }
 

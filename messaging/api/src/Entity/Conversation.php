@@ -37,9 +37,15 @@ class Conversation
      */
     private $messages;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="conversation")
+     */
+    private $participants;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -96,6 +102,37 @@ class Conversation
             // set the owning side to null (unless already changed)
             if ($message->getConversation() === $this) {
                 $message->setConversation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|IndividualMember[]
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(IndividualMember $participant): self
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants[] = $participant;
+            $participant->setConversation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(IndividualMember $participant): self
+    {
+        if ($this->participants->contains($participant)) {
+            $this->participants->removeElement($participant);
+            // set the owning side to null (unless already changed)
+            if ($participant->getConversation() === $this) {
+                $participant->setConversation(null);
             }
         }
 

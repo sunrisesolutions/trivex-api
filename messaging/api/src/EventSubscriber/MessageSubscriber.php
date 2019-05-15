@@ -56,6 +56,7 @@ class MessageSubscriber implements EventSubscriberInterface
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
 
         $message->setSender($im);
+        $message->setOrganisation($im->getOrganisation());
 
 //        $event->setControllerResult($connection);
 

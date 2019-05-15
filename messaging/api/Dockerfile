@@ -28,6 +28,7 @@ RUN set -eux; \
 		libzip-dev \
 		postgresql-dev \
 		zlib-dev \
+		gmp gmp-dev \
 	; \
 	\
 	docker-php-ext-configure zip --with-libzip; \
@@ -35,6 +36,8 @@ RUN set -eux; \
 		intl \
 		pdo_pgsql \
 		zip \
+		gmp \		
+		pcntl \
 	; \
 	pecl install \
 		apcu-${APCU_VERSION} \
@@ -43,6 +46,8 @@ RUN set -eux; \
 	docker-php-ext-enable \
 		apcu \
 		opcache \
+		gmp \
+		pcntl \		
 	; \
 	\
 	runDeps="$( \

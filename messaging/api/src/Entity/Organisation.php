@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -13,6 +15,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Organisation
 {
+    private $memberPage;
+    private $memberCount;
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -44,6 +49,29 @@ class Organisation
     {
         $this->individualMembers = new ArrayCollection();
         $this->messages = new ArrayCollection();
+    }
+
+    public function getIndividualMembersByPage($page = null, $limit = AppUtil::BATCH_SIZE)
+    {
+        if (empty($this->memberCount)) {
+            $this->memberCount = $this->individualMembers->count();
+        }
+
+        if (empty($page)) {
+            if ($this->memberPage === null) {
+                $this->memberPage = 1;
+            }
+            $page = $this->memberPage;
+            if ( ($this->memberPage - 1) * $limit > $this->memberCount) {
+                return false;
+            }
+            $this->memberPage++;
+        }
+
+        $c = Criteria::create();
+        $c->setFirstResult(($page - 1) * $limit);
+        $c->setMaxResults($limit);
+        return $this->individualMembers->matching($c);
     }
 
     public function getId(): ?int

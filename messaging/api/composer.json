@@ -9,6 +9,7 @@
         "aws/aws-sdk-php": "^3.93",
         "guzzlehttp/guzzle": "^6.3",
         "lexik/jwt-authentication-bundle": "^2.6",
+        "minishlink/web-push": "^5.2",
         "symfony/console": "4.2.*",
         "symfony/dotenv": "4.2.*",
         "symfony/flex": "^1.1",
