@@ -42,7 +42,7 @@ class NotifSubscription
     /**
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="subscriptions")
-     * @ORM\JoinColumn(name="id_individual_member", referencedColumnName="id")
+     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id")
      */
     protected $individualMember;
 

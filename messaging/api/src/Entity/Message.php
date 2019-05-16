@@ -115,7 +115,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="messages")
-     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id")
+     * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
      * @Groups("read")
      */
     private $sender;
