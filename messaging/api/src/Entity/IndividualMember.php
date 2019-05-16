@@ -28,6 +28,7 @@ class IndividualMember
     {
         $this->messages = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
+        $this->conversations = new ArrayCollection();
     }
 
     public function isMessageDelivered(Message $message)
@@ -76,15 +77,14 @@ class IndividualMember
     private $messages;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="participants")
-     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id")
-     */
-    private $conversation;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Delivery", mappedBy="recipient")
      */
     private $deliveries;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Conversation", mappedBy="participants")
+     */
+    private $conversations;
 
     public function getId(): ?int
     {
@@ -146,18 +146,6 @@ class IndividualMember
         return $this;
     }
 
-    public function getConversation(): ?Conversation
-    {
-        return $this->conversation;
-    }
-
-    public function setConversation(?Conversation $conversation): self
-    {
-        $this->conversation = $conversation;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Delivery[]
      */
@@ -184,6 +172,34 @@ class IndividualMember
             if ($delivery->getRecipient() === $this) {
                 $delivery->setRecipient(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Conversation[]
+     */
+    public function getConversations(): Collection
+    {
+        return $this->conversations;
+    }
+
+    public function addConversation(Conversation $conversation): self
+    {
+        if (!$this->conversations->contains($conversation)) {
+            $this->conversations[] = $conversation;
+            $conversation->addParticipant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeConversation(Conversation $conversation): self
+    {
+        if ($this->conversations->contains($conversation)) {
+            $this->conversations->removeElement($conversation);
+            $conversation->removeParticipant($this);
         }
 
         return $this;

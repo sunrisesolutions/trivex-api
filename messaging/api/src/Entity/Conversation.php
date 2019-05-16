@@ -39,9 +39,14 @@ class Conversation
     private $messages;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="conversation")
+     * @ORM\ManyToMany(targetEntity="App\Entity\IndividualMember", inversedBy="conversations")
+     * @ORM\JoinTable(name="messaging__conversations_participants",
+     *      joinColumns={@ORM\JoinColumn(name="id_conversation", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id_individual", referencedColumnName="id")}
+     *      )
      */
     private $participants;
+
 
     public function __construct()
     {
@@ -121,7 +126,6 @@ class Conversation
     {
         if (!$this->participants->contains($participant)) {
             $this->participants[] = $participant;
-            $participant->setConversation($this);
         }
 
         return $this;
@@ -131,12 +135,9 @@ class Conversation
     {
         if ($this->participants->contains($participant)) {
             $this->participants->removeElement($participant);
-            // set the owning side to null (unless already changed)
-            if ($participant->getConversation() === $this) {
-                $participant->setConversation(null);
-            }
         }
 
         return $this;
     }
+    
 }
