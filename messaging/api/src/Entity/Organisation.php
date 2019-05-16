@@ -19,9 +19,10 @@ class Organisation
     private $memberCount;
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var int|null
+     * @ORM\Id
+     * @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 

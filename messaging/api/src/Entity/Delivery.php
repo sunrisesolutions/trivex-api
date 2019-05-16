@@ -15,9 +15,10 @@ use Doctrine\ORM\Mapping as ORM;
 class Delivery
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var int|null
+     * @ORM\Id
+     * @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -71,12 +72,14 @@ class Delivery
     /**
      * @var Message
      * @ORM\ManyToOne(targetEntity="App\Entity\Message", inversedBy="deliveries")
+     * @ORM\JoinColumn(name="id_message", referencedColumnName="id")
      */
     private $message;
 
     /**
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="deliveries")
+     * @ORM\JoinColumn(name="id_recipient", referencedColumnName="id")
      */
     private $recipient;
 

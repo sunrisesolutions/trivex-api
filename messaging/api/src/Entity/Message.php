@@ -30,9 +30,10 @@ class Message
     const STATUS_READ = 'MESSAGE_READ';
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var int|null
+     * @ORM\Id
+     * @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -99,6 +100,7 @@ class Message
     /**
      * @var Conversation
      * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="messages")
+     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id")
      * @Groups({"read", "write"})
      */
     private $conversation;
@@ -106,12 +108,14 @@ class Message
     /**
      * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="messages")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
      * @Groups("read")
      */
     private $organisation;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="messages")
+     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id")
      * @Groups("read")
      */
     private $sender;

@@ -17,9 +17,10 @@ class IndividualMember
     private $messageDeliveryCache = [];
 
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @var int|null
+     * @ORM\Id
+     * @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -63,7 +64,9 @@ class IndividualMember
     private $uuid;
 
     /**
+     * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
      */
     private $organisation;
 
@@ -74,6 +77,7 @@ class IndividualMember
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="participants")
+     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id")
      */
     private $conversation;
 
