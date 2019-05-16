@@ -23,9 +23,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class IndividualMember
 {
     /**
+     * @var int|null The User Id
      * @ORM\Id()
      * @ORM\GeneratedValue()
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="integer",options={"unsigned":true})
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
@@ -37,15 +39,15 @@ class IndividualMember
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
      */
     private $organisation;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers")
+     * @ORM\JoinColumn(name="id_person", referencedColumnName="id")
      */
     private $person;
-
-
 
     public function __construct()
     {

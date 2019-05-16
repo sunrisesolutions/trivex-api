@@ -70,6 +70,7 @@ class Event
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="events")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
      */
     private $organisation;
 
