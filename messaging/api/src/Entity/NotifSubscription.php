@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
@@ -61,30 +62,35 @@ class NotifSubscription
     /**
      * @var string|null
      * @ORM\Column(type="string", nullable=true, name="p256dh_key")
+     * @Groups({"read", "write"})
      */
     protected $p256dhKey;
 
     /**
      * @var string|null
      * @ORM\Column(type="string", nullable=true, name="auth_token")
+     * @Groups({"read", "write"})
      */
     protected $authToken;
 
     /**
      * @var string|null
      * @ORM\Column(type="string", nullable=true, name="endpoint")
+     * @Groups({"read", "write"})
      */
     protected $endpoint;
 
     /**
      * @var string|null
      * @ORM\Column(type="string", nullable=true)
+     * @Groups({"read", "write"})
      */
     protected $contentEncoding;
 
     /**
      * @var double|null
      * @ORM\Column(type="bigint", nullable=true, name="expiration_time")
+     * @Groups({"read", "write"})
      */
     protected $expirationTime;
 
