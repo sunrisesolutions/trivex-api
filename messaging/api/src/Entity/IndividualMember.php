@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     collectionOperations={
  *     },
  *     itemOperations={
+ *     "get"={},
  *     "unsubscribe_to_notif"={
  *         "method"="DELETE",
  *         "path"="/individual_members/{id}/subscriptions",
