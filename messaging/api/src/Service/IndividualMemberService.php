@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
+use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 
 class IndividualMemberService
@@ -30,65 +31,67 @@ class IndividualMemberService
 //            $members = $memberRepo->findHavingOrganisationSubscriptions((int) $dp->getOwnerId());
 //
 //
-//            $path = $this->container->getParameter('PWA_PUBLIC_KEY_PATH');
-//            $pwaPublicKey = trim(file_get_contents($path));
-//            $path = $this->container->getParameter('PWA_PRIVATE_KEY_PATH');
-//            $pwaPrivateKey = trim(file_get_contents($path));
-//            $auth = [
-//                'VAPID' => [
-//                    'subject' => 'mailto:peter@magenta-wellness.com',
-//                    'publicKey' => $pwaPublicKey,
-//                    'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
-//                ],
-//            ];
-//            $webPush = new WebPush($auth);
-////                $multipleRun = false;
-//            /*
-//             * @var IndividualMember
-//             */
-//            foreach ($members as $member) {
-//                if ($member->isMessageDelivered($message)) {
-//                    continue;
-//                }
-//                ++$row;
-////                    if ($row > 1000) {
-////                        $multipleRun = true;
-////                        break;
-////                    }
-//
-//                $subscriptions = $member->getSubscriptions();
-//
-//                $preparedSubscriptions = [];
-//                /*
-//                 * @var Subscription
-//                 */
-//                foreach ($subscriptions as $_sub) {
-//                    $preparedSub = \Minishlink\WebPush\Subscription::create(
-//                        [
-//                            'endpoint' => $_sub->getEndpoint(),
-//                            'publicKey' => $_sub->getP256dhKey(),
-//                            'authToken' => $_sub->getAuthToken(),
-//                            'contentEncoding' => $_sub->getContentEncoding(), // one of PushManager.supportedContentEncodings
-//                        ]
-//                    );
-//                    $preparedSubscriptions[] = $preparedSub;
-//
-//                    $webPush->sendNotification(
-//                        $preparedSub,
-//                        json_encode([
-//                            'sender-name' => $message->getSender()->getPerson()->getName(),
-//                            'message-id' => $message->getId(),
-//                            'message-name' => $message->getName(),
-//                            'subscription-id' => $_sub->getId(), ]),
-//                        false
-//                    );
-//                }
-//
-////                    $recipient = $member;
-////                    $delivery = MessageDelivery::createInstance($message, $recipient);
-//            }
-//
-//            $res = $webPush->flush();
+            $path = $this->container->getParameter('PWA_PUBLIC_KEY_PATH');
+            $pwaPublicKey = trim(file_get_contents($path));
+            $path = $this->container->getParameter('PWA_PRIVATE_KEY_PATH');
+            $pwaPrivateKey = trim(file_get_contents($path));
+            $auth = [
+                'VAPID' => [
+                    'subject' => 'mailto:peter@magenta-wellness.com',
+                    'publicKey' => $pwaPublicKey,
+                    'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
+                ],
+            ];
+            $webPush = new WebPush($auth);
+//                $multipleRun = false;
+            /*
+             * @var IndividualMember
+             */
+            while (!empty($members = $message->getRecipientsByPage())) {
+                foreach ($members as $member) {
+                    if ($member->isMessageDelivered($message)) {
+                        continue;
+                    }
+                    ++$row;
+//                    if ($row > 1000) {
+//                        $multipleRun = true;
+//                        break;
+//                    }
+
+                    $subscriptions = $member->getSubscriptions();
+
+                    $preparedSubscriptions = [];
+                    /**
+                     * @var Subscription $_sub
+                     */
+                    foreach ($subscriptions as $_sub) {
+                        $preparedSub = Subscription::create(
+                            [
+                                'endpoint' => $_sub->getEndpoint(),
+                                'publicKey' => $_sub->getPublicKey(),
+                                'authToken' => $_sub->getAuthToken(),
+                                'contentEncoding' => $_sub->getContentEncoding(), // one of PushManager.supportedContentEncodings
+                            ]
+                        );
+                        $preparedSubscriptions[] = $preparedSub;
+
+                        $webPush->sendNotification(
+                            $preparedSub,
+                            json_encode([
+                                'sender-name' => $message->getSender()->getPerson()->getName(),
+                                'message-id' => $message->getId(),
+                                'message-subject' => $message->getSubject(),
+                                'subscription-id' => $_sub->getId(),]),
+                            false
+                        );
+                    }
+
+//                    $recipient = $member;
+//                    $delivery = MessageDelivery::createInstance($message, $recipient);
+                }
+                $res = $webPush->flush();
+            }
+
 
             while (!empty($deliveries = $message->commitDeliveries())) {
                 foreach ($deliveries as $delivery) {

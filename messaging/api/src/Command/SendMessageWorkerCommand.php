@@ -74,10 +74,10 @@ class SendMessageWorkerCommand extends Command
             $this->handleMemory($parameters['limit']);
 
             $mRepo = $this->manager->getRepository(Message::class);
-            $messages = $mRepo->findBy(['status'=>Message::STATUS_NEW]);
+            $messages = $mRepo->findBy(['status' => Message::STATUS_NEW]);
 
             /** @var Message $message */
-            foreach($messages as $message){
+            foreach ($messages as $message) {
                 $this->imService->notifyOneOrganisationIndividualMembers($message);
             }
 
@@ -89,7 +89,10 @@ class SendMessageWorkerCommand extends Command
 //                $output->writeln('Consuming a message ... '. $message->id. ' ...... '.$message->body);
 //                $this->consumer->consume($message, $parameters['queue']);
 //
-            ++$processed;
+            if (count($messages) > 0) {
+                ++$processed;
+            }
+
 //            } else {
             $output->writeln('Sleeping for 3 seconds due to no message ... ');
 

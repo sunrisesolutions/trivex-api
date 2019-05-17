@@ -44,21 +44,28 @@ class Message
         $this->deliveries = new ArrayCollection();
     }
 
+    public function getRecipientsByPage(): ?Collection
+    {
+        if (empty($this->conversation)) {
+            $members = $this->organisation->getIndividualMembersByPage();
+            if (empty($members)) {
+                return null;
+            }
+        } else {
+            throw new UnsupportedException('Not yet implemented');
+//                $members = $this->conversation->getParticipants();
+//                $this->status = self::STATUS_DELIVERY_SUCCESSFUL;
+        }
+        return $members;
+    }
+
     public function commitDeliveries()
     {
         $deliveries = [];
         if (in_array($this->status, [self::STATUS_NEW, self::STATUS_DELIVERY_IN_PROGRESS])) {
-            if (empty($this->conversation)) {
-                $members = $this->organisation->getIndividualMembersByPage();
-                if (empty($members)) {
-                    return false;
-                }
-            } else {
-                throw new UnsupportedException('Not yet implemented');
-//                $members = $this->conversation->getParticipants();
-//                $this->status = self::STATUS_DELIVERY_SUCCESSFUL;
+            if (empty($members = $this->getRecipientsByPage())) {
+                return false;
             }
-
             /** @var IndividualMember $member */
             foreach ($members as $member) {
                 $recipient = $member;
