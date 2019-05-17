@@ -2,12 +2,29 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiResource(
+ *     attributes={"access_control"="is_granted('ROLE_USER') and object.uuid == user.imUuid"},
+ *     collectionOperations={
+ *     },
+ *     itemOperations={
+ *     "unsubscribe_to_notif"={
+ *         "method"="DELETE",
+ *         "path"="/individual_members/{id}/subscriptions",
+ *         "controller"=SendEmailToIndividualMember::class,
+ *         "normalization_context"={"groups"={"subscription"}},
+ *         "denormalization_context"={"groups"={"subscription"}},
+ *     }
+ *     },
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\IndividualMemberRepository")
  * @ORM\Table(name="messaging__individual_member")
  * @ORM\HasLifecycleCallbacks()
@@ -29,6 +46,7 @@ class IndividualMember
         $this->messages = new ArrayCollection();
         $this->deliveries = new ArrayCollection();
         $this->conversations = new ArrayCollection();
+        $this->notifSubscriptions = new ArrayCollection();
     }
 
     public function isMessageDelivered(Message $message)
@@ -85,6 +103,11 @@ class IndividualMember
      * @ORM\ManyToMany(targetEntity="App\Entity\Conversation", mappedBy="participants")
      */
     private $conversations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\NotifSubscription", mappedBy="individualMember")
+     */
+    private $notifSubscriptions;
 
     public function getId(): ?int
     {
@@ -200,6 +223,37 @@ class IndividualMember
         if ($this->conversations->contains($conversation)) {
             $this->conversations->removeElement($conversation);
             $conversation->removeParticipant($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|NotifSubscription[]
+     */
+    public function getNotifSubscriptions(): Collection
+    {
+        return $this->notifSubscriptions;
+    }
+
+    public function addNotifSubscription(NotifSubscription $notifSubscription): self
+    {
+        if (!$this->notifSubscriptions->contains($notifSubscription)) {
+            $this->notifSubscriptions[] = $notifSubscription;
+            $notifSubscription->setIndividualMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotifSubscription(NotifSubscription $notifSubscription): self
+    {
+        if ($this->notifSubscriptions->contains($notifSubscription)) {
+            $this->notifSubscriptions->removeElement($notifSubscription);
+            // set the owning side to null (unless already changed)
+            if ($notifSubscription->getIndividualMember() === $this) {
+                $notifSubscription->setIndividualMember(null);
+            }
         }
 
         return $this;

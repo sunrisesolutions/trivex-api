@@ -28,3 +28,10 @@ api_platform:
             apiKey:
                 name: Authorization
                 type: header
+
+
+services:
+    notif_subscription.search_filter:
+        parent: 'api_platform.doctrine.orm.search_filter'
+        arguments: [ { id: 'exact', p256dhKey: 'exact', endpoint: 'partial' } ]
+        tags: [ 'api_platform.filter' ]

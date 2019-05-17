@@ -9,7 +9,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     attributes={
+ *       "access_control"="is_granted('ROLE_USER')",
+ *       "filters"={"notif_subscription.search_filter"}
+ *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
@@ -46,12 +49,6 @@ class NotifSubscription
         return $instance;
     }
 
-    /**
-     * @var IndividualMember
-     * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="subscriptions")
-     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id")
-     */
-    protected $individualMember;
 
     /**
      * @var Collection
@@ -93,6 +90,13 @@ class NotifSubscription
      * @Groups({"read", "write"})
      */
     protected $expirationTime;
+
+    /**
+     * @var IndividualMember
+     * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="notifSubscriptions")
+     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id")
+     */
+    private $individualMember;
 
     /**
      * @return null|string
@@ -159,22 +163,6 @@ class NotifSubscription
     }
 
     /**
-     * @return IndividualMember
-     */
-    public function getIndividualMember(): IndividualMember
-    {
-        return $this->individualMember;
-    }
-
-    /**
-     * @param IndividualMember $individualMember
-     */
-    public function setIndividualMember(IndividualMember $individualMember): void
-    {
-        $this->individualMember = $individualMember;
-    }
-
-    /**
      * @return null|string
      */
     public function getContentEncoding(): ?string
@@ -188,5 +176,17 @@ class NotifSubscription
     public function setContentEncoding(?string $contentEncoding): void
     {
         $this->contentEncoding = $contentEncoding;
+    }
+
+    public function getIndividualMember(): ?IndividualMember
+    {
+        return $this->individualMember;
+    }
+
+    public function setIndividualMember(?IndividualMember $individualMember): self
+    {
+        $this->individualMember = $individualMember;
+
+        return $this;
     }
 }
