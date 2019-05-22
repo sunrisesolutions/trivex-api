@@ -8,7 +8,7 @@ use App\Message\Message;
 
 interface StrategyInterface
 {
-    public function canProcess(string $queue): bool;
+    public function canProcess(Message $message = null, string $queue = null): bool;
     
     public function process(Message $message): void;
 }

@@ -20,7 +20,7 @@ class Consumer implements ConsumerInterface
     {
         /** @var StrategyInterface $strategy */
         foreach ($this->strategies as $strategy) {
-            if ($strategy->canProcess($queue)) {
+            if ($strategy->canProcess($message, $queue)) {
                 $strategy->process($message);
                 
                 break;

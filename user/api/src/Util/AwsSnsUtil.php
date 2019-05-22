@@ -9,8 +9,6 @@ use Aws\Sqs\SqsClient;
 
 class AwsSnsUtil
 {
-    private $queuePrefix = 'INANZZZ_';
-
     /** @var SqsClient */
     private $client;
     private $sdk;
@@ -27,8 +25,11 @@ class AwsSnsUtil
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
     }
 
-    public function publishMessage($message, $topicArn)
+    public function publishMessage($message, $topicArn = null)
     {
+        if(empty($topicArn)){
+            $topicArn = AppUtil::TOPIC_ARN;
+        }
         $this->client->publish(['Message' => $message, 'TopicArn' => $topicArn]);
     }
 }

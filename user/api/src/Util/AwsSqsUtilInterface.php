@@ -25,7 +25,7 @@ interface AwsSqsUtilInterface
     
 //    public function getQueueUrl(string $name): ?string;
     
-    public function receiveMessage(string $url): ?Message;
+    public function receiveMessage(string $url, string $name): ?Message;
     
     public function deleteMessage(Message $message): void;
     

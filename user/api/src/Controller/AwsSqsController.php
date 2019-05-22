@@ -32,7 +32,7 @@ class AwsSqsController
     {
 //        $content = json_decode($request->getContent(), true);
         
-        return new JsonResponse($this->awsSnsUtil->publishMessage($request->getContent(), 'arn:aws:sns:ap-southeast-1:073853278715:sample-topic-1'));
+        return new JsonResponse($this->awsSnsUtil->publishMessage($request->getContent(), null));
     }
     
     /**

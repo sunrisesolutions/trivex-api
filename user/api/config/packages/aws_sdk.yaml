@@ -5,10 +5,10 @@ parameters:
 
     aws_sdk.credentials.default:
         credentials:
-            key: 'AKIARCMP7TH5QUWUYKCH'
-            secret: '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'
+            key: '%env(AWS_KEY)%'
+            secret: '%env(AWS_SECRET)%'
 
     aws_sdk.credentials.sns:
         credentials:
-            key: 'AKIARCMP7TH52M3GP2BW'
-            secret: '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'
+            key: '%env(AWS_KEY)%'
+            secret: '%env(AWS_SECRET)%'

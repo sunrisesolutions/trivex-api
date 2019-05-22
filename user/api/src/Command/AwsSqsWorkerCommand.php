@@ -73,7 +73,7 @@ class AwsSqsWorkerCommand extends Command
             }
 
             $this->handleMemory($parameters['queue'], $parameters['limit']);
-            $message = $this->awsSqsUtil->receiveMessage($queueUrl);
+            $message = $this->awsSqsUtil->receiveMessage($queueUrl, $parameters['queue']);
             
             if ($message instanceof Message) {
                 $output->writeln('Consuming a message ... '. $message->id. ' ...... '.$message->body);

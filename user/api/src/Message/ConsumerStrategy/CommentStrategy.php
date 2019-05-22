@@ -23,10 +23,8 @@ class CommentStrategy implements StrategyInterface
         $this->logger = $logger;
     }
 
-    public function canProcess(string $queue): bool
+    public function canProcess(Message $message = null, string $queue = null): bool
     {
-        return true;
-
         return self::QUEUE_NAME === $queue;
     }
 

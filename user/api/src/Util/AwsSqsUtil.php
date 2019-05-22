@@ -8,6 +8,7 @@ use App\Message\Message;
 use Aws\Result;
 use Aws\Sdk;
 use Aws\Sqs\SqsClient;
+use App\Message\Entity as MessageEntity;
 
 class AwsSqsUtil implements AwsSqsUtilInterface
 {
@@ -118,12 +119,11 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     {
         $this->client = $this->sdk->createSqs($config + $credentials);
     }
-
-
+    
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#receivemessage
      */
-    public function receiveMessage(string $url): ?Message
+    public function receiveMessage(string $url, string $name): ?Message
     {
         /** @var Result $result */
         $result = $this->client->receiveMessage([
@@ -133,7 +133,8 @@ class AwsSqsUtil implements AwsSqsUtilInterface
 
         $message = null;
         if (null !== $result->get('Messages')) {
-            $message = new Message();
+            $messageClass = 'MessageEntity\\'.ucfirst(strtolower($name)).'Message';
+            $message = new $messageClass();
             $message->url = $url;
             $message->id = $result->get('Messages')[0]['MessageId'];
             $message->body = $result->get('Messages')[0]['Body'];
