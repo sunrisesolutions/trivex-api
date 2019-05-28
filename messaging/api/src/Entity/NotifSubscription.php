@@ -13,6 +13,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *       "access_control"="is_granted('ROLE_USER')",
  *       "filters"={"notif_subscription.search_filter"}
  *     },
+ *     itemOperations={
+ *         "get",
+ *         "delete"={"access_control"="is_granted('ROLE_USER') and object.individualMember.uuid == user.imUuid"}
+ *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
@@ -85,7 +89,7 @@ class NotifSubscription
     protected $contentEncoding;
 
     /**
-     * @var double|null
+     * @var float|null
      * @ORM\Column(type="bigint", nullable=true, name="expiration_time")
      * @Groups({"read", "write"})
      */
