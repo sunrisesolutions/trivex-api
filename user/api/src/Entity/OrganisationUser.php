@@ -74,7 +74,7 @@ class OrganisationUser
     }
 
     /**
-     * @param mixed $organisation
+     * @param Organisation $organisation
      */
     public function setOrganisation($organisation): void
     {

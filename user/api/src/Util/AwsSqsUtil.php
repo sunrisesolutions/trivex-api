@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Util;
 
 use App\Message\Message;
+use App\Message\MessageFactory;
 use Aws\Result;
 use Aws\Sdk;
 use Aws\Sqs\SqsClient;
@@ -12,6 +13,9 @@ use App\Message\Entity as MessageEntity;
 
 class AwsSqsUtil implements AwsSqsUtilInterface
 {
+
+    private $mf;
+
     private $queuePrefix = 'INANZZZ_';
 
     /** @var SqsClient */
@@ -20,15 +24,15 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     private $applicationName;
     private $env;
 
-    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env)
+    public function __construct(MessageFactory $mf, Sdk $sdk, iterable $config, iterable $credentials, string $env)
     {
+        $this->mf = $mf;
         $this->client = $sdk->createSqs($config + $credentials);
         $this->sdk = $sdk;
         $this->applicationName = AppUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
     }
-
 
     /**
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#createqueue
@@ -119,7 +123,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     {
         $this->client = $this->sdk->createSqs($config + $credentials);
     }
-    
+
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#receivemessage
      */
@@ -133,12 +137,11 @@ class AwsSqsUtil implements AwsSqsUtilInterface
 
         $message = null;
         if (null !== $result->get('Messages')) {
-            $messageClass = 'MessageEntity\\'.ucfirst(strtolower($name)).'Message';
-            $message = new $messageClass();
-            $message->url = $url;
-            $message->id = $result->get('Messages')[0]['MessageId'];
-            $message->body = $result->get('Messages')[0]['Body'];
-            $message->receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];
+            $body = $result->get('Messages')[0]['Body'];
+            $id = $result->get('Messages')[0]['MessageId'];
+            $receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];
+            $message = $this->mf->newMessage(AppUtil::getFullAppName($name), $url, $id, $body, $receiptHandle);
+
         }
 
         return $message;
@@ -170,7 +173,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     private function createQueueName(string $name, bool $isDeadLetter = null): string
     {
         return sprintf(
-            '%s_%s_%s%s',
+            '%s_%s_%s%s', // TRIVEX_USER_DEV_ORG
             strtoupper($this->applicationName),
             strtoupper($this->env),
             $name,

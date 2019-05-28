@@ -10,11 +10,11 @@ abstract class Message
 {
     public $version;
 
-    public function getUpdatedEntity(EntityManagerInterface $manager){
-        $body = json_decode($this->body);
-        $type = $body['TYPE'];
+    public $operation;
 
-    }
+    public $data;
+
+    public abstract function updateEntity(EntityManagerInterface $manager);
 
     public $url;
 

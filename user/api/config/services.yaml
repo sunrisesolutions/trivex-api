@@ -60,7 +60,7 @@ services:
 #        tags:
 #            - { name: consumer_strategy }
 
-    App\Message\ConsumerStrategy\CommentStrategy:
+    App\Message\ConsumerStrategy\ProcessNDeleteStrategy:
         tags:
             - { name: consumer_strategy }
 

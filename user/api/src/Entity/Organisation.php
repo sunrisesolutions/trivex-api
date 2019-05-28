@@ -60,8 +60,8 @@ class Organisation
     private $uuid;
 
     /**
-     * @var string code
-     * @ORM\Column(type="string")
+     * @var string code|null
+     * @ORM\Column(type="string",nullable=true)
      * @Assert\NotBlank()
      */
     private $code;
@@ -121,17 +121,17 @@ class Organisation
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getCode(): string
+    public function getCode(): ?string
     {
         return $this->code;
     }
 
     /**
-     * @param string $code
+     * @param string|null $code
      */
-    public function setCode(string $code): void
+    public function setCode(?string $code): void
     {
         $this->code = $code;
     }

@@ -81,7 +81,7 @@ class AwsSqsWorkerCommand extends Command
 
                 ++$processed;
             } else {
-                $output->writeln('Sleeping for 10 seconds due to no message ... ');
+                $output->writeln('Sleeping for 10 seconds due to no message ... at '.$queueUrl);
 
                 sleep(10);
             }
