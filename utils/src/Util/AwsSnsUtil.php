@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Util;
 
-use App\Message\Message;
 use Aws\Exception\AwsException;
 use Aws\Sdk;
 use Aws\Sns\SnsClient;
