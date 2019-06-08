@@ -34,7 +34,7 @@ services:
     volumes:
       - ./api/public:/srv/api/public:ro
     ports:
-      - "8080:80"
+      - "8480:80"
 
   cache-proxy:
     image: ${CONTAINER_REGISTRY_BASE}/varnish
@@ -49,7 +49,7 @@ services:
     tmpfs:
       - /usr/local/var/varnish:exec
     ports:
-      - "8081:80"
+      - "8481:80"
 
   db:
     # In production, you may want to use a managed database service
@@ -60,11 +60,11 @@ services:
       # You should definitely change the password in production
       - POSTGRES_PASSWORD=!ChangeMe!
     volumes:
-      - db-data:/var/lib/postgresql/data:rw
+      - db-data-trivex-messaging:/var/lib/postgresql/data:rw
       # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
       # - ./docker/db/data:/var/lib/postgresql/data:rw
     ports:
-      - "5432:5432"
+      - "5832:5432"
 
   mercure:
     # In production, you may want to use the managed version of Mercure, https://mercure.rocks
@@ -77,7 +77,7 @@ services:
       - PUBLISH_ALLOWED_ORIGINS=http://localhost:1337,https://localhost:1338
       - DEMO=1
     ports:
-      - "1337:80"
+      - "1737:80"
 
   client:
     # Use a static website hosting service in production
@@ -93,7 +93,7 @@ services:
       - ./client:/usr/src/client:rw,cached
       - /usr/src/client/node_modules
     ports:
-      - "80:3000"
+      - "120:3000"
 
   admin:
     # Use a static website hosting service in production
@@ -107,7 +107,7 @@ services:
       - ./admin:/usr/src/admin:rw,cached
       - /usr/src/admin/node_modules
     ports:
-      - "81:3000"
+      - "121:3000"
 
   h2-proxy:
     # Don't use this proxy in prod
@@ -119,10 +119,10 @@ services:
       - api
       - cache-proxy
     ports:
-      - "443:443"
-      - "444:444"
-      - "8443:8443"
-      - "8444:8444"
+      - "483:443"
+      - "484:444"
+      - "8843:8443"
+      - "8844:8444"
 
 volumes:
-  db-data: {}
+  db-data-trivex-messaging: {}
