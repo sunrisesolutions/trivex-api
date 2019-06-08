@@ -25,3 +25,20 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    Aws\Sdk: ~
+
+    App\Util\AwsSqsUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.default%'
+            $env: '%kernel.environment%'
+    #        calls:
+    #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
+
+    App\Util\AwsSnsUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.sns%'
+            $env: '%kernel.environment%'
+#        calls:
+#            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
