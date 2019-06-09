@@ -16,13 +16,12 @@ class AwsSqsUtil implements AwsSqsUtilInterface
 
     private $mf;
 
-    private $queuePrefix = 'INANZZZ_';
-
     /** @var SqsClient */
     private $client;
     private $sdk;
     private $applicationName;
     private $env;
+    private $queuePrefix;
 
     public function __construct(MessageFactory $mf, Sdk $sdk, iterable $config, iterable $credentials, string $env)
     {
@@ -37,10 +36,13 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     /**
      * @see https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#createqueue
      */
-    public function createQueue(string $name): ?string
+    public function createQueue(string $name, $prefix = null): ?string
     {
+        if (empty($prefix)) {
+            $prefix = $this->queuePrefix;
+        }
         /** @var Result $result */
-        $result = $this->client->createQueue(['QueueName' => $this->queuePrefix.$name]);
+        $result = $this->client->createQueue(['QueueName' => $prefix.$name]);
 
         return $result->get('QueueUrl');
     }
@@ -64,11 +66,11 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#getqueueurl
      */
-    public function getQueueUrl(string $name): ?string
+    public function getQueueUrl(string $name, $prefix = null): ?string
     {
         /** @var Result $result */
         $result = $this->client->getQueueUrl([
-            'QueueName' => $this->createQueueName($name),
+            'QueueName' => $this->createQueueName($name, $prefix),
         ]);
 
         return $result->get('QueueUrl');
@@ -170,14 +172,23 @@ class AwsSqsUtil implements AwsSqsUtilInterface
         ]);
     }
 
-    private function createQueueName(string $name, bool $isDeadLetter = null): string
+    private function createQueueName(string $name, $prefix = null, bool $isDeadLetter = null): string
     {
-        return sprintf(
-            '%s_%s_%s%s', // TRIVEX_USER_DEV_ORG
-            strtoupper($this->applicationName),
-            strtoupper($this->env),
-            $name,
-            $isDeadLetter ? '_DL' : null
-        );
+        if (empty($prefix)) {
+            return sprintf(
+                '%s_%s_%s%s', // TRIVEX_USER_DEV_ORG
+                strtoupper($this->applicationName),
+                strtoupper($this->env),
+                $name,
+                $isDeadLetter ? '_DL' : null
+            );
+        } else {
+            return sprintf(
+                '%s%s%s', // TRIVEX_USER_DEV_ORG
+                strtoupper($this->queuePrefix),
+                $name,
+                $isDeadLetter ? '_DL' : null
+            );
+        }
     }
 }
