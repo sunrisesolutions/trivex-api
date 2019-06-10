@@ -23,6 +23,8 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     private $env;
     private $queuePrefix;
 
+    private $queues;
+
     public function __construct(MessageFactory $mf, Sdk $sdk, iterable $config, iterable $credentials, string $env)
     {
         $this->mf = $mf;
@@ -52,6 +54,10 @@ class AwsSqsUtil implements AwsSqsUtilInterface
      */
     public function listQueues(): iterable
     {
+//        return   $result = $this->client->listQueues();
+        if(!empty($this->queues)){
+            return $this->queues;
+        }
         $queues = [];
 
         /** @var Result $result */
@@ -60,6 +66,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             $queues[] = $queueUrl;
         }
 
+        $this->queues = $queues;
         return $queues;
     }
 
@@ -88,6 +95,17 @@ class AwsSqsUtil implements AwsSqsUtilInterface
         ]);
 
         return $result->get('MessageId');
+    }
+
+    public function getQueueArn(string $url): string
+    {
+        /** @var Result $result */
+        $result = $this->client->getQueueAttributes([
+            'QueueUrl' => $url,
+            'AttributeNames' => ['QueueArn'],
+        ]);
+
+        return $result->get('Attributes')['QueueArn'];
     }
 
     /**
@@ -172,7 +190,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
         ]);
     }
 
-    private function createQueueName(string $name, $prefix = null, bool $isDeadLetter = null): string
+    public function createQueueName(string $name, $prefix = null, bool $isDeadLetter = null): string
     {
         if (empty($prefix)) {
             return sprintf(
