@@ -13,7 +13,7 @@ class MessageFactory
         $this->manager = $manager;
     }
 
-    public function newMessage($serviceName, $url, $id, $body, $handler)
+    public function createMessage($serviceName, $url, $id, $body, $handler)
     {
         $bodyArray = json_decode($body);
 //        var_dump($bodyArray);

@@ -140,7 +140,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             $body = $result->get('Messages')[0]['Body'];
             $id = $result->get('Messages')[0]['MessageId'];
             $receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];
-            $message = $this->mf->newMessage(AppUtil::getFullAppName($name), $url, $id, $body, $receiptHandle);
+            $message = $this->mf->createMessage(AppUtil::getFullAppName($name), $url, $id, $body, $receiptHandle);
 
         }
 
