@@ -2,7 +2,7 @@
 
 namespace App\Util;
 
-class AppUtil
+class AppUtil extends BaseUtil
 {
     const APP_NAME = 'EVENT';
 
