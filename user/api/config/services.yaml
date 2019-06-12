@@ -29,6 +29,9 @@ services:
 
     Aws\Sdk: ~
 
+    App\Util\:
+        resource: '../libraries/component/utils/src/Util/*'
+
     App\Util\AwsSqsUtil:
         arguments:
             $config: '%aws_sdk.config.default%'

@@ -21,6 +21,7 @@ services:
       - ./api:/srv/api:rw,cached
       # If you develop on Linux, uncomment the following line to use a bind-mounted host directory instead
       # - ./api/var:/srv/api/var:rw
+      - ../utils/src:/srv/api/libraries/component/utils/src:rw,cached
 
   api:
     image: ${CONTAINER_REGISTRY_BASE}/nginx

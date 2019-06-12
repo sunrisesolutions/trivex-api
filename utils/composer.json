@@ -24,7 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "App\\": "src/",
+            "App\\Util\\": "libraries\\App\\Util/"
         }
     },
     "autoload-dev": {

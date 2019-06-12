@@ -30,7 +30,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
         $this->mf = $mf;
         $this->client = $sdk->createSqs($config + $credentials);
         $this->sdk = $sdk;
-        $this->applicationName = AppUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
+        $this->applicationName = BaseUtil::PROJECT_NAME.'_'.BaseUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
     }
@@ -160,7 +160,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             $body = $result->get('Messages')[0]['Body'];
             $id = $result->get('Messages')[0]['MessageId'];
             $receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];
-            $message = $this->mf->newMessage(AppUtil::getFullAppName($name), $url, $id, $body, $receiptHandle);
+            $message = $this->mf->newMessage(BaseUtil::getFullAppName($name), $url, $id, $body, $receiptHandle);
 
         }
 

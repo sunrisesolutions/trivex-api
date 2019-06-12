@@ -8,9 +8,4 @@ use Doctrine\ORM\EntityManagerInterface;
 class AppUtil extends BaseUtil
 {
     const APP_NAME = 'USER';
-
-    public static function getAppName()
-    {
-        return self::APP_NAME;
-    }
 }

@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use App\Entity\SnsSubscription;
-use App\Util\AppUtil;
+use App\Util\BaseUtil;
 use App\Util\AwsSnsUtil;
 use App\Util\AwsSqsUtil;
 use App\Util\StringUtil;
@@ -33,7 +33,7 @@ class AppService
             foreach ($subs as $sub) {
                 $key = $sub->getTopic();
                 if (!array_key_exists($key, $this->topicArns)) {
-                    $topicName = AppUtil::PROJECT_NAME.'_'.$key.'_'.$env;
+                    $topicName = BaseUtil::PROJECT_NAME.'_'.$key.'_'.$env;
                     $this->topicArns[$key] = $this->snsUtil->getTopicArn($topicName);
                     if (!array_key_exists($key, $this->topicEndpoints)) {
                         $this->topicEndpoints[$key] = [];
@@ -59,7 +59,7 @@ class AppService
         $topics = [];
         foreach ($topicArns as $name => $arn) {
             if (empty($arn)) {
-                $topicName = AppUtil::PROJECT_NAME.'_'.strtoupper($name).'_'.$env;
+                $topicName = BaseUtil::PROJECT_NAME.'_'.strtoupper($name).'_'.$env;
                 $r = $this->snsUtil->createTopic($topicName);
                 $this->topicArns[$name] = $r->get('TopicArn');
             }
@@ -68,7 +68,7 @@ class AppService
 
             foreach ($subscribers as $index => $subscriber) {
                 $queueCode = $this->topicEndpoints[$name][$index]['endpoint'];
-                $queuePrefix = AppUtil::PROJECT_NAME.'_'.strtoupper($queueCode).'_'.$env.'_';
+                $queuePrefix = BaseUtil::PROJECT_NAME.'_'.strtoupper($queueCode).'_'.$env.'_';
                 $queueName = $this->sqsUtil->createQueueName($queueCode,$queuePrefix);
 
                 if (empty($this->snsUtil->hasQueueSubscription($topicArn, $queueName))) {

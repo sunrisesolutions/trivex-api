@@ -30,7 +30,7 @@ class AwsSnsUtil
         $this->client = $sdk->createSns($config + $credentials);
 
         $this->sdk = $sdk;
-        $this->applicationName = AppUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
+        $this->applicationName = BaseUtil::PROJECT_NAME.'_'.BaseUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
         $this->normalizer = $normalizer;
@@ -39,7 +39,7 @@ class AwsSnsUtil
     public function getTopicArn($name = null)
     {
         if (empty($name)) {
-            return getenv('AWS_SNS_PREFIX').AppUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
+            return getenv('AWS_SNS_PREFIX').BaseUtil::PROJECT_NAME.'_'.BaseUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
         }
 
         if (!empty($this->topics)) {
