@@ -1,5 +1,10 @@
 .idea
 
+config/services.yaml
+config/packages/aws_sdk.yaml
+libraries/component/utils/src
+
+
 /helm/api/charts
 
 ###> symfony/framework-bundle ###
