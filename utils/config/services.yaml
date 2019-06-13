@@ -4,6 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    noreply_email: no-reply@magentapulse.com
 
 services:
     # default configuration for services in *this* file
@@ -25,7 +26,14 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
     Aws\Sdk: ~
+
+    App\Util\:
+        resource: '../libraries/component/utils/src/Util/*'
+
+    App\Message\:
+        resource: '../libraries/component/utils/src/Message/*'
 
     App\Util\AwsSqsUtil:
         arguments:
@@ -40,5 +48,30 @@ services:
             $config: '%aws_sdk.config.default%'
             $credentials: '%aws_sdk.credentials.sns%'
             $env: '%kernel.environment%'
-#        calls:
-#            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
+    #        calls:
+    #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
+
+#    App\Command\AwsSqsWorkerCommand:
+#        tags:
+#            -  { name: console.command }
+
+    App\Message\Consumer:
+        arguments: [!tagged consumer_strategy]
+
+    #    App\Message\ConsumerStrategy\ImageStrategy:
+    #        tags:
+    #            - { name: consumer_strategy }
+
+    #    App\Message\ConsumerStrategy\FileStrategy:
+    #        tags:
+    #            - { name: consumer_strategy }
+
+    App\Message\ConsumerStrategy\ProcessNDeleteStrategy:
+        tags:
+            - { name: consumer_strategy }
+
+    app.event.jwt_created_listener:
+        class: App\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }
