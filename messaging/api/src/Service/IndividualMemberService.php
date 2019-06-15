@@ -27,7 +27,7 @@ class IndividualMemberService
 
         try {
             $memberRepo = $this->manager->getRepository(IndividualMember::class);
-            ////////////// PƯA Púh ////////////
+            ////////////// PWA Púh ////////////
 //            $members = $memberRepo->findHavingOrganisationSubscriptions((int) $dp->getOwnerId());
 //
 //
