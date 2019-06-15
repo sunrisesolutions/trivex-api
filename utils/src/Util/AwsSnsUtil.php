@@ -30,7 +30,7 @@ class AwsSnsUtil
         $this->client = $sdk->createSns($config + $credentials);
 
         $this->sdk = $sdk;
-        $this->applicationName = BaseUtil::PROJECT_NAME.'_'.BaseUtil::APP_NAME;
+        $this->applicationName = BaseUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName.'_'.$env.'_';
         $this->normalizer = $normalizer;

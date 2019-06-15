@@ -73,6 +73,7 @@ WORKDIR /srv/api
 
 # build for production
 ARG APP_ENV=prod
+ARG MAILER_URL=''
 
 # prevent the reinstallation of vendors at every changes in the source code
 COPY composer.json composer.lock symfony.lock ./
@@ -87,6 +88,10 @@ COPY bin bin/
 COPY config config/
 COPY public public/
 COPY src src/
+COPY utils/src /srv/api/libraries/component/utils/src/
+COPY utils/config/services.yaml /srv/api/config
+COPY utils/config/packages/aws_sdk.yaml /srv/api/config/packages
+
 
 RUN set -eux; \
 	mkdir -p var/cache var/log; \
