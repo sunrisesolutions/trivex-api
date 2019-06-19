@@ -5,9 +5,14 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\DeliveryRepository")
  * @ORM\Table(name="messaging__delivery")
  * @ORM\HasLifecycleCallbacks()
@@ -51,21 +56,25 @@ class Delivery
 
     /**
      * @ORM\Column(type="string", length=191)
+     * @Groups("read")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups("read")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read", "write"})
      */
     private $readAt;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
      */
     private $updatedAt;
 
@@ -73,6 +82,7 @@ class Delivery
      * @var Message
      * @ORM\ManyToOne(targetEntity="App\Entity\Message", inversedBy="deliveries")
      * @ORM\JoinColumn(name="id_message", referencedColumnName="id")
+     * @Groups("read")
      */
     private $message;
 
@@ -80,6 +90,7 @@ class Delivery
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="deliveries")
      * @ORM\JoinColumn(name="id_recipient", referencedColumnName="id")
+     * @Groups("read")
      */
     private $recipient;
 
