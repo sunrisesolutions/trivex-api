@@ -11,14 +11,17 @@ use Doctrine\ORM\OptimisticLockException;
 use Doctrine\ORM\ORMException;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class IndividualMemberService
 {
     private $manager;
+    private $container;
 
-    public function __construct(EntityManagerInterface $manager)
+    public function __construct(EntityManagerInterface $manager, ContainerInterface $container)
     {
         $this->manager = $manager;
+        $this->container = $container;
     }
 
     public function notifyOneOrganisationIndividualMembers(Message $message)
