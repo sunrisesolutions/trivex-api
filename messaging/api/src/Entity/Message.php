@@ -49,8 +49,12 @@ class Message
     {
         if (empty($this->conversation)) {
             $members = $this->organisation->getIndividualMembersByPage();
-            if (empty($members->count())) {
+            if (empty($members)) {
                 return null;
+            } else {
+                if ($members->count() === 0) {
+                    return null;
+                }
             }
         } else {
             throw new UnsupportedException('Not yet implemented');
