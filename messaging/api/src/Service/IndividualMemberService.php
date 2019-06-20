@@ -51,6 +51,7 @@ class IndividualMemberService
              * @var IndividualMember
              */
             while (!empty($members = $message->getRecipientsByPage())) {
+                /** @var IndividualMember $member */
                 foreach ($members as $member) {
                     if ($member->isMessageDelivered($message)) {
                         continue;
@@ -61,7 +62,7 @@ class IndividualMemberService
 //                        break;
 //                    }
 
-                    $subscriptions = $member->getSubscriptions();
+                    $subscriptions = $member->getNotifSubscriptions();
 
                     $preparedSubscriptions = [];
                     /**
