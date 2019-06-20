@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Entity\IndividualMember;
 use App\Entity\Message;
+use App\Entity\NotifSubscription;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,13 +67,13 @@ class IndividualMemberService
 
                     $preparedSubscriptions = [];
                     /**
-                     * @var Subscription $_sub
+                     * @var NotifSubscription $_sub
                      */
                     foreach ($subscriptions as $_sub) {
                         $preparedSub = Subscription::create(
                             [
                                 'endpoint' => $_sub->getEndpoint(),
-                                'publicKey' => $_sub->getPublicKey(),
+                                'publicKey' => $_sub->getP256dhKey(),
                                 'authToken' => $_sub->getAuthToken(),
                                 'contentEncoding' => $_sub->getContentEncoding(), // one of PushManager.supportedContentEncodings
                             ]
