@@ -110,6 +110,13 @@ class IndividualMember
      */
     private $notifSubscriptions;
 
+    /**
+     * @var Person
+     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers")
+     * @ORM\JoinColumn(name="id_person", referencedColumnName="id")
+     */
+    private $person;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -256,6 +263,18 @@ class IndividualMember
                 $notifSubscription->setIndividualMember(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
+    }
+
+    public function setPerson(?Person $person): self
+    {
+        $this->person = $person;
 
         return $this;
     }
