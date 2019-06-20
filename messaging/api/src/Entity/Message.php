@@ -7,6 +7,7 @@ use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 
@@ -93,6 +94,21 @@ class Message
     }
 
     /**
+     * @Groups("write")
+     */
+    private $published;
+
+    public function setPublished(?bool $published): self
+    {
+        $this->published = $published;
+        if ($published && $this->status === self::STATUS_DRAFT) {
+            $this->setStatus(self::STATUS_NEW);
+        }
+
+        return $this;
+    }
+
+    /**
      * @ORM\Column(type="string", length=191)
      * @Groups("read")
      */
@@ -142,6 +158,7 @@ class Message
     /**
      * @var string
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups("read")
      */
     private $status;
 
@@ -281,4 +298,10 @@ class Message
 
         return $this;
     }
+
+    public function getPublished(): ?bool
+    {
+        return $this->published;
+    }
+
 }
