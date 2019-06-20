@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\IndividualMember;
 use App\Security\JWTUser;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Security;
 
 final class CurrentOrganisationExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
@@ -33,6 +34,10 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
     {
         /** @var JWTUser $user */
         $user = $this->security->getUser();
+        if (empty($user)) {
+            throw new UnauthorizedHttpException('Please login');
+        }
+
         if (!$this->supportClass($resourceClass) || $this->security->isGranted('ROLE_ADMIN') || null === $objectUuid = $user->getOrgUuid()) {
             return;
         }

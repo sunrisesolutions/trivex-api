@@ -28,7 +28,7 @@ class SendEmailToIndividualMember
         if (!empty($data)) {
             if (!empty($toEmail = $data->getPerson()->getEmail())) {
                 $message = (new \Swift_Message($data->emailSubject))
-                    ->setFrom('no-reply@magentapulse.com')
+                    ->setFrom('no-reply-member@magentapulse.com')
                     ->setTo($toEmail)
                     ->setBody(
                         $data->emailBody,
