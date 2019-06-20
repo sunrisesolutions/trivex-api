@@ -51,10 +51,6 @@ class Message
             $members = $this->organisation->getIndividualMembersByPage();
             if (empty($members)) {
                 return null;
-            } else {
-                if ($members->count() === 0) {
-                    return null;
-                }
             }
         } else {
             throw new UnsupportedException('Not yet implemented');

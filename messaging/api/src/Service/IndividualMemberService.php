@@ -48,10 +48,18 @@ class IndividualMemberService
             ];
             $webPush = new WebPush($auth);
 //                $multipleRun = false;
+            $count = 0;
             /*
              * @var IndividualMember
              */
             while (!empty($members = $message->getRecipientsByPage())) {
+                echo ':::IMService count '.$count.':::';
+                if(empty($members)){
+                    echo '$members is empty in IMS';
+                }else{
+                    echo '$members NOTTTT empty in IMS:::::';
+                }
+
                 /** @var IndividualMember $member */
                 foreach ($members as $member) {
                     if ($member->isMessageDelivered($message)) {
@@ -95,6 +103,7 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
                 $res = $webPush->flush();
+                $count++;
             }
 
 

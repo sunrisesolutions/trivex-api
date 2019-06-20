@@ -64,6 +64,8 @@ class Organisation
             }
             $page = $this->memberPage;
             if ( ($this->memberPage - 1) * $limit > $this->memberCount) {
+                $this->memberPage = $this->memberCount = null;
+
                 return false;
             }
             $this->memberPage++;
