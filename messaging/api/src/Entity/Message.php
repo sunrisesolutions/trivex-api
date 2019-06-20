@@ -49,7 +49,7 @@ class Message
     {
         if (empty($this->conversation)) {
             $members = $this->organisation->getIndividualMembersByPage();
-            if (empty($members)) {
+            if (empty($members->count())) {
                 return null;
             }
         } else {
