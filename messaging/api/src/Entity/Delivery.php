@@ -2,7 +2,11 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -13,6 +17,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
+ * @ApiFilter(DateFilter::class, properties={"readAt"})
+ * @ApiFilter(ExistsFilter::class, properties={"readAt"})
+
  * @ORM\Entity(repositoryClass="App\Repository\DeliveryRepository")
  * @ORM\Table(name="messaging__delivery")
  * @ORM\HasLifecycleCallbacks()
@@ -39,6 +46,10 @@ class Delivery
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    public function getUnreadDeliveryCount(){
+
     }
 
     /**
