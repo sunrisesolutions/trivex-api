@@ -14,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     collectionOperations={
  *     },
  *     itemOperations={
- *     "get"={},
+ *     "get"={}
  *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
