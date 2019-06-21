@@ -9,6 +9,16 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiResource(
+ *     attributes={"access_control"="is_granted('ROLE_USER') and object.uuid == user.imUuid"},
+ *     collectionOperations={
+ *     },
+ *     itemOperations={
+ *     "get"={},
+ *     },
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass="App\Repository\IndividualMemberRepository")
  * @ORM\Table(name="messaging__individual_member")
  * @ORM\HasLifecycleCallbacks()
