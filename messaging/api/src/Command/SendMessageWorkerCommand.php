@@ -95,7 +95,7 @@ class SendMessageWorkerCommand extends Command
             }
 
 //            } else {
-            $output->writeln('Sleeping for 3 seconds due to no message ... ');
+//            $output->writeln('Sleeping for 3 seconds due to no message ... ');
 
             sleep(3);
 //            }

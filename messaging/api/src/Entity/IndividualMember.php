@@ -9,23 +9,6 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
- *     attributes={"access_control"="is_granted('ROLE_USER') and object.uuid == user.imUuid"},
- *     collectionOperations={
- *     },
- *     itemOperations={
- *     "get"={},
- *     "unsubscribe_to_notif"={
- *         "method"="DELETE",
- *         "path"="/individual_members/{id}/subscriptions",
- *         "controller"=SendEmailToIndividualMember::class,
- *         "normalization_context"={"groups"={"subscription"}},
- *         "denormalization_context"={"groups"={"subscription"}},
- *     }
- *     },
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
  * @ORM\Entity(repositoryClass="App\Repository\IndividualMemberRepository")
  * @ORM\Table(name="messaging__individual_member")
  * @ORM\HasLifecycleCallbacks()
