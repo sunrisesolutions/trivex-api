@@ -38,7 +38,7 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
         if ($supported && empty($user)) {
             throw new UnauthorizedHttpException('Please login');
         }
-        
+
         if (!$supported || $this->security->isGranted('ROLE_ADMIN') || null === $objectUuid = $user->getOrgUuid()) {
             return;
         }
