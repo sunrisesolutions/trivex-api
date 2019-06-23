@@ -54,7 +54,7 @@ class Organisation
 
     /**
      * @var string The Universally Unique Id
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", length=191, unique=true)
      * @Assert\NotBlank()
      */
     private $uuid;
