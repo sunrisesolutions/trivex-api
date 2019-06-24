@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     itemOperations={
  *         "get",
- *         "delete"={"access_control"="is_granted('ROLE_USER') and object.individualMember.uuid == user.imUuid"}
+ *         "delete"={"access_control"="is_granted('ROLE_USER') and object.getIndividualMember().uuid == user.imUuid"}
  *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
@@ -98,7 +98,7 @@ class NotifSubscription
     /**
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="notifSubscriptions")
-     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id")
+     * @ORM\JoinColumn(name="id_individual", referencedColumnName="id", onDelete="CASCADE")
      */
     private $individualMember;
 
