@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use App\Util\AwsS3Util;
@@ -10,6 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource(
@@ -31,6 +33,7 @@ use App\Controller\SendEmailToIndividualMember;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
  * @ORM\Entity(repositoryClass="App\Repository\IndividualMemberRepository")
  * @ORM\Table(name="organisation__individual_member")
  * @ORM\HasLifecycleCallbacks()
@@ -76,6 +79,21 @@ class IndividualMember
     {
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IM_%s_%s', $this->organisation->getId(), $this->person->getId()));
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateFulltextString()
+    {
+        if (empty($person = $this->person)) {
+            $this->fulltextString = '';
+        } else {
+            $fulltextString = '';
+            $fulltextString .= 'name: '.$person->getName().' email: '.$person->getEmail().' employer: '.$person->getEmployerName();
+            $this->fulltextString = $fulltextString;
         }
     }
 
@@ -145,6 +163,11 @@ class IndividualMember
      * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="individualMember")
      */
     private $roles;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $fulltextString;
 
     public function __construct()
     {
@@ -307,6 +330,18 @@ class IndividualMember
                 $toConnection->setToMember(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getFulltextString(): ?string
+    {
+        return $this->fulltextString;
+    }
+
+    public function setFulltextString(?string $fulltextString): self
+    {
+        $this->fulltextString = $fulltextString;
 
         return $this;
     }
