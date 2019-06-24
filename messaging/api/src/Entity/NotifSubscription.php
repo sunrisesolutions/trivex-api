@@ -15,7 +15,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     },
  *     itemOperations={
  *         "get",
- *         "delete"={"access_control"="is_granted('ROLE_USER') and object.getIndividualMember().uuid == user.imUuid"}
+ *         "delete"={"access_control"="is_granted('ROLE_USER') and object.getIndividualMember().uuid == user.getImUuid()"}
  *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
