@@ -5,6 +5,7 @@ namespace App\Extension;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Entity\Delivery;
 use App\Entity\IndividualMember;
 use App\Security\JWTUser;
 use Doctrine\ORM\QueryBuilder;
@@ -47,6 +48,6 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
 
     private function supportClass($class)
     {
-        return in_array($class, [IndividualMember::class]);
+        return in_array($class, [Delivery::class]);
     }
 }
