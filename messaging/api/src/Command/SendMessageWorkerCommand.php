@@ -134,10 +134,10 @@ class SendMessageWorkerCommand extends Command
     {
         pcntl_async_signals(true);
         pcntl_signal(SIGINT, function () {
-            throw new AwsSqsWorkerException('Process has been terminated with the "ctrl+c" signal.');
+            throw new \Exception('Process has been terminated with the "ctrl+c" signal.');
         });
         pcntl_signal(SIGTERM, function () {
-            throw new AwsSqsWorkerException('Process has been terminated with the "kill" signal.');
+            throw new \Exception('Process has been terminated with the "kill" signal.');
         });
     }
 
@@ -145,9 +145,7 @@ class SendMessageWorkerCommand extends Command
     {
         // 104857600 bytes = 100 megabytes
         if (104857600 < memory_get_peak_usage(true)) {
-            throw new AwsSqsWorkerException(
-                sprintf('Run out of memory while watching the "%s" queue for "%d" messages.', $queue, $limit)
-            );
+            throw new \Exception(sprintf('Run out of memory while watching for "%d" messages.', $limit));
         }
     }
 
