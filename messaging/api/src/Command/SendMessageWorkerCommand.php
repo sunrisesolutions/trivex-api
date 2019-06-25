@@ -82,17 +82,21 @@ class SendMessageWorkerCommand extends Command
                 $output->writeln('Sending Message ... '.$message->getUuid().' with SUBJ:'.$message->getSubject());
                 $res = $this->imService->notifyOneOrganisationIndividualMembers($message);
                 $io->note('MSG: '.$message->getUuid().' '.$message->getSubject());
+                var_dump($res);
+                
+                /**
                 if (is_array($res)) {
-                    foreach ($res as $_r) {
-                        if ($_r instanceof MessageSentReport) {
-                            $io->comment($_r->getRequestPayload().' '.$_r->isSuccess().' '.$_r->getResponseContent());
-                        } else {
-                            $io->comment(get_class($_r));
-                        }
-                    }
+                foreach ($res as $_r) {
+                if ($_r instanceof MessageSentReport) {
+                $io->comment($_r->getRequestPayload().' '.$_r->isSuccess().' '.$_r->getResponseContent());
                 } else {
-                    $io->comment('not array '.json_encode($res));
+                $io->comment(get_class($_r));
                 }
+                }
+                } else {
+                $io->comment('not array '.json_encode($res));
+                }
+                 */
             }
 
             /////////////////////////////////////
