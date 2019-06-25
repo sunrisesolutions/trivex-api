@@ -86,6 +86,8 @@ class SendMessageWorkerCommand extends Command
                     foreach ($res as $_r) {
                         if ($_r instanceof MessageSentReport) {
                             $io->comment($_r->getRequestPayload().' '.$_r->isSuccess().' '.$_r->getResponseContent());
+                        } else {
+                            $io->comment(get_class($_r));
                         }
                     }
                 } else {
