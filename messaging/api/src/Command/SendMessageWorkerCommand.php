@@ -8,6 +8,7 @@ use App\Exception\AwsSqsWorkerException;
 use App\Service\IndividualMemberService;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Minishlink\WebPush\MessageSentReport;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -81,7 +82,15 @@ class SendMessageWorkerCommand extends Command
                 $output->writeln('Sending Message ... '.$message->getUuid().' with SUBJ:'.$message->getSubject());
                 $res = $this->imService->notifyOneOrganisationIndividualMembers($message);
                 $io->note('MSG: '.$message->getUuid().' '.$message->getSubject());
-                $io->comment($res);
+                if (is_array($res)) {
+                    foreach ($res as $_r) {
+                        if ($_r instanceof MessageSentReport) {
+                            $io->comment($_r->getRequestPayload().' '.$_r->isSuccess().' '.$_r->getResponseContent());
+                        }
+                    }
+                } else {
+                    $io->comment('not array '.json_encode($res));
+                }
             }
 
             /////////////////////////////////////
