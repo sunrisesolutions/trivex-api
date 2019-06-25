@@ -62,6 +62,8 @@ class Message
 
     public function commitDeliveries()
     {
+        $message = $this;
+
         $deliveries = [];
         if (in_array($this->status, [self::STATUS_NEW, self::STATUS_DELIVERY_IN_PROGRESS])) {
             if (empty($members = $this->getRecipientsByPage())) {
@@ -69,6 +71,10 @@ class Message
             }
             /** @var IndividualMember $member */
             foreach ($members as $member) {
+                if ($member->isMessageDelivered($message) || $member->getUuid() === $message->getSender()->getUuid()) {
+                    continue;
+                }
+
                 $recipient = $member;
                 $delivery = Delivery::createInstance($this, $recipient);
                 $deliveries[] = $delivery;

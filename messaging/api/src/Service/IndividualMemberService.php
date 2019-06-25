@@ -28,6 +28,7 @@ class IndividualMemberService
     public function notifyOneOrganisationIndividualMembers(Message $message)
     {
         $row = 0;
+        $response = [];
 
         try {
             $memberRepo = $this->manager->getRepository(IndividualMember::class);
@@ -95,6 +96,8 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
                 $res = $webPush->flush();
+                $response[] = json_encode($res);
+
             }
 
 
@@ -120,5 +123,6 @@ class IndividualMemberService
         } catch (\Exception $e) {
             throw $e;
         }
+        return $response;
     }
 }

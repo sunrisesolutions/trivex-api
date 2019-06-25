@@ -79,7 +79,9 @@ class SendMessageWorkerCommand extends Command
             /** @var Message $message */
             foreach ($messages as $message) {
                 $output->writeln('Sending Message ... '.$message->getUuid().' with SUBJ:'.$message->getSubject());
-                $this->imService->notifyOneOrganisationIndividualMembers($message);
+                $res = $this->imService->notifyOneOrganisationIndividualMembers($message);
+                $io->note('MSG: '.$message->getUuid().' '.$message->getSubject());
+                $io->comment($res);
             }
 
             /////////////////////////////////////
