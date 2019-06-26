@@ -80,14 +80,25 @@ class IndividualMemberService
                             ]
                         );
                         $preparedSubscriptions[] = $preparedSub;
+                        $notificationPayload = [
+                            'notification' => [
+                                'title' => $message->getSubject(),
+                                'body' => $message->getBody(),
+                                'icon' => 'http://trivesg.com/assets/img/brand/T-Logo.png',
+                                'vibrate' => [100, 50, 100],
+                                'data' => $message,
+                                'actions' => [
+                                    [
+                                        'action' => 'explore',
+                                        'title' => 'View message'
+                                    ]
+                                ]
+                            ]
+                        ];
 
                         $webPush->sendNotification(
                             $preparedSub,
-                            json_encode([
-                                'sender-name' => $message->getSender()->getPerson()->getName(),
-                                'message-id' => $message->getId(),
-                                'message-subject' => $message->getSubject(),
-                                'subscription-id' => $_sub->getId(),]),
+                            json_encode($notificationPayload),
                             false
                         );
                     }
