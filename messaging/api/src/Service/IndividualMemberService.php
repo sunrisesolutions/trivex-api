@@ -107,8 +107,29 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
                 $res = $webPush->flush();
-                $response[] = json_encode($res);
+                /** @var \Minishlink\WebPush\MessageSentReport $report */
+                foreach ($webPush->flush() as $report) {
+                    $endpoint = $report->getEndpoint();
+                    if ($report->isSuccess()) {
+                        $response[] =  "[v] Message sent successfully for subscription {$endpoint}.";
+                    } else {
+                        $response[] =  "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
 
+                        // also available (to get more info)
+
+                        /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
+                        $requestToPushService = $report->getRequest();
+
+                        /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
+                        $responseOfPushService = $report->getResponse();
+
+                        /** @var string $failReason */
+                        $failReason = $report->getReason();
+
+                        /** @var bool $isTheEndpointWrongOrExpired */
+                        $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
+                    }
+                }
             }
 
 

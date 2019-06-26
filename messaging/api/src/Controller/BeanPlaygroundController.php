@@ -77,6 +77,32 @@ class BeanPlaygroundController extends AbstractController
 
         $res = $webPush->flush();
 
+        /** @var \Minishlink\WebPush\MessageSentReport $report */
+        foreach ($webPush->flush() as $report) {
+            $endpoint = $report->getEndpoint();
+
+            if ($report->isSuccess()) {
+                echo "[v] Message sent successfully for subscription {$endpoint}.";
+            } else {
+                echo "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
+
+                // also available (to get more info)
+
+                /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
+                $requestToPushService = $report->getRequest();
+
+                /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
+                $responseOfPushService = $report->getResponse();
+
+                /** @var string $failReason */
+                $failReason = $report->getReason();
+
+                /** @var bool $isTheEndpointWrongOrExpired */
+                $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
+            }
+        }
+
+
         return $this->render('bean_playground/index.html.twig', [
             'controller_name' => 'BeanPlaygroundController',
             'payload'=>json_encode($notificationPayload),
