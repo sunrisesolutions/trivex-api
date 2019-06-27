@@ -82,6 +82,9 @@ class SendMessageWorkerCommand extends Command
                 $output->writeln('Sending Message ... '.$message->getUuid().' with SUBJ:'.$message->getSubject());
                 $res = $this->imService->notifyOneOrganisationIndividualMembers($message);
                 $io->note('MSG: '.$message->getUuid().' '.$message->getSubject());
+                if(count($res) === 0){
+                    $io->note('no push notifs were sent');
+                }
                 foreach($res as $r){
                     $io->comment($r);
                 }
