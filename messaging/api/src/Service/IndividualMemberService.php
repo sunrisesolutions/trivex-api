@@ -190,7 +190,7 @@ class IndividualMemberService
 
             $response[] = "let's push again after while loop";
             /** @var WebPush $webPush */
-            foreach($webPushObjs as $webPush){
+            foreach ($webPushObjs as $webPush) {
                 $pushReport = [];
                 $webPush->flush();
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
@@ -214,6 +214,12 @@ class IndividualMemberService
 
                         /** @var bool $isTheEndpointWrongOrExpired */
                         $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
+                        if ($isTheEndpointWrongOrExpired) {
+                            $notif = $this->manager->getRepository(NotifSubscription::class)->findOneBy(['endpoint' => $endpoint]);
+                            if (!empty($notif)) {
+                                $this->manager->remove($notif);
+                            }
+                        }
                     }
                 }
                 if (count($pushReport) === 0) {
