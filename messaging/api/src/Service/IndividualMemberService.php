@@ -159,7 +159,7 @@ class IndividualMemberService
                     $response[] = 'automatic padding is '.$webPush->getAutomaticPadding();
 
                     /** @var \Minishlink\WebPush\MessageSentReport $report */
-                    foreach ($webPush->flush($rowNotif) as $report) {
+                    foreach ($webPush->flush() as $report) {
                         $endpoint = $report->getEndpoint();
                         if ($report->isSuccess()) {
                             $pushReport[] = $response[] = "[v] Message sent successfully for subscription {$endpoint}.";

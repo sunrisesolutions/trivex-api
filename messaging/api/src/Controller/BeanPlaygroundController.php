@@ -59,7 +59,10 @@ class BeanPlaygroundController extends AbstractController
                 'body' => $message->getBody(),
                 'icon' => '/assets/img/brand/T-Logo.png',
                 'vibrate' => [100, 50, 100],
-                'data' => $message,
+                'data' => [
+                    'messageId' => $message->getId(),
+                    'messageUuid' => $message->getUuid()
+                ],
                 'actions' => [
                     [
                         'action' => 'explore',
