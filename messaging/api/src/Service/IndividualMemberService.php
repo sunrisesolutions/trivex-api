@@ -57,9 +57,9 @@ class IndividualMemberService
                             'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
                         ],
                     ];
+
                     $webPush = new WebPush($auth);
                     $webPush->setReuseVAPIDHeaders(true);
-
 //                $multipleRun = false;
                     /*
                      * @var IndividualMember
@@ -125,7 +125,7 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
 
-                if($rowNotif > 0){
+                if ($rowNotif > 0) {
                     $response[] = 'pushing '.$rowNotif.' notifs';
                 }
 
@@ -153,7 +153,7 @@ class IndividualMemberService
                         $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
                     }
                 }
-                if(count($pushReport) === 0){
+                if (count($pushReport) === 0) {
                     $response[] = 'no notifs were flushed';
                 }
             }
