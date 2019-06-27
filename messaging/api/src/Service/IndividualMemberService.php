@@ -35,7 +35,7 @@ class IndividualMemberService
             $memberRepo = $this->manager->getRepository(IndividualMember::class);
             ////////////// PWA Púh ////////////
 //            $members = $memberRepo->findHavingOrganisationSubscriptions((int) $dp->getOwnerId());
-
+            $webPushObjs = [];
             while (!empty($deliveries = $message->commitDeliveries())) {
                 ++$row;
                 $rowNotif = 0;
@@ -58,7 +58,7 @@ class IndividualMemberService
                         ],
                     ];
 
-                    $webPush = new WebPush($auth);
+                    $webPushObjs[] = $webPush = new WebPush($auth);
                     $webPush->setReuseVAPIDHeaders(true);
 //                $multipleRun = false;
                     /*
