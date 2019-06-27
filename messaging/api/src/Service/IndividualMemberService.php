@@ -127,9 +127,8 @@ class IndividualMemberService
                     $response[] = 'pushing '.$rowNotif.' notifs';
                 }
 
-                $res = $webPush->flush($rowNotif);
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
-                foreach ($res as $report) {
+                foreach ($webPush->flush($rowNotif) as $report) {
                     $endpoint = $report->getEndpoint();
                     if ($report->isSuccess()) {
                         $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
