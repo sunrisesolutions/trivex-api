@@ -37,6 +37,7 @@ class IndividualMemberService
 //            $members = $memberRepo->findHavingOrganisationSubscriptions((int) $dp->getOwnerId());
 
             while (!empty($deliveries = $message->commitDeliveries())) {
+                ++$row;
                 /** @var Delivery $delivery */
                 foreach ($deliveries as $delivery) {
                     $this->manager->persist($delivery);
@@ -63,10 +64,9 @@ class IndividualMemberService
 //            while (!empty($members = $message->getRecipientsByPage())) {
 //                /** @var IndividualMember $member */
 //                foreach ($members as $member) {
-                    if ($member->getUuid() === $message->getSender()->getUuid()) {
-                        continue;
-                    }
-                    ++$row;
+//                    if ($member->getUuid() === $message->getSender()->getUuid()) {
+//                        continue;
+//                    }
 //                    if ($row > 1000) {
 //                        $multipleRun = true;
 //                        break;
@@ -96,10 +96,10 @@ class IndividualMemberService
                                 'icon' => 'assets/img/brand/T-Logo.png',
                                 'vibrate' => [100, 50, 100],
                                 'data' => [
-                                    'messageId' => $message->getId(),
-                                    'messageUuid' => $message->getUuid(),
-                                    'deliveryId' => $delivery->getId(),
-                                    'deliveryUuid' => $delivery->getUuid()
+//                                    'messageId' => $message->getId(),
+//                                    'messageUuid' => $message->getUuid(),
+//                                    'deliveryId' => $delivery->getId(),
+//                                    'deliveryUuid' => $delivery->getUuid()
                                 ],
                                 'actions' => [
                                     [
