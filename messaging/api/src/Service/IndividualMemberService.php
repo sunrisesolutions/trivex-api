@@ -63,7 +63,7 @@ class IndividualMemberService
 //            while (!empty($members = $message->getRecipientsByPage())) {
 //                /** @var IndividualMember $member */
 //                foreach ($members as $member) {
-                    if ($member->isMessageDelivered($message) || $member->getUuid() === $message->getSender()->getUuid()) {
+                    if ($member->getUuid() === $message->getSender()->getUuid()) {
                         continue;
                     }
                     ++$row;
