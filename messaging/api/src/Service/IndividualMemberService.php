@@ -36,6 +36,23 @@ class IndividualMemberService
             ////////////// PWA Púh ////////////
 //            $members = $memberRepo->findHavingOrganisationSubscriptions((int) $dp->getOwnerId());
             $webPushObjs = [];
+
+            $path = $this->container->getParameter('PWA_PUBLIC_KEY_PATH');
+            $pwaPublicKey = trim(file_get_contents($path));
+            $path = $this->container->getParameter('PWA_PRIVATE_KEY_PATH');
+            $pwaPrivateKey = trim(file_get_contents($path));
+
+            $auth = [
+                'VAPID' => [
+                    'subject' => 'mailto:peter@magenta-wellness.com',
+                    'publicKey' => $pwaPublicKey,
+                    'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
+                ],
+            ];
+
+            $webPush = new WebPush($auth);
+            $webPush->setReuseVAPIDHeaders(true);
+
             while (!empty($deliveries = $message->commitDeliveries())) {
                 ++$row;
                 $rowNotif = 0;
@@ -46,20 +63,6 @@ class IndividualMemberService
 //                }
                     $member = $delivery->getRecipient();
 
-                    $path = $this->container->getParameter('PWA_PUBLIC_KEY_PATH');
-                    $pwaPublicKey = trim(file_get_contents($path));
-                    $path = $this->container->getParameter('PWA_PRIVATE_KEY_PATH');
-                    $pwaPrivateKey = trim(file_get_contents($path));
-                    $auth = [
-                        'VAPID' => [
-                            'subject' => 'mailto:peter@magenta-wellness.com',
-                            'publicKey' => $pwaPublicKey,
-                            'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
-                        ],
-                    ];
-
-                    $webPushObjs[] = $webPush = new WebPush($auth);
-                    $webPush->setReuseVAPIDHeaders(true);
 //                $multipleRun = false;
                     /*
                      * @var IndividualMember
@@ -127,6 +130,8 @@ class IndividualMemberService
 
                 if ($rowNotif > 0) {
                     $response[] = 'pushing '.$rowNotif.' notifs';
+                } else {
+                    $response[] = 'No push notif for '.$member->getId().' '.$member->getPerson()->getName();
                 }
 
                 $pushReport = [];
@@ -189,10 +194,42 @@ class IndividualMemberService
             }
 
             $response[] = "let's push again after while loop";
-            /** @var WebPush $webPush */
-            foreach ($webPushObjs as $webPush) {
-                $pushReport = [];
-                $webPush->flush();
+            $pushReport = [];
+            $webPush->flush();
+            /** @var \Minishlink\WebPush\MessageSentReport $report */
+            foreach ($webPush->flush() as $report) {
+                $endpoint = $report->getEndpoint();
+                if ($report->isSuccess()) {
+                    $pushReport[] = $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
+                } else {
+                    $pushReport[] = $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
+
+                    // also available (to get more info)
+
+                    /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
+                    $requestToPushService = $report->getRequest();
+
+                    /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
+                    $responseOfPushService = $report->getResponse();
+
+                    /** @var string $failReason */
+                    $failReason = $report->getReason();
+
+                    /** @var bool $isTheEndpointWrongOrExpired */
+                    $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
+                    if ($isTheEndpointWrongOrExpired) {
+                        $notif = $this->manager->getRepository(NotifSubscription::class)->findOneBy(['endpoint' => $endpoint]);
+                        if (!empty($notif)) {
+                            $this->manager->remove($notif);
+                        }
+                    }
+                }
+            }
+            if (count($pushReport) === 0) {
+                $response[] = 'no notifs were flushed';
+                $response[] = $webPush->countPendingNotifications().' pending notifs';
+                $response[] = 'automatic padding is '.$webPush->getAutomaticPadding();
+
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
                 foreach ($webPush->flush() as $report) {
                     $endpoint = $report->getEndpoint();
@@ -214,48 +251,14 @@ class IndividualMemberService
 
                         /** @var bool $isTheEndpointWrongOrExpired */
                         $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
-                        if ($isTheEndpointWrongOrExpired) {
-                            $notif = $this->manager->getRepository(NotifSubscription::class)->findOneBy(['endpoint' => $endpoint]);
-                            if (!empty($notif)) {
-                                $this->manager->remove($notif);
-                            }
-                        }
                     }
                 }
                 if (count($pushReport) === 0) {
-                    $response[] = 'no notifs were flushed';
+                    $response[] = '(2nd try): no notifs were flushed';
                     $response[] = $webPush->countPendingNotifications().' pending notifs';
-                    $response[] = 'automatic padding is '.$webPush->getAutomaticPadding();
-
-                    /** @var \Minishlink\WebPush\MessageSentReport $report */
-                    foreach ($webPush->flush() as $report) {
-                        $endpoint = $report->getEndpoint();
-                        if ($report->isSuccess()) {
-                            $pushReport[] = $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
-                        } else {
-                            $pushReport[] = $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
-
-                            // also available (to get more info)
-
-                            /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
-                            $requestToPushService = $report->getRequest();
-
-                            /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
-                            $responseOfPushService = $report->getResponse();
-
-                            /** @var string $failReason */
-                            $failReason = $report->getReason();
-
-                            /** @var bool $isTheEndpointWrongOrExpired */
-                            $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
-                        }
-                    }
-                    if (count($pushReport) === 0) {
-                        $response[] = '(2nd try): no notifs were flushed';
-                        $response[] = $webPush->countPendingNotifications().' pending notifs';
-                    }
                 }
             }
+
 
             if (!$this->manager->isOpen()) {
                 throw new \Exception('EM is closed before flushed '.$row);
