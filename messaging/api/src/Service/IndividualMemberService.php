@@ -58,6 +58,8 @@ class IndividualMemberService
                         ],
                     ];
                     $webPush = new WebPush($auth);
+                    $webPush->setReuseVAPIDHeaders(true);
+
 //                $multipleRun = false;
                     /*
                      * @var IndividualMember
@@ -127,13 +129,14 @@ class IndividualMemberService
                     $response[] = 'pushing '.$rowNotif.' notifs';
                 }
 
+                $pushReport = [];
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
                 foreach ($webPush->flush($rowNotif) as $report) {
                     $endpoint = $report->getEndpoint();
                     if ($report->isSuccess()) {
-                        $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
+                        $pushReport[] = $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
                     } else {
-                        $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
+                        $pushReport[] = $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
 
                         // also available (to get more info)
 
@@ -149,6 +152,9 @@ class IndividualMemberService
                         /** @var bool $isTheEndpointWrongOrExpired */
                         $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
                     }
+                }
+                if(count($pushReport) === 0){
+                    $response[] = 'no notifs were flushed';
                 }
             }
 
