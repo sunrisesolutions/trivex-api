@@ -155,6 +155,8 @@ class IndividualMemberService
                 }
                 if (count($pushReport) === 0) {
                     $response[] = 'no notifs were flushed';
+                    $response[] = $webPush->countPendingNotifications().' pending notifs';
+                    $response[] = 'automatic padding is '.$webPush->getAutomaticPadding();
                 }
             }
 
