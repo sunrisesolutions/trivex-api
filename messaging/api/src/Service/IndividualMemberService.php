@@ -38,6 +38,7 @@ class IndividualMemberService
 
             while (!empty($deliveries = $message->commitDeliveries())) {
                 ++$row;
+                $rowNotif = 0;
                 /** @var Delivery $delivery */
                 foreach ($deliveries as $delivery) {
                     $this->manager->persist($delivery);
@@ -79,6 +80,7 @@ class IndividualMemberService
                      * @var NotifSubscription $_sub
                      */
                     foreach ($subscriptions as $_sub) {
+                        $rowNotif++;
                         $preparedSub = Subscription::create(
                             [
                                 'endpoint' => $_sub->getEndpoint(),
@@ -121,10 +123,9 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
 
-
-                $res = $webPush->flush(3000);
+                $res = $webPush->flush($rowNotif);
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
-                foreach ($webPush->flush() as $report) {
+                foreach ($res as $report) {
                     $endpoint = $report->getEndpoint();
                     if ($report->isSuccess()) {
                         $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
