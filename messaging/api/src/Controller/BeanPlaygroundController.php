@@ -75,7 +75,7 @@ class BeanPlaygroundController extends AbstractController
             false
         );
 
-        $res = $webPush->flush();
+        $res = $webPush->flush(3000);
 
         /** @var \Minishlink\WebPush\MessageSentReport $report */
         foreach ($webPush->flush() as $report) {
