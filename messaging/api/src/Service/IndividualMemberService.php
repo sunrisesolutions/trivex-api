@@ -96,10 +96,10 @@ class IndividualMemberService
                                 'icon' => 'assets/img/brand/T-Logo.png',
                                 'vibrate' => [100, 50, 100],
                                 'data' => [
-//                                    'messageId' => $message->getId(),
-//                                    'messageUuid' => $message->getUuid(),
-//                                    'deliveryId' => $delivery->getId(),
-//                                    'deliveryUuid' => $delivery->getUuid()
+                                    'messageId' => $message->getId(),
+                                    'messageUuid' => $message->getUuid(),
+                                    'deliveryId' => $delivery->getId(),
+                                    'deliveryUuid' => $delivery->getUuid()
                                 ],
                                 'actions' => [
                                     [
