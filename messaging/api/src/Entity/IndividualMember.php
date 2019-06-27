@@ -52,6 +52,10 @@ class IndividualMember
         return true;
     }
 
+    /**
+     * @param Message $message
+     * @return Delivery|mixed|null
+     */
     public function getMessageDelivery(Message $message)
     {
         if (array_key_exists($message->getId(), $this->messageDeliveryCache)) {

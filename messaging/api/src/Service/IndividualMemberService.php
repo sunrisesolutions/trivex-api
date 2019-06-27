@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\Delivery;
 use App\Entity\IndividualMember;
 use App\Entity\Message;
 use App\Entity\NotifSubscription;
@@ -34,27 +35,33 @@ class IndividualMemberService
             $memberRepo = $this->manager->getRepository(IndividualMember::class);
             ////////////// PWA Púh ////////////
 //            $members = $memberRepo->findHavingOrganisationSubscriptions((int) $dp->getOwnerId());
-//
-//
-            $path = $this->container->getParameter('PWA_PUBLIC_KEY_PATH');
-            $pwaPublicKey = trim(file_get_contents($path));
-            $path = $this->container->getParameter('PWA_PRIVATE_KEY_PATH');
-            $pwaPrivateKey = trim(file_get_contents($path));
-            $auth = [
-                'VAPID' => [
-                    'subject' => 'mailto:peter@magenta-wellness.com',
-                    'publicKey' => $pwaPublicKey,
-                    'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
-                ],
-            ];
-            $webPush = new WebPush($auth);
+
+            while (!empty($deliveries = $message->commitDeliveries())) {
+                /** @var Delivery $delivery */
+                foreach ($deliveries as $delivery) {
+                    $this->manager->persist($delivery);
+//                }
+                    $member = $delivery->getRecipient();
+
+                    $path = $this->container->getParameter('PWA_PUBLIC_KEY_PATH');
+                    $pwaPublicKey = trim(file_get_contents($path));
+                    $path = $this->container->getParameter('PWA_PRIVATE_KEY_PATH');
+                    $pwaPrivateKey = trim(file_get_contents($path));
+                    $auth = [
+                        'VAPID' => [
+                            'subject' => 'mailto:peter@magenta-wellness.com',
+                            'publicKey' => $pwaPublicKey,
+                            'privateKey' => $pwaPrivateKey, // in the real world, this would be in a secret file
+                        ],
+                    ];
+                    $webPush = new WebPush($auth);
 //                $multipleRun = false;
-            /*
-             * @var IndividualMember
-             */
-            while (!empty($members = $message->getRecipientsByPage())) {
-                /** @var IndividualMember $member */
-                foreach ($members as $member) {
+                    /*
+                     * @var IndividualMember
+                     */
+//            while (!empty($members = $message->getRecipientsByPage())) {
+//                /** @var IndividualMember $member */
+//                foreach ($members as $member) {
                     if ($member->isMessageDelivered($message) || $member->getUuid() === $message->getSender()->getUuid()) {
                         continue;
                     }
@@ -80,13 +87,19 @@ class IndividualMemberService
                             ]
                         );
                         $preparedSubscriptions[] = $preparedSub;
+
                         $notificationPayload = [
                             'notification' => [
                                 'title' => $message->getSubject(),
                                 'body' => $message->getBody(),
-                                'icon' => 'http://trivesg.com/assets/img/brand/T-Logo.png',
+                                'icon' => 'assets/img/brand/T-Logo.png',
                                 'vibrate' => [100, 50, 100],
-                                'data' => $message,
+                                'data' => [
+                                    'messageId' => $message->getId(),
+                                    'messageUuid' => $message->getUuid(),
+                                    'deliveryId' => $delivery->getId(),
+                                    'deliveryUuid' => $delivery->getUuid()
+                                ],
                                 'actions' => [
                                     [
                                         'action' => 'explore',
@@ -106,14 +119,16 @@ class IndividualMemberService
 //                    $recipient = $member;
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
+
+                $this->manager->flush();
                 $res = $webPush->flush();
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
                 foreach ($webPush->flush() as $report) {
                     $endpoint = $report->getEndpoint();
                     if ($report->isSuccess()) {
-                        $response[] =  "[v] Message sent successfully for subscription {$endpoint}.";
+                        $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
                     } else {
-                        $response[] =  "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
+                        $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
 
                         // also available (to get more info)
 
@@ -130,14 +145,6 @@ class IndividualMemberService
                         $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
                     }
                 }
-            }
-
-
-            while (!empty($deliveries = $message->commitDeliveries())) {
-                foreach ($deliveries as $delivery) {
-                    $this->manager->persist($delivery);
-                }
-                $this->manager->flush();
             }
 
             if (!$this->manager->isOpen()) {
