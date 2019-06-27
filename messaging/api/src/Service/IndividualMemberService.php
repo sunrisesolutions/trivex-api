@@ -40,6 +40,7 @@ class IndividualMemberService
                 /** @var Delivery $delivery */
                 foreach ($deliveries as $delivery) {
                     $this->manager->persist($delivery);
+                    $this->manager->flush($delivery);
 //                }
                     $member = $delivery->getRecipient();
 
@@ -120,7 +121,7 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
 
-                $this->manager->flush();
+
                 $res = $webPush->flush();
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
                 foreach ($webPush->flush() as $report) {
