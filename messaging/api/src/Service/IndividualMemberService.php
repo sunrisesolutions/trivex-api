@@ -188,6 +188,69 @@ class IndividualMemberService
                 }
             }
 
+            $response[] = "let's push again after while loop";
+            /** @var WebPush $webPush */
+            foreach($webPushObjs as $webPush){
+                $pushReport = [];
+                $webPush->flush();
+                /** @var \Minishlink\WebPush\MessageSentReport $report */
+                foreach ($webPush->flush() as $report) {
+                    $endpoint = $report->getEndpoint();
+                    if ($report->isSuccess()) {
+                        $pushReport[] = $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
+                    } else {
+                        $pushReport[] = $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
+
+                        // also available (to get more info)
+
+                        /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
+                        $requestToPushService = $report->getRequest();
+
+                        /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
+                        $responseOfPushService = $report->getResponse();
+
+                        /** @var string $failReason */
+                        $failReason = $report->getReason();
+
+                        /** @var bool $isTheEndpointWrongOrExpired */
+                        $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
+                    }
+                }
+                if (count($pushReport) === 0) {
+                    $response[] = 'no notifs were flushed';
+                    $response[] = $webPush->countPendingNotifications().' pending notifs';
+                    $response[] = 'automatic padding is '.$webPush->getAutomaticPadding();
+
+                    /** @var \Minishlink\WebPush\MessageSentReport $report */
+                    foreach ($webPush->flush() as $report) {
+                        $endpoint = $report->getEndpoint();
+                        if ($report->isSuccess()) {
+                            $pushReport[] = $response[] = "[v] Message sent successfully for subscription {$endpoint}.";
+                        } else {
+                            $pushReport[] = $response[] = "[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
+
+                            // also available (to get more info)
+
+                            /** @var \Psr\Http\Message\RequestInterface $requestToPushService */
+                            $requestToPushService = $report->getRequest();
+
+                            /** @var \Psr\Http\Message\ResponseInterface $responseOfPushService */
+                            $responseOfPushService = $report->getResponse();
+
+                            /** @var string $failReason */
+                            $failReason = $report->getReason();
+
+                            /** @var bool $isTheEndpointWrongOrExpired */
+                            $isTheEndpointWrongOrExpired = $report->isSubscriptionExpired();
+                        }
+                    }
+                    if (count($pushReport) === 0) {
+                        $response[] = '(2nd try): no notifs were flushed';
+                        $response[] = $webPush->countPendingNotifications().' pending notifs';
+                    }
+                }
+            }
+
             if (!$this->manager->isOpen()) {
                 throw new \Exception('EM is closed before flushed '.$row);
             } else {
