@@ -123,6 +123,10 @@ class IndividualMemberService
 //                    $delivery = MessageDelivery::createInstance($message, $recipient);
                 }
 
+                if($rowNotif > 0){
+                    $response[] = 'pushing '.$rowNotif.' notifs';
+                }
+
                 $res = $webPush->flush($rowNotif);
                 /** @var \Minishlink\WebPush\MessageSentReport $report */
                 foreach ($res as $report) {
