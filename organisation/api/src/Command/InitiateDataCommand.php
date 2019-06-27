@@ -5,6 +5,7 @@ namespace App\Command;
 use App\Entity\IndividualMember;
 use App\Entity\Organisation;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,7 +19,7 @@ class InitiateDataCommand extends Command
 
     private $manager;
 
-    public function __construct(string $name = null, EntityManager $manager)
+    public function __construct(string $name = null, EntityManagerInterface $manager)
     {
         parent::__construct($name);
         $this->manager = $manager;
