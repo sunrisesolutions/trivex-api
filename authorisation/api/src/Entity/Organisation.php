@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OrganisationRepository")
  * @ORM\Table(name="authorisation__organisation")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Organisation
 {
@@ -23,6 +24,7 @@ class Organisation
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     /**
@@ -39,6 +41,11 @@ class Organisation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\ACRole", mappedBy="organisation")
+     */
+    private $roles;
 
     public function getId(): ?int
     {
@@ -94,6 +101,37 @@ class Organisation
             // set the owning side to null (unless already changed)
             if ($individualMember->getOrganisation() === $this) {
                 $individualMember->setOrganisation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ACRole[]
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(ACRole $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->setOrganisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(ACRole $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+            // set the owning side to null (unless already changed)
+            if ($role->getOrganisation() === $this) {
+                $role->setOrganisation(null);
             }
         }
 

@@ -53,6 +53,11 @@ class ACRole
      */
     private $entries;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="roles")
+     */
+    private $organisation;
+
     public function __construct()
     {
         $this->entries = new ArrayCollection();
@@ -114,6 +119,18 @@ class ACRole
                 $entry->setRole(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getOrganisation(): ?Organisation
+    {
+        return $this->organisation;
+    }
+
+    public function setOrganisation(?Organisation $organisation): self
+    {
+        $this->organisation = $organisation;
 
         return $this;
     }

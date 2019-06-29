@@ -151,6 +151,17 @@ class Organisation
      */
     private $subdomain;
 
+    /**
+     * @ORM\Column(type="magenta_json", nullable=true)
+     */
+    private $roles = [];
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="organisations")
+     * @Groups({"read", "write"})
+     */
+    private $module;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -333,6 +344,30 @@ class Organisation
     public function setSubdomain(?string $subdomain): self
     {
         $this->subdomain = $subdomain;
+
+        return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(?array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getModule(): ?Module
+    {
+        return $this->module;
+    }
+
+    public function setModule(?Module $module): self
+    {
+        $this->module = $module;
 
         return $this;
     }
