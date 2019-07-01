@@ -51,6 +51,7 @@ class Connection
     /**
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="fromConnections")
+     * @ORM\JoinColumn(name="id_from_member", referencedColumnName="id"),
      * @Groups("read")
      */
     private $fromMember;
@@ -58,6 +59,7 @@ class Connection
     /**
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="toConnections")
+     * @ORM\JoinColumn(name="id_to_member", referencedColumnName="id"),
      * @Groups({"read", "write"})
      */
     private $toMember;

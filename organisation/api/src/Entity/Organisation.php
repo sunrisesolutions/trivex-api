@@ -158,6 +158,7 @@ class Organisation
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="organisations")
+     * @ORM\JoinColumn(name="id_module", referencedColumnName="id"),
      * @Groups({"read", "write"})
      */
     private $module;
