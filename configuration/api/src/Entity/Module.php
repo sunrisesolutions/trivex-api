@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -59,6 +61,16 @@ class Module
      */
     private $hostname;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Organisation", mappedBy="modules")
+     */
+    private $organisations;
+
+    public function __construct()
+    {
+        $this->organisations = new ArrayCollection();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -96,6 +108,34 @@ class Module
     public function setHostname(?string $hostname): self
     {
         $this->hostname = $hostname;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Organisation[]
+     */
+    public function getOrganisations(): Collection
+    {
+        return $this->organisations;
+    }
+
+    public function addOrganisation(Organisation $organisation): self
+    {
+        if (!$this->organisations->contains($organisation)) {
+            $this->organisations[] = $organisation;
+            $organisation->addModule($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganisation(Organisation $organisation): self
+    {
+        if ($this->organisations->contains($organisation)) {
+            $this->organisations->removeElement($organisation);
+            $organisation->removeModule($this);
+        }
 
         return $this;
     }
