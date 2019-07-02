@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Security;
 
 class IndividualMemberSubscriber implements EventSubscriberInterface
@@ -70,7 +69,14 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         }
 
         if (!empty($orgUuid = $member->getOrganisationUuid())) {
-            throw new InvalidArgumentException('Invalid Organisation');
+            $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
+            if (empty($org)) {
+                throw new InvalidArgumentException('Invalid Organisation');
+            }
+            $member->setPerson($person);
+            $member->setOrganisation($org);
+            $person->addIndividualMember($member);
+            $org->addIndividualMember($member);
         }
 
 //        $event->setControllerResult($member);
