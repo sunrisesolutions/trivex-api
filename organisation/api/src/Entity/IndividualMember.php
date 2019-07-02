@@ -108,6 +108,11 @@ class IndividualMember
     }
 
     /**
+     * @Groups("write")
+     */
+    private $personUuid;
+
+    /**
      * @return array
      * @Groups({"read"})
      */
@@ -127,6 +132,7 @@ class IndividualMember
      * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="toMember")
      */
     private $toConnections;
+
     /**
      * @var string
      * @ORM\Column(type="string", length=191)
@@ -143,13 +149,15 @@ class IndividualMember
 
     /**
      * @var Person
-     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers", cascade={"persist","merge"})
+     * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
      */
     private $person;
 
     /**
      * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="CASCADE")
      */
     private $organisation;
 
@@ -342,6 +350,18 @@ class IndividualMember
     public function setFulltextString(?string $fulltextString): self
     {
         $this->fulltextString = $fulltextString;
+
+        return $this;
+    }
+
+    public function getPersonUuid(): ?string
+    {
+        return $this->personUuid;
+    }
+
+    public function setPersonUuid(?string $personUuid): self
+    {
+        $this->personUuid = $personUuid;
 
         return $this;
     }
