@@ -156,7 +156,7 @@ class IndividualMember
 
     /**
      * @var Organisation
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers", cascade={"persist","merge"})
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="CASCADE")
      */
     private $organisation;
@@ -176,6 +176,11 @@ class IndividualMember
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $fulltextString;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $organisationUuid;
 
     public function __construct()
     {
@@ -362,6 +367,18 @@ class IndividualMember
     public function setPersonUuid(?string $personUuid): self
     {
         $this->personUuid = $personUuid;
+
+        return $this;
+    }
+
+    public function getOrganisationUuid(): ?string
+    {
+        return $this->organisationUuid;
+    }
+
+    public function setOrganisationUuid(?string $organisationUuid): self
+    {
+        $this->organisationUuid = $organisationUuid;
 
         return $this;
     }

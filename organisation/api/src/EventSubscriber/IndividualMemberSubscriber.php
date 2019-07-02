@@ -6,6 +6,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Attendee;
 use App\Entity\Connection;
 use App\Entity\IndividualMember;
+use App\Entity\Organisation;
 use App\Entity\Person;
 use App\Security\JWTUser;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -65,6 +66,18 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             }
             $member->setPerson($person);
             $person->addIndividualMember($member);
+        }
+
+        if (!empty($orgUuid = $member->getOrganisationUuid())) {
+            $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
+            if (empty($org)) {
+                $org = new Organisation();
+                $org->setUuid($orgUuid);
+            }
+            $member->setPerson($person);
+            $member->setOrganisation($org);
+            $person->addIndividualMember($member);
+            $org->addIndividualMember($member);
         }
 
 //        $event->setControllerResult($member);
