@@ -7,5 +7,5 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class AppUtil extends BaseUtil
 {
-    const APP_NAME = 'USER';
+    const APP_NAME = 'UTILS';
 }
