@@ -127,7 +127,14 @@ class IndividualMember
     {
         $person = $this->person;
 
-        return ['name' => $person->getName(), 'jobTitle' => $person->getJobTitle(), 'employerName' => $person->getEmployerName()];
+        return [
+            'name' => $person->getName(),
+            'jobTitle' => $person->getJobTitle(),
+            'employerName' => $person->getEmployerName(),
+            'dob' => $person->getBirthDate(),
+            'nric' => ($nat = $person->getNationality()) ? $nat->getNricNumber() : '',
+            'email' => $person->getEmail()
+        ];
     }
 
     /**
