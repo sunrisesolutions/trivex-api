@@ -23,8 +23,6 @@ class AwsSnsUtil
 
     private $normalizer;
 
-    const MESSAGE_VERSION = 1;
-
     public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, ObjectNormalizer $normalizer)
     {
         $this->client = $sdk->createSns($config + $credentials);
@@ -157,7 +155,7 @@ class AwsSnsUtil
 //        $first = $member->getOrganisationUsers()->first();
 
 //        $message['data']['first'] = $this->normalizer->normalize($first);
-            $messageArray['version'] = self::MESSAGE_VERSION;
+            $messageArray['version'] = AppUtil::MESSAGE_VERSION;
 
             $message = json_encode($messageArray);
         }

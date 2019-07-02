@@ -43,6 +43,7 @@ class Person
         }
     }
 
+    /** @return  Nationality|bool */
     public function getNationality()
     {
         return $this->nationalities->first();

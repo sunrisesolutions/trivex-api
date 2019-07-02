@@ -30,6 +30,16 @@ class Person
     private $individualMembers;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person")
+     */
+    private $nationalities;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $birthDate;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
@@ -52,6 +62,7 @@ class Person
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
+        $this->nationalities = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -149,4 +160,17 @@ class Person
 
         return $this;
     }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
 }
