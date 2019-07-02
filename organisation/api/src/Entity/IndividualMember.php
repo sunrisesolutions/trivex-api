@@ -187,6 +187,7 @@ class IndividualMember
         $this->roles = new ArrayCollection();
         $this->fromConnections = new ArrayCollection();
         $this->toConnections = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int
