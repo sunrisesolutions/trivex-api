@@ -110,6 +110,11 @@ class IndividualMember
     /**
      * @Groups("write")
      */
+    private $organisationUuid;
+
+    /**
+     * @Groups("write")
+     */
     private $personUuid;
 
     /**
@@ -176,11 +181,6 @@ class IndividualMember
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $fulltextString;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $organisationUuid;
 
     public function __construct()
     {
