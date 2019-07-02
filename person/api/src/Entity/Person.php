@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -12,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  * )
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
  * @ORM\Table(name="person__person")
  * @ORM\HasLifecycleCallbacks()
