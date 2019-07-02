@@ -22,6 +22,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *     },
  *     itemOperations={
  *     "get",
+ *     "delete"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
  *     "put_email"={
  *         "method"="PUT",
  *         "path"="/individual_members/{id}/email",
