@@ -55,6 +55,7 @@ class AppService
 
     public function initiateTopics($env = 'DEV')
     {
+        $env = strtoupper($env);
         $topicArns = $this->getTopicArns($env);
         $topics = [];
         foreach ($topicArns as $name => $arn) {
