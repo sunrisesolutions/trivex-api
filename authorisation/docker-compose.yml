@@ -93,7 +93,7 @@ services:
       - ./client:/usr/src/client:rw,cached
       - /usr/src/client/node_modules
     ports:
-      - "86:3000"
+      - "140:3000"
 
   admin:
     # Use a static website hosting service in production
@@ -107,7 +107,7 @@ services:
       - ./admin:/usr/src/admin:rw,cached
       - /usr/src/admin/node_modules
     ports:
-      - "87:3000"
+      - "141:3000"
 
   h2-proxy:
     # Don't use this proxy in prod

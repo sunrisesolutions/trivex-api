@@ -156,13 +156,6 @@ class Organisation
      */
     private $roles = [];
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="organisations")
-     * @ORM\JoinColumn(name="id_module", referencedColumnName="id"),
-     * @Groups({"read", "write"})
-     */
-    private $module;
-
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -357,18 +350,6 @@ class Organisation
     public function setRoles(?array $roles): self
     {
         $this->roles = $roles;
-
-        return $this;
-    }
-
-    public function getModule(): ?Module
-    {
-        return $this->module;
-    }
-
-    public function setModule(?Module $module): self
-    {
-        $this->module = $module;
 
         return $this;
     }
