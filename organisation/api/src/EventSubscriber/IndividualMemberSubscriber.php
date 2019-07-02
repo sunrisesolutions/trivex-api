@@ -9,6 +9,7 @@ use App\Entity\IndividualMember;
 use App\Entity\Organisation;
 use App\Entity\Person;
 use App\Security\JWTUser;
+use http\Exception\InvalidArgumentException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -69,15 +70,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         }
 
         if (!empty($orgUuid = $member->getOrganisationUuid())) {
-            $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
-            if (empty($org)) {
-                $org = new Organisation();
-                $org->setUuid($orgUuid);
-            }
-            $member->setPerson($person);
-            $member->setOrganisation($org);
-            $person->addIndividualMember($member);
-            $org->addIndividualMember($member);
+            throw new InvalidArgumentException('Invalid Organisation');
         }
 
 //        $event->setControllerResult($member);
