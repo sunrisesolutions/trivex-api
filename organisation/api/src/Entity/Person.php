@@ -65,6 +65,12 @@ class Person
         $this->nationalities = new ArrayCollection();
     }
 
+    /** @return  Nationality|bool */
+    public function getNationality()
+    {
+        return $this->nationalities->first();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -169,6 +175,37 @@ class Person
     public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Nationality[]
+     */
+    public function getNationalities(): Collection
+    {
+        return $this->nationalities;
+    }
+
+    public function addNationality(Nationality $nationality): self
+    {
+        if (!$this->nationalities->contains($nationality)) {
+            $this->nationalities[] = $nationality;
+            $nationality->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNationality(Nationality $nationality): self
+    {
+        if ($this->nationalities->contains($nationality)) {
+            $this->nationalities->removeElement($nationality);
+            // set the owning side to null (unless already changed)
+            if ($nationality->getPerson() === $this) {
+                $nationality->setPerson(null);
+            }
+        }
 
         return $this;
     }
