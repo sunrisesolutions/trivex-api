@@ -9,13 +9,13 @@ use App\Entity\IndividualMember;
 use App\Entity\Organisation;
 use App\Entity\Person;
 use App\Security\JWTUser;
-use http\Exception\InvalidArgumentException;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Security;
 
 class IndividualMemberSubscriber implements EventSubscriberInterface
