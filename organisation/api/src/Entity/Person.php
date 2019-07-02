@@ -45,6 +45,11 @@ class Person
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=25, nullable=true)
+     */
+    private $phoneNumber;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $jobTitle;
@@ -206,6 +211,18 @@ class Person
                 $nationality->setPerson(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
 
         return $this;
     }

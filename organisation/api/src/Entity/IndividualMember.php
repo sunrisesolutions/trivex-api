@@ -133,7 +133,8 @@ class IndividualMember
             'employerName' => $person->getEmployerName(),
             'dob' => $person->getBirthDate(),
             'nric' => ($nat = $person->getNationality()) ? $nat->getNricNumber() : '',
-            'email' => $person->getEmail()
+            'email' => $person->getEmail(),
+            'phone' => $person->getPhoneNumber()
         ];
     }
 
