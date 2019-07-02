@@ -21,7 +21,7 @@ services:
       - ./api:/srv/api:rw,cached
       # If you develop on Linux, uncomment the following line to use a bind-mounted host directory instead
       # - ./api/var:/srv/api/var:rw
-      - ../utils/src:/srv/api/libraries/component/utils/src:rw,cached
+      - ../utils/libraries/component/utils/src:/srv/api/libraries/component/utils/src:rw,cached
       - ../utils/config/services.yaml:/srv/api/config/services.yaml:rw,cached
       - ../utils/config/packages/aws_sdk.yaml:/srv/api/config/packages/aws_sdk.yaml:rw,cached
   api:
