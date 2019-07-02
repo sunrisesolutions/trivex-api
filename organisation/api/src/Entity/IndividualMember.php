@@ -102,7 +102,7 @@ class IndividualMember
      */
     public function initiateAccessToken()
     {
-        if (empty($this->uuid)) {
+        if (empty($this->accessToken)) {
             $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT'));
         }
     }
