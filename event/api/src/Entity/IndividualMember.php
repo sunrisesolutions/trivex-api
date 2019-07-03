@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     collectionOperations={
  *         "get"={"access_control"="is_granted('ROLE_USER')"},
  *     },

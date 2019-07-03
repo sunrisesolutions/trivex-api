@@ -7,7 +7,7 @@ use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     shortName="IndividualMember",
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={

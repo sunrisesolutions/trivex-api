@@ -1,0 +1,13 @@
+App\Entity\IndividualMember:
+  individualmember{1..5}:
+    uuid (unique): 'UID-<numberBetween(1000, 9999)>'
+    roles: '<randomElement(["ROLE_USER", "ROLE_ADMIN"])>'
+    emailBody: '<sentence(6, true)>'
+    emailSubject: '<name()>'
+    fulltextString: '<sentence(10, true)>'
+    fromConnections: ''
+    toConnections: ''
+  individualmember_person{1..10}:
+    person: ''
+  individualmember_org{1..10}:
+    organisation: ''
