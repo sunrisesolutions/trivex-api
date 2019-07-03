@@ -43,6 +43,22 @@ class User implements UserInterface
     }
 
     /**
+     * @return array
+     * @Groups("read")
+     */
+    public function getIndividualMemberData(){
+        $data = [];
+        /** @var OrganisationUser $im */
+        foreach($this->organisationUsers as $im){
+            $member['accessToken'] = $im->getAccessToken();
+            $member['id'] = $im->getId();
+            $member['uuid'] = $im->getUuid();
+            $data[]= $member;
+        }
+        return $data;
+    }
+
+    /**
      * @ORM\PrePersist
      */
     public function initiateUuid()
