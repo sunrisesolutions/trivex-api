@@ -143,11 +143,20 @@ class Message
     private $organisation;
 
     /**
+     * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="messages")
      * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
-     * @Groups("read")
      */
     private $sender;
+
+    /**
+     * @return mixed
+     * @Groups("read")
+     */
+    public function getSenderId()
+    {
+        return $this->sender->getId();
+    }
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
