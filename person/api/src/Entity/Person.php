@@ -25,7 +25,7 @@ class Person
     const GENDER_FEMALE = 'FEMALE';
 
     /**
-     * @var int|null The Event Id
+     * @var int|null The Person Id
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
