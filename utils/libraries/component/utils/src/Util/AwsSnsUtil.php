@@ -37,7 +37,10 @@ class AwsSnsUtil
     public function getTopicArn($name = null)
     {
         if (empty($name)) {
-            return getenv('AWS_SNS_PREFIX').BaseUtil::PROJECT_NAME.'_'.BaseUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
+            if(empty($snsPrefix = getenv('AWS_SNS_PREFIX'))){
+                $snsPrefix = getenv(sprintf('AWS_SNS_PREFIX_%s',AppUtil::APP_NAME));
+            }
+            return $snsPrefix.BaseUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
         }
 
         if (!empty($this->topics)) {
@@ -50,7 +53,7 @@ class AwsSnsUtil
         $topics = $topicResults->get('Topics');
         $arn = null;
         foreach ($topics as $topic) {
-            $this->topics[$name] = $topic['TopicArn'];
+            $this->topics[$name] = ['TopicArn'=>$topic['TopicArn']];
             if (StringUtil::endsWith($topic['TopicArn'], $name)) {
                 $arn = $topic['TopicArn'];
             }
