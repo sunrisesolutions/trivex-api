@@ -71,8 +71,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         if (!empty($orgUuid = $member->getOrganisationUuid())) {
             $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
             if (empty($org)) {
-                $org = new Organisation();
-                $org->setUuid($orgUuid);
+                throw new InvalidArgumentException('Invalid Organisation');
             }
             $member->setPerson($person);
             $member->setOrganisation($org);

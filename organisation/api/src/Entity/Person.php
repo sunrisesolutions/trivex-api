@@ -30,9 +30,24 @@ class Person
     private $individualMembers;
 
     /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person")
+     */
+    private $nationalities;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $birthDate;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
+
+    /**
+     * @ORM\Column(type="string", length=25, nullable=true)
+     */
+    private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -52,6 +67,13 @@ class Person
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
+        $this->nationalities = new ArrayCollection();
+    }
+
+    /** @return  Nationality|bool */
+    public function getNationality()
+    {
+        return $this->nationalities->first();
     }
 
     public function getId(): ?int
@@ -149,4 +171,60 @@ class Person
 
         return $this;
     }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Nationality[]
+     */
+    public function getNationalities(): Collection
+    {
+        return $this->nationalities;
+    }
+
+    public function addNationality(Nationality $nationality): self
+    {
+        if (!$this->nationalities->contains($nationality)) {
+            $this->nationalities[] = $nationality;
+            $nationality->setPerson($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNationality(Nationality $nationality): self
+    {
+        if ($this->nationalities->contains($nationality)) {
+            $this->nationalities->removeElement($nationality);
+            // set the owning side to null (unless already changed)
+            if ($nationality->getPerson() === $this) {
+                $nationality->setPerson(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
 }

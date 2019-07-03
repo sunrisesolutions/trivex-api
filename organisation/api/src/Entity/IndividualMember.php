@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use App\Util\AwsS3Util;
@@ -11,17 +13,17 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_ADMIN')"},
+ *         "post"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
  *     },
  *     itemOperations={
  *     "get",
+ *     "delete"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
  *     "put_email"={
  *         "method"="PUT",
  *         "path"="/individual_members/{id}/email",
@@ -78,7 +80,7 @@ class IndividualMember
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IM_%s_%s', $this->organisation->getId(), $this->person->getId()));
+            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IM'));
         }
     }
 
@@ -102,8 +104,8 @@ class IndividualMember
      */
     public function initiateAccessToken()
     {
-        if (empty($this->uuid)) {
-            $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT_%s_%s', $this->organisation->getId(), $this->person->getId()));
+        if (empty($this->accessToken)) {
+            $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT'));
         }
     }
 
@@ -125,7 +127,15 @@ class IndividualMember
     {
         $person = $this->person;
 
-        return ['name' => $person->getName(), 'jobTitle' => $person->getJobTitle(), 'employerName' => $person->getEmployerName()];
+        return [
+            'name' => $person->getName(),
+            'jobTitle' => $person->getJobTitle(),
+            'employerName' => $person->getEmployerName(),
+            'dob' => $person->getBirthDate(),
+            'nric' => ($nat = $person->getNationality()) ? $nat->getNricNumber() : '',
+            'email' => $person->getEmail(),
+            'phone' => $person->getPhoneNumber()
+        ];
     }
 
     /**
@@ -187,6 +197,7 @@ class IndividualMember
         $this->roles = new ArrayCollection();
         $this->fromConnections = new ArrayCollection();
         $this->toConnections = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     public function getId(): ?int

@@ -2,15 +2,11 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(
- *     attributes={"access_control"="is_granted('ROLE_USER')"},
- * )
  * @ORM\Entity(repositoryClass="App\Repository\NationalityRepository")
- * @ORM\Table(name="person__nationality")
+ * @ORM\Table(name="organisation__nationality")
  */
 class Nationality
 {
