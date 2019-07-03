@@ -11,13 +11,13 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity(repositoryClass="App\Repository\NationalityRepository")
  * @ORM\Table(name="person__nationality")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Nationality
 {
     /**
      * @var int|null The Event Id
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
