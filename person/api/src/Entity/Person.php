@@ -52,7 +52,7 @@ class Person
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person")
+     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person", cascade={"persist","merge"})
      * @Groups({"read","write"})
      */
     private $nationalities;
