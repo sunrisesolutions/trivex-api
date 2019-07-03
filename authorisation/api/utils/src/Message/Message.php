@@ -10,9 +10,11 @@ use Doctrine\ORM\EntityManagerInterface;
 
 abstract class Message
 {
-    public $version;
+    const OPERATION_DELETE = 'DELETE';
+    const OPERATION_POST = 'POST';
+    const OPERATION_PUT = 'PUT';
 
-    public $operation;
+    public $version;
 
     public $data;
 
@@ -26,6 +28,11 @@ abstract class Message
                 $className = constant("$supportedType::$prop");
                 $repo = $manager->getRepository($className);
                 $entity = $repo->findOneBy(['uuid' => $obj->uuid]);
+                if ($obj->_SYSTEM_OPERATION === self::OPERATION_DELETE) {
+                    $manager->remove($entity);
+                    break;
+                }
+
                 $nonScalarProps = AppUtil::copyObjectScalarProperties($obj, $entity);
 
                 foreach ($nonScalarProps as $_prop => $_obj) {

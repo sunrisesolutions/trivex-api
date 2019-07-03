@@ -23,8 +23,6 @@ class AwsSnsUtil
 
     private $normalizer;
 
-    const MESSAGE_VERSION = 1;
-
     public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, ObjectNormalizer $normalizer)
     {
         $this->client = $sdk->createSns($config + $credentials);
@@ -39,7 +37,10 @@ class AwsSnsUtil
     public function getTopicArn($name = null)
     {
         if (empty($name)) {
-            return getenv('AWS_SNS_PREFIX').BaseUtil::PROJECT_NAME.'_'.BaseUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
+            if (empty($snsPrefix = getenv('AWS_SNS_PREFIX'))) {
+                $snsPrefix = getenv(sprintf('AWS_SNS_PREFIX_%s', AppUtil::APP_NAME));
+            }
+            return $snsPrefix.BaseUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
         }
 
         if (!empty($this->topics)) {
@@ -52,7 +53,7 @@ class AwsSnsUtil
         $topics = $topicResults->get('Topics');
         $arn = null;
         foreach ($topics as $topic) {
-            $this->topics[$name] = $topic['TopicArn'];
+            $this->topics[$name] = ['TopicArn' => $topic['TopicArn']];
             if (StringUtil::endsWith($topic['TopicArn'], $name)) {
                 $arn = $topic['TopicArn'];
             }
@@ -145,19 +146,21 @@ class AwsSnsUtil
         return $result;
     }
 
-    public function publishMessage($object, $topicArn = null)
+    public function publishMessage($object, $operation = \App\Message\Message::OPERATION_POST, $topicArn = null)
     {
         if (is_string($object)) {
             $message = $object;
         } else {
             $messageArray = [];
             $className = (new \ReflectionClass($object))->getShortName();
+            $normalised = $this->normalizer->normalize($object);
+            $normalised['_SYSTEM_OPERATION'] = $operation;
 
-            $messageArray['data'] = [lcfirst($className) => $this->normalizer->normalize($object)];
+            $messageArray['data'] = [lcfirst($className) => $normalised];
 //        $first = $member->getOrganisationUsers()->first();
 
 //        $message['data']['first'] = $this->normalizer->normalize($first);
-            $messageArray['version'] = self::MESSAGE_VERSION;
+            $messageArray['version'] = AppUtil::MESSAGE_VERSION;
 
             $message = json_encode($messageArray);
         }
