@@ -4,10 +4,13 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\NationalityRepository")
  * @ORM\Table(name="person__nationality")
@@ -16,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Nationality
 {
     /**
-     * @var int|null The Event Id
+     * @var int|null The Nationality Id
      * @ORM\Id()
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
@@ -25,22 +28,26 @@ class Nationality
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read","write"})
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $nricNumber;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $passportNumber;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="nationalities")
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
+     * @Groups("read")
      */
     private $person;
 
