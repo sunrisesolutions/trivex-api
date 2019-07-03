@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -25,6 +26,16 @@ class Nationality
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
@@ -50,6 +61,12 @@ class Nationality
      * @Groups("read")
      */
     private $person;
+
+    /**
+     * @ORM\Column(type="string", length=191)
+     * @Groups("read")
+     */
+    private $uuid;
 
     public function getId(): ?int
     {
@@ -100,6 +117,18 @@ class Nationality
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }
