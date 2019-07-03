@@ -27,7 +27,6 @@ class Person
     /**
      * @var int|null The Person Id
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
