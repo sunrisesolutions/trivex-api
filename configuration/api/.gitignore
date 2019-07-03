@@ -1,4 +1,8 @@
 .idea
+config/services.yaml
+config/packages/aws_sdk.yaml
+libraries/component/utils/src
+utils
 
 /helm/api/charts
 
