@@ -24,3 +24,10 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
                 alias: App
+
+services:
+    magenta_person.person_event_subscriber:
+        class: App\Doctrine\Subscriber\PersonEventSubsriber
+        arguments: ['@app_util_aws_sns_util']
+        tags:
+            - { name: doctrine.event_subscriber }

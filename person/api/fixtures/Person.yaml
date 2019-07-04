@@ -1,0 +1,17 @@
+App\Entity\Person:
+  person{1..5}:
+    birthDate: '<dateTimeBetween("-10 year", "now")>'
+    givenName: '<lastName()>'
+    familyName: '<firstName()>'
+    gender: '<randomElement(["MALE", "FEMALE"])>'
+    email: '<email()>'
+    phoneNumber: '<numberBetween(1000000000, 9000000000)>'
+    uuid: 'UID-<numberBetween(100000, 900000)>'
+  person6:
+    birthDate: '<dateTimeBetween("-10 year", "now")>'
+    givenName: 'usertest'
+    familyName: '<firstName()>'
+    gender: '<randomElement(["MALE", "FEMALE"])>'
+    email: 'usertest\@gmail.com'
+    phoneNumber: '<numberBetween(1000000000, 9000000000)>'
+    uuid: 'UID-<numberBetween(100000, 900000)>'
