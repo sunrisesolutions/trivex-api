@@ -32,7 +32,7 @@ use App\Controller\SendEmailToIndividualMember;
  *         "denormalization_context"={"groups"={"email"}},
  *     }
  *     },
- *     normalizationContext={"groups"={"read"}},
+ *     normalizationContext={"groups"={"read_member"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
@@ -66,7 +66,7 @@ class IndividualMember
     public $emailSubject;
 
     /**
-     * @Groups({"read"})
+     * @Groups({"read_member"})
      * @return mixed|string
      */
     public function getProfilePicture()
@@ -121,7 +121,7 @@ class IndividualMember
 
     /**
      * @return array
-     * @Groups({"read"})
+     * @Groups({"read_member"})
      */
     public function getPersonData()
     {
@@ -151,14 +151,14 @@ class IndividualMember
     /**
      * @var string
      * @ORM\Column(type="string", length=191)
-     * @Groups({"read"})
+     * @Groups({"read_member"})
      */
     private $uuid;
 
     /**
      * @var \DateTime
      * @ORM\Column(type="datetime")
-     * @Groups({"read"})
+     * @Groups({"read_member"})
      */
     private $createdAt;
 
