@@ -47,7 +47,7 @@ class UserTests extends WebTestCase
         $this->assertTrue(is_string($responseArray['hydra:member'][0]['birthDate']));
     }
 
-    public function testGreateUser() {
+    public function testPostUser() {
         $token = $this->jwtToken();
         $response = $this->request('POST', 'users', [
             'email' => 'user7@gmail.com',

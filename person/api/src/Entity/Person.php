@@ -9,10 +9,13 @@ use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}*
  * )
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
@@ -25,9 +28,8 @@ class Person
     const GENDER_FEMALE = 'FEMALE';
 
     /**
-     * @var int|null The Event Id
+     * @var int|null The Person Id
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
@@ -50,47 +52,56 @@ class Person
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person")
+     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person", cascade={"persist","merge"})
+     * @Groups({"read","write"})
      */
     private $nationalities;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read","write"})
      */
     private $birthDate;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Groups({"read","write"})
      */
     private $givenName;
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read","write"})
      */
     private $familyName;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
+     * @Groups({"read","write"})
      */
     private $gender;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read","write"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=25, nullable=true)
+     * @Groups({"read","write"})
      */
     private $phoneNumber;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("read")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read","write"})
      */
     private $middleName;
 

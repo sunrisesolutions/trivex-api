@@ -73,6 +73,19 @@
     "doctrine/doctrine-cache-bundle": {
         "version": "1.3.5"
     },
+    "doctrine/doctrine-migrations-bundle": {
+        "version": "1.2",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.2",
+            "ref": "c1431086fec31f17fbcfe6d6d7e92059458facc1"
+        },
+        "files": [
+            "config/packages/doctrine_migrations.yaml",
+            "src/Migrations/.gitignore"
+        ]
+    },
     "doctrine/event-manager": {
         "version": "v1.0.0"
     },
@@ -85,6 +98,9 @@
     "doctrine/lexer": {
         "version": "v1.0.1"
     },
+    "doctrine/migrations": {
+        "version": "v2.1.0"
+    },
     "doctrine/orm": {
         "version": "v2.6.3"
     },
@@ -96,6 +112,9 @@
     },
     "easyrdf/easyrdf": {
         "version": "0.9.1"
+    },
+    "egulias/email-validator": {
+        "version": "2.1.9"
     },
     "fig/link-util": {
         "version": "1.0.0"
@@ -159,6 +178,9 @@
             "config/packages/lexik_jwt_authentication.yaml"
         ]
     },
+    "monolog/monolog": {
+        "version": "1.24.0"
+    },
     "mtdowling/jmespath.php": {
         "version": "2.4.0"
     },
@@ -195,6 +217,12 @@
     },
     "nikic/php-parser": {
         "version": "v4.2.1"
+    },
+    "ocramius/package-versions": {
+        "version": "1.4.0"
+    },
+    "ocramius/proxy-manager": {
+        "version": "2.2.2"
     },
     "php-cs-fixer/diff": {
         "version": "v1.3.0"
@@ -240,6 +268,8 @@
     },
     "sebastian/recursion-context": {
         "version": "3.0.0"
+    "swiftmailer/swiftmailer": {
+        "version": "v6.2.1"
     },
     "symfony/asset": {
         "version": "v4.2.4"
@@ -363,6 +393,23 @@
             "config/packages/mercure.yaml"
         ]
     },
+    "symfony/monolog-bridge": {
+        "version": "v4.2.10"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.3",
+            "ref": "6240c6d43e8237a32452f057f81816820fd56ab6"
+        },
+        "files": [
+            "config/packages/dev/monolog.yaml",
+            "config/packages/prod/monolog.yaml",
+            "config/packages/test/monolog.yaml"
+        ]
+    },
     "symfony/options-resolver": {
         "version": "v4.2.4"
     },
@@ -381,6 +428,11 @@
             "phpunit.xml.dist",
             "tests/.gitignore"
         ]
+    "symfony/orm-pack": {
+        "version": "v1.0.6"
+    },
+    "symfony/polyfill-intl-idn": {
+        "version": "v1.11.0"
     },
     "symfony/polyfill-mbstring": {
         "version": "v1.11.0"
@@ -447,6 +499,19 @@
     },
     "symfony/test-pack": {
         "version": "v1.0.6"
+    "symfony/swiftmailer-bundle": {
+        "version": "2.5",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "2.5",
+            "ref": "3db029c03e452b4a23f7fc45cec7c922c2247eb8"
+        },
+        "files": [
+            "config/packages/dev/swiftmailer.yaml",
+            "config/packages/swiftmailer.yaml",
+            "config/packages/test/swiftmailer.yaml"
+        ]
     },
     "symfony/twig-bridge": {
         "version": "v4.2.4"
@@ -520,5 +585,11 @@
     },
     "willdurand/negotiation": {
         "version": "v2.3.1"
+    },
+    "zendframework/zend-code": {
+        "version": "3.3.1"
+    },
+    "zendframework/zend-eventmanager": {
+        "version": "3.2.1"
     }
 }

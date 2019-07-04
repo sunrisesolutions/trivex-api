@@ -3,46 +3,70 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     normalizationContext={"groups"={"read", "read_person"}},
+ *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\NationalityRepository")
  * @ORM\Table(name="person__nationality")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Nationality
 {
     /**
-     * @var int|null The Event Id
+     * @var int|null The Nationality Id
      * @ORM\Id()
-     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=128)
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
+
+    /**
+     * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read","write"})
      */
     private $country;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $nricNumber;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $passportNumber;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="nationalities")
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
+     * @Groups("read_person")
      */
     private $person;
+
+    /**
+     * @ORM\Column(type="string", length=191)
+     * @Groups("read")
+     */
+    private $uuid;
 
     public function getId(): ?int
     {
@@ -54,7 +78,7 @@ class Nationality
         return $this->country;
     }
 
-    public function setCountry(string $country): self
+    public function setCountry(?string $country): self
     {
         $this->country = $country;
 
@@ -93,6 +117,18 @@ class Nationality
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

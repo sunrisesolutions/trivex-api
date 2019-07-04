@@ -43,6 +43,10 @@ services:
     #        calls:
     #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
 
+    app_util_aws_sns_util:
+        alias: App\Util\AwsSnsUtil
+        public: true
+
     App\Util\AwsSnsUtil:
         arguments:
             $config: '%aws_sdk.config.default%'
