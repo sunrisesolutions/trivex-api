@@ -45,7 +45,7 @@ class Organisation
 
     public function setLogoName(?string $logoName): self
     {
-        if (!empty($this->logoName) && $this->logoName !== $logoName) {
+        if (empty($logoName) && !empty($this->logoName)) {
             AwsS3Util::getInstance()->deleteObject($this->buildLogoPath());
         }
 
