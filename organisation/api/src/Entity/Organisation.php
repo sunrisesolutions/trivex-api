@@ -40,7 +40,7 @@ class Organisation
 
     private function buildLogoPath()
     {
-        return strtolower(AppUtil::APP_NAME).'/logo/'.$this->uuid.'-'.$this->logoName;
+        return strtolower(AppUtil::APP_NAME).'/logo/'.$this->uuid;
     }
 
     public function setLogoName(?string $logoName): self
@@ -65,6 +65,18 @@ class Organisation
                 $this->code = $this->uuid;
             }
         }
+    }
+
+    /**
+     * @Groups({"read"})
+     *
+     * @return mixed|string|null
+     */
+    public function getLogoWriteUrl()
+    {
+        $path = $this->buildLogoPath();
+
+        return AwsS3Util::getInstance()->getObjectReadUrl($path);
     }
 
     /**
