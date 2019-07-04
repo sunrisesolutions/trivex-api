@@ -10,7 +10,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read"}},
+ *     normalizationContext={"groups"={"read", "read_person"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\NationalityRepository")
@@ -58,7 +58,7 @@ class Nationality
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="nationalities")
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
-     * @Groups("read")
+     * @Groups("read_person")
      */
     private $person;
 
