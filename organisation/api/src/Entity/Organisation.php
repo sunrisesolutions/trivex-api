@@ -72,11 +72,11 @@ class Organisation
      *
      * @return mixed|string|null
      */
-    public function getLogoWriteUrl()
+    public function getLogoWriteForm()
     {
         $path = $this->buildLogoPath();
 
-        return AwsS3Util::getInstance()->getObjectReadUrl($path);
+        return AwsS3Util::getInstance()->getObjectWriteForm($path);
     }
 
     /**
