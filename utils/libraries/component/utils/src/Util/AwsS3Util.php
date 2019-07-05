@@ -20,6 +20,20 @@ class AwsS3Util
         return self::$instance;
     }
 
+    public function getConfig()
+    {
+        $accessKey = getenv('S3_ACCESS_KEY');
+        $secretKey = getenv('S3_SECRET_KEY');
+        $region = getenv('S3_REGION');
+        $bucket = getenv('S3_BUCKET');
+        $directory = getenv('S3_DIRECTORY');
+        return [
+            'accessKey' => $accessKey,
+            'secretKey' => $secretKey,
+            'directory' => $directory
+        ];
+    }
+
     public function deleteObject($path)
     {
         $accessKey = getenv('S3_ACCESS_KEY');
