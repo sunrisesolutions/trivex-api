@@ -74,9 +74,9 @@ class Organisation
      */
     public function getLogoWriteForm()
     {
-        $path = AwsS3Util::getInstance()->getConfig()['directory'].'/'.$this->buildLogoPath();
+        $path = $this->buildLogoPath();
 
-        return array_merge(['filePath' => $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
+        return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'. $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
     }
 
     /**
