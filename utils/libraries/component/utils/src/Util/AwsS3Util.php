@@ -51,6 +51,82 @@ class AwsS3Util
         }
     }
 
+    public function getObjectWriteForm($path, $expr = '+7 days')
+    {
+        $apcuGetKey = 'POST_'.$path;
+        if (apcu_exists($apcuGetKey)) {
+            return apcu_fetch($apcuGetKey);
+        }
+
+        $accessKey = getenv('S3_ACCESS_KEY');
+        $secretKey = getenv('S3_SECRET_KEY');
+        $region = getenv('S3_REGION');
+        $bucket = getenv('S3_BUCKET');
+        $directory = getenv('S3_DIRECTORY');
+        $version = self::SDK_VERSION;
+
+        $credentials = new Credentials($accessKey, $secretKey);
+
+        $path = $directory.'/'.$path;
+
+        //Creating a presigned request
+        $s3Client = new S3Client([
+//            'profile' => 'default',
+            'region' => $region,
+            'version' => $version,
+            'credentials' => $credentials,
+        ]);
+
+        $cmd = $s3Client->getCommand('PostObject', [
+            'Bucket' => $bucket,
+            'Key' => $path,
+        ]);
+
+        $request = $s3Client->createPresignedRequest($cmd, $expr);
+        $url = (string) $request->getUri();
+
+        apcu_store($apcuGetKey, $url);
+
+        /////////////////////////////////////////
+        ///
+        ///
+        ///
+
+// Set some defaults for form input fields
+        $formInputs = ['acl' => 'private'];
+
+// Construct an array of conditions for policy
+        $options = [
+            ['acl' => 'private'],
+            ['bucket' => $bucket],
+            ['starts-with', '$key', $path],
+            ['starts-with', '$Content-Type', '']
+        ];
+
+// Optional: configure expiration time string
+        $expires = '+2 hours';
+
+        $postObject = new \Aws\S3\PostObjectV4(
+            $s3Client,
+            $bucket,
+            $formInputs,
+            $options,
+            $expires
+        );
+
+// Get attributes to set on an HTML form, e.g., action, method, enctype
+        $formAttributes = $postObject->getFormAttributes();
+
+// Get form input fields. This will include anything set as a form input in
+// the constructor, the provided JSON policy, your AWS access key ID, and an
+// auth signature.
+        $formInputs = $postObject->getFormInputs();
+        return [
+            'attributes' => $formAttributes,
+            'inputs' => $formInputs
+        ];
+    }
+
     public function getObjectReadUrl($path, $expr = '+7 days')
     {
         $apcuGetKey = 'GET_'.$path;
