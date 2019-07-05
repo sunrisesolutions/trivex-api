@@ -51,7 +51,7 @@ class AwsS3Util
         }
     }
 
-    public function getObjectWriteForm($path, $expr = '+7 days')
+    public function getObjectWriteForm($path, $expires = '+2 hours')
     {
 //        $apcuGetKey = 'POST_'.$path;
 //        if (apcu_exists($apcuGetKey)) {
@@ -87,17 +87,19 @@ class AwsS3Util
 
 // Set some defaults for form input fields
         $formInputs = ['acl' => 'private'];
-
+        $pathPieces = explode('/', $path);
+        array_pop($pathPieces);
+        $directoryPath = implode('/', $pathPieces);
 // Construct an array of conditions for policy
         $options = [
             ['acl' => 'private'],
             ['bucket' => $bucket],
-            ['starts-with', '$key', $path],
+            ['starts-with', '$key', $directoryPath],
             ['starts-with', '$Content-Type', '']
         ];
 
 // Optional: configure expiration time string
-        $expires = '+2 hours';
+//        $expires = '+2 hours';
 
         $postObject = new \Aws\S3\PostObjectV4(
             $s3Client,
