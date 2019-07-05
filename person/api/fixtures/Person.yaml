@@ -1,5 +1,5 @@
 App\Entity\Person:
-  person{1..5}:
+  person{1..3}:
     birthDate: '<dateTimeBetween("-10 year", "now")>'
     givenName: '<lastName()>'
     familyName: '<firstName()>'
@@ -7,11 +7,19 @@ App\Entity\Person:
     email: '<email()>'
     phoneNumber: '<numberBetween(1000000000, 9000000000)>'
     uuid: 'UID-<numberBetween(100000, 900000)>'
-  person6:
+  person4:
     birthDate: '<dateTimeBetween("-10 year", "now")>'
-    givenName: 'usertest'
+    givenName: 'person4'
     familyName: '<firstName()>'
     gender: '<randomElement(["MALE", "FEMALE"])>'
-    email: 'usertest\@gmail.com'
+    email: 'person4\@gmail.com'
+    phoneNumber: '<numberBetween(1000000000, 9000000000)>'
+    uuid: 'UID-<numberBetween(100000, 900000)>'
+  person5:
+    birthDate: '<dateTimeBetween("-10 year", "now")>'
+    givenName: 'person5'
+    familyName: '<firstName()>'
+    gender: '<randomElement(["MALE", "FEMALE"])>'
+    email: 'person5\@gmail.com'
     phoneNumber: '<numberBetween(1000000000, 9000000000)>'
     uuid: 'UID-<numberBetween(100000, 900000)>'

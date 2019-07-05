@@ -95,7 +95,7 @@ class UserTests extends WebTestCase
         $this->assertNull($u);
     }
 
-    public function EditUser() {
+    public function testEditUser() {
         $repository = static::$container->get('doctrine')->getRepository(User::class);
         $token = $this->jwtToken();
         $user = $repository->findOneBy(['username' => 'user1']);

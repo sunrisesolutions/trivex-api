@@ -11,7 +11,9 @@ class BaseUtil
 
     public static function getFullAppName($name)
     {
-        $names = ['ORG' => 'Organisation',
+        $names = [
+            'ORG' => 'Organisation',
+            'PERSON' => 'Person'
         ];
         return $names[$name];
     }
@@ -30,9 +32,9 @@ class BaseUtil
                 continue;
             }
 
-            echo 'prop is '.$prop.'  ';
+            echo 'prop is ' . $prop . '  ';
             if (is_scalar($val)) {
-                $setter = 'set'.ucfirst(strtolower($prop));
+                $setter = 'set' . ucfirst(strtolower($prop));
                 $dest->{$setter}($val);
             } else {
                 $nonScalarProps[$prop] = $val;

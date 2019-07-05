@@ -35,6 +35,10 @@ services:
     App\Message\:
         resource: '../libraries/component/utils/src/Message/*'
 
+    app_util_aws_sqs_util:
+        alias: App\Util\AwsSqsUtil
+        public: true
+
     App\Util\AwsSqsUtil:
         arguments:
             $config: '%aws_sdk.config.default%'
@@ -58,6 +62,10 @@ services:
 #    App\Command\AwsSqsWorkerCommand:
 #        tags:
 #            -  { name: console.command }
+
+    app_util_aws_message_consumer:
+        alias: App\Message\Consumer
+        public: true
 
     App\Message\Consumer:
         arguments: [!tagged consumer_strategy]

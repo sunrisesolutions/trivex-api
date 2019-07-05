@@ -2,18 +2,18 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\Person;
+use App\Entity\Organisation;
 use App\Message\Message;
+use App\Util\AwsSnsUtil;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use App\Util\AwsSnsUtil;
 
-class PersonEventSubsriber implements EventSubscriber {
+class OrganisationEventSubscriber implements EventSubscriber {
 
     private $awsSnsUtil;
 
-    public function __construct(AwsSnsUtil $awsSnsUtil) {
+    function __construct(AwsSnsUtil $awsSnsUtil)
+    {
         $this->awsSnsUtil = $awsSnsUtil;
     }
 
@@ -30,7 +30,7 @@ class PersonEventSubsriber implements EventSubscriber {
 
     public function postPersist(LifecycleEventArgs $args) {
         $object = $args->getObject();
-        if (!$object instanceof Person) {
+        if (!$object instanceof Organisation) {
             return;
         }
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
@@ -38,7 +38,7 @@ class PersonEventSubsriber implements EventSubscriber {
 
     public function postUpdate(LifecycleEventArgs $args) {
         $object = $args->getObject();
-        if (!$object instanceof Person) {
+        if (!$object instanceof Organisation) {
             return;
         }
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
@@ -46,10 +46,9 @@ class PersonEventSubsriber implements EventSubscriber {
 
     public function postRemove(LifecycleEventArgs $args) {
         $object = $args->getObject();
-        if (!$object instanceof Person) {
+        if (!$object instanceof Organisation) {
             return;
         }
-        //var_dump($object);
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_DELETE);
     }
 }
