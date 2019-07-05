@@ -40,7 +40,7 @@ class Organisation
 
     private function buildLogoPath()
     {
-        return strtolower(AppUtil::APP_NAME).'/logo/'.$this->uuid;
+        return 'organisation/logo/'.$this->uuid;
     }
 
     public function setLogoName(?string $logoName): self
