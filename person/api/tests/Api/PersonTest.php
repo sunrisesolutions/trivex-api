@@ -104,20 +104,18 @@ class PersonTest extends WebTestCase
     {
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
         $person = $personRepo->findOneBy([], ['id' => 'DESC']);
+        $personId = $person->getId();
         $this->assertNotEmpty($person);
-        print_r($this->jwtToken());
-        $response = $this->request('DELETE', 'people/' . $person->getId(), null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
-        print_r($response->getContent());
+
+        $response = $this->request('DELETE', 'people/' . $personId, null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(204, $response->getStatusCode());
 
-
-//
 //        /** @var PersonMessage $message */
 //        $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
 //        $this->assertNotEmpty($message);
 //
-//        $isMessageExists = $this->purgeMessage($message, function($msg) use ($givenName) {
-//            if ($msg->data->person->givenName == $givenName) return true;
+//        $isMessageExists = $this->purgeMessage($message, function($msg) use ($personId) {
+//            if ($msg->data->person->id == $personId) return true;
 //            return false;
 //        });
 //        $this->assertEquals(true, $isMessageExists);
@@ -132,6 +130,7 @@ class PersonTest extends WebTestCase
                 sleep(4);
                 $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
             }
+//            print_r($message);
         }
         return false;
     }

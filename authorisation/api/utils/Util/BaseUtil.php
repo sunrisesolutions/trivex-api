@@ -30,7 +30,7 @@ class BaseUtil
                 continue;
             }
 
-//            echo 'prop is '.$prop.'  ';
+            echo 'prop is '.$prop.'  ';
             if (is_scalar($val)) {
                 $setter = 'set'.ucfirst(strtolower($prop));
                 $dest->{$setter}($val);

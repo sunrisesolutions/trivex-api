@@ -25,22 +25,28 @@ class BaseUtil
 
     public static function copyObjectScalarProperties($source, $dest)
     {
-        $props = get_object_vars($source);
+//        $props = get_object_vars($source);
+        $reflection = new \ReflectionClass($source);
+        $reflectionProps = $reflection->getProperties();
+
         $nonScalarProps = [];
-        foreach ($props as $prop => $val) {
+        /** @var \ReflectionProperty $reflectionProp */
+        foreach ($reflectionProps as $reflectionProp) {
+            $prop = $reflectionProp->getName();
+
             if ($prop === 'id') {
                 continue;
             }
 
-            echo 'prop is ' . $prop . '  ';
-            if (is_scalar($val)) {
+            $getter = 'get' . ucfirst(strtolower($prop));
+            $val = $source->{$getter}();
+            if (is_scalar($val) || $val instanceof \DateTime) {
                 $setter = 'set' . ucfirst(strtolower($prop));
                 $dest->{$setter}($val);
-            } else {
+            } elseif ($val !== null) {
                 $nonScalarProps[$prop] = $val;
             }
         }
         return $nonScalarProps;
     }
-
 }

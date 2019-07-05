@@ -157,12 +157,14 @@ class AwsSnsUtil
             $message = $object;
         } else {
             $messageArray = [];
-            $className = (new \ReflectionClass($object))->getShortName();
+            $reflection = new \ReflectionClass($object);
+            $className = $reflection->getShortName();
             $fqClassname = get_class($object);
             $dto = new $fqClassname();
             $nonScalar = AppUtil::copyObjectScalarProperties($object, $dto);
 
             $normalised = $this->normalizer->normalize($dto);
+
             $normalised['_SYSTEM_OPERATION'] = $operation;
 
             foreach ($nonScalar as $prop => $val) {
