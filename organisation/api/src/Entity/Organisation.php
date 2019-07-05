@@ -40,12 +40,12 @@ class Organisation
 
     private function buildLogoPath()
     {
-        return strtolower(AppUtil::APP_NAME).'/logo/'.$this->uuid.'-'.$this->logoName;
+        return 'organisation/logo/'.$this->uuid;
     }
 
     public function setLogoName(?string $logoName): self
     {
-        if (!empty($this->logoName) && $this->logoName !== $logoName) {
+        if (empty($logoName) && !empty($this->logoName)) {
             AwsS3Util::getInstance()->deleteObject($this->buildLogoPath());
         }
 
@@ -65,6 +65,18 @@ class Organisation
                 $this->code = $this->uuid;
             }
         }
+    }
+
+    /**
+     * @Groups({"read"})
+     *
+     * @return mixed|string|null
+     */
+    public function getLogoWriteForm()
+    {
+        $path = $this->buildLogoPath();
+
+        return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'. $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
     }
 
     /**

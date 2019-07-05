@@ -7,36 +7,36 @@ use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(shortName="acentry")
  * @ORM\Entity(repositoryClass="App\Repository\ACEntryRepository")
  * @ORM\Table(name="authorisation__entry")
  * @ORM\HasLifecycleCallbacks()
  */
 class ACEntry
 {
-    const PERMISSION_CREATE = 'CREATE';
-    const PERMISSION_READ = 'READ';
-    const PERMISSION_UPDATE = 'UPDATE';
-    const PERMISSION_DELETE = 'DELETE';
-    const PERMISSION_LIST = 'LIST';
-    const PERMISSION_ASSIGN = 'ASSIGN';
-    const PERMISSION_RECEIVE = 'RECEIVE';
-    const PERMISSION_APPROVE = 'APPROVE';
-    const PERMISSION_REJECT = 'REJECT';
+//    const PERMISSION_CREATE = 'CREATE';
+//    const PERMISSION_READ = 'READ';
+//    const PERMISSION_UPDATE = 'UPDATE';
+//    const PERMISSION_DELETE = 'DELETE';
+//    const PERMISSION_LIST = 'LIST';
+//    const PERMISSION_ASSIGN = 'ASSIGN';
+//    const PERMISSION_RECEIVE = 'RECEIVE';
+//    const PERMISSION_APPROVE = 'APPROVE';
+//    const PERMISSION_REJECT = 'REJECT';
 
     const STATUS_GRANTED = 'GRANTED';
     const STATUS_DENIED = 'DENIED';
     const STATUS_EMPTY = 'EMPTY';
 
-    public static function getSupportedActions()
-    {
-        return [
-            self::PERMISSION_CREATE,
-            self::PERMISSION_READ,
-            self::PERMISSION_UPDATE,
-            self::PERMISSION_DELETE,
-        ];
-    }
+//    public static function getSupportedActions()
+//    {
+//        return [
+//            self::PERMISSION_CREATE,
+//            self::PERMISSION_READ,
+//            self::PERMISSION_UPDATE,
+//            self::PERMISSION_DELETE,
+//        ];
+//    }
 
     /**
      * @var int|null
