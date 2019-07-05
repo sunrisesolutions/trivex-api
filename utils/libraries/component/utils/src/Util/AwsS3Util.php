@@ -109,7 +109,6 @@ class AwsS3Util
             ['acl' => 'private'],
             ['bucket' => $bucket],
             ['starts-with', '$key', $directoryPath],
-            ['starts-with', '$Content-Type', '']
         ];
 
 // Optional: configure expiration time string
