@@ -7,7 +7,7 @@ use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(shortName="acentry")
  * @ORM\Entity(repositoryClass="App\Repository\ACEntryRepository")
  * @ORM\Table(name="authorisation__entry")
  * @ORM\HasLifecycleCallbacks()
