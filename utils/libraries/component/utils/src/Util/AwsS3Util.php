@@ -53,10 +53,10 @@ class AwsS3Util
 
     public function getObjectWriteForm($path, $expr = '+7 days')
     {
-        $apcuGetKey = 'POST_'.$path;
-        if (apcu_exists($apcuGetKey)) {
-            return apcu_fetch($apcuGetKey);
-        }
+//        $apcuGetKey = 'POST_'.$path;
+//        if (apcu_exists($apcuGetKey)) {
+//            return apcu_fetch($apcuGetKey);
+//        }
 
         $accessKey = getenv('S3_ACCESS_KEY');
         $secretKey = getenv('S3_SECRET_KEY');
@@ -77,15 +77,8 @@ class AwsS3Util
             'credentials' => $credentials,
         ]);
 
-        $cmd = $s3Client->getCommand('PostObject', [
-            'Bucket' => $bucket,
-            'Key' => $path,
-        ]);
 
-        $request = $s3Client->createPresignedRequest($cmd, $expr);
-        $url = (string) $request->getUri();
-
-        apcu_store($apcuGetKey, $url);
+//        apcu_store($apcuGetKey, $url);
 
         /////////////////////////////////////////
         ///
