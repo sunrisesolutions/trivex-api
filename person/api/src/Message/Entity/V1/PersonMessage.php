@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class PersonMessage extends Message
 {
-    protected function getSupportedType(){
+    protected function getSupportedType(): string{
         return PersonSupportedType::class;
     }
 

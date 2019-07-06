@@ -35,6 +35,7 @@ RUN set -eux; \
 		intl \
 		pdo_pgsql \
 		zip \
+		pcntl \
 	; \
 	pecl install \
 		apcu-${APCU_VERSION} \
@@ -43,6 +44,7 @@ RUN set -eux; \
 	docker-php-ext-enable \
 		apcu \
 		opcache \
+		pcntl \
 	; \
 	\
 	runDeps="$( \

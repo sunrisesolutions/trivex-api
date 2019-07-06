@@ -18,39 +18,56 @@ abstract class Message
 
     public $data;
 
+    protected abstract function getSupportedType(): string;
+
     public function updateEntity(EntityManagerInterface $manager)
     {
         $props = get_object_vars($this->data);
         foreach ($props as $prop => $obj) {
-            echo 'prop is '.$prop.'  ';
-            $supportedType = OrganisationSupportedType::class;
+            echo 'prop is ' . $prop . '  ';
+            $supportedType = $this->getSupportedType();
             if (defined("$supportedType::$prop")) {
+                echo '///////////////////////////';
+
                 $className = constant("$supportedType::$prop");
                 $repo = $manager->getRepository($className);
                 $entity = $repo->findOneBy(['uuid' => $obj->uuid]);
-                if ($obj->_SYSTEM_OPERATION === self::OPERATION_DELETE) {
-                    $manager->remove($entity);
-                    break;
+
+                if (!empty($entity)) {
+                    echo '#################### '.$obj->uuid.' ################';
+                    echo get_class($entity);
+//                    var_dump($entity);
+                    if ($obj->_SYSTEM_OPERATION === self::OPERATION_DELETE) {
+                        $manager->remove($entity);
+                        break;
+                    }
+                } else {
+                    echo 'new entity';
+                    $entity = new $className();
                 }
 
-                $nonScalarProps = AppUtil::copyObjectScalarProperties($obj, $entity);
+                echo '$obj->givenName is '.$obj->givenName;
 
+                $nonScalarProps = AppUtil::copyObjectScalarProperties($obj, $entity);
+echo 'entity->givename is '.$entity->getGivenName();
                 foreach ($nonScalarProps as $_prop => $_obj) {
                     if (defined("$supportedType::$_prop")) {
                         $_className = constant("$supportedType::$_prop");
                         $_repo = $manager->getRepository($_className);
                         $_entity = $_repo->findOneBy(['uuid' => $_obj->uuid]);
-                        echo '_prop is '.$_prop.' uuid: '.$_obj->uuid.'  '.$_className.' '.empty($_entity).'  ';
+                        echo '_prop is ' . $_prop . ' uuid: ' . $_obj->uuid . '  ' . $_className . ' ' . empty($_entity) . '  ';
                         if (empty($_entity)) {
                             $_entity = new $_className;
                             $_entity->setUuid($_obj->uuid);
                         }
-                        $setter = 'set'.ucfirst(strtolower($_prop));
+                        $setter = 'set' . ucfirst(strtolower($_prop));
                         $entity->{$setter}($_entity);
                         $manager->persist($_entity);
                     }
                 }
                 $manager->persist($entity);
+            }else{
+//                echo $supportedType.'::'.$prop.' NOT DEFINED';
             }
         }
         $manager->flush();

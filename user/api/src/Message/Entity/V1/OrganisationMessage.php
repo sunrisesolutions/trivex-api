@@ -10,7 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class OrganisationMessage extends Message
 {
-    protected function getSupportedType(){
+    protected function getSupportedType(): string{
         return OrganisationSupportedType::class;
     }
 

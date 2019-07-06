@@ -159,7 +159,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
             'QueueUrl' => $url,
             'MaxNumberOfMessages' => 1,
         ]);
-//
+
         $message = null;
         if (null !== $result->get('Messages')) {
             $body = $result->get('Messages')[0]['Body'];
