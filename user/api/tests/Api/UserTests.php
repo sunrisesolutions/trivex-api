@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Tests;
+namespace App\Tests\Api;
 
 use App\Entity\Organisation;
 use App\Entity\OrganisationUser;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Tests;
+namespace App\Tests\Api;
 
 use App\Entity\Organisation;
 use Doctrine\ORM\Tools\SchemaTool;
@@ -38,9 +38,17 @@ class OrganisationTest extends WebTestCase
         $this->queueName = 'ORG';
         $this->sqsUtil = static::$container->get('app_util_aws_sqs_util');
         $this->queueUrl = $this->sqsUtil->getQueueUrl($this->queueName);
+        $this->purgeQueue();
     }
 
-    public function PostOrg() {
+    protected function purgeQueue()
+    {
+        while (!empty($message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName))) {
+            $this->sqsUtil->deleteMessage($message);
+        }
+    }
+
+    public function testPostOrg() {
         $name = 'donal trump';
         $content = [
             'foundedOn' => '2019-07-05T07:16:22.184Z',
@@ -54,15 +62,10 @@ class OrganisationTest extends WebTestCase
 
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-
-        $isMessageExists = $this->purgeMessage($message, function($msg) use ($name) {
-            if ($msg->data->organisation->name == $name) return true;
-            return false;
-        });
-        $this->assertEquals(true, $isMessageExists);
+        $this->assertEquals($message->data->organisation->name, $name);
     }
 
-    public function PutOrg() {
+    public function testPutOrg() {
         $orgRepo = static::$container->get('doctrine')->getRepository(Organisation::class);
         $org = $orgRepo->findOneBy(['uuid' => 'UID-4444']);
 
@@ -79,31 +82,21 @@ class OrganisationTest extends WebTestCase
 
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-
-        $isMessageExists = $this->purgeMessage($message, function($msg) use ($changedAddr) {
-            if ($msg->data->organisation->address == $changedAddr) return true;
-            return false;
-        });
-        $this->assertEquals(true, $isMessageExists);
+        $this->assertEquals($message->data->organisation->address, $changedAddr);
     }
 
     public function testDeleteOrg() {
         $orgRepo = static::$container->get('doctrine')->getRepository(Organisation::class);
-        $org = $orgRepo->findOneBy([], ['id', 'DESC']);
+        $org = $orgRepo->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($org);
-        $orgId = $org->getId();
+        $orgUid = $org->getUuid();
 
-        $response = $this->request('DELETE', 'organisations/' . $orgId, null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
+        $response = $this->request('DELETE', 'organisations/' . $org->getId(), null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(204, $response->getStatusCode());
 
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-
-        $isMessageExists = $this->purgeMessage($message, function($msg) use ($orgId) {
-            if ($msg->data->organisation->id == $orgId) return true;
-            return false;
-        });
-        $this->assertEquals(true, $isMessageExists);
+        $this->assertEquals($message->data->organisation->uuid, $orgUid);
     }
 
     protected function purgeMessage(Message $message, $condition) {

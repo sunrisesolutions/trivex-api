@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Api\Tests;
+namespace App\Tests\Api;
 
 use App\Entity\Nationality;
 use App\Entity\Person;
@@ -36,9 +36,17 @@ class PersonTest extends WebTestCase
         $this->queueName = 'PERSON';
         $this->sqsUtil = static::$container->get('app_util_aws_sqs_util');
         $this->queueUrl = $this->sqsUtil->getQueueUrl($this->queueName);
+        $this->purgeQueue();
     }
 
-    public function PostPerson()
+    protected function purgeQueue()
+    {
+        while (!empty($message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName))) {
+            $this->sqsUtil->deleteMessage($message);
+        }
+    }
+
+    public function testPostPerson()
     {
         $givenName = 'special_unique_given_name';
         $content = [
@@ -55,18 +63,16 @@ class PersonTest extends WebTestCase
         $response = $this->request('POST', '/people', json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(201, $response->getStatusCode());
 
+        sleep(7);
+
         /** @var PersonMessage $message */
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-
-        $isMessageExists = $this->purgeMessage($message, function($msg) use ($givenName) {
-            if ($msg->data->person->givenName == $givenName) return true;
-            return false;
-        });
-        $this->assertEquals(true, $isMessageExists);
+        $this->assertEquals($givenName, $message->data->person->givenName);
     }
 
-    public function PutPerson() {
+    public function testPutPerson()
+    {
         $givenName = 'person4';
         $emailToChange = 'changed@gmail.com';
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
@@ -89,50 +95,31 @@ class PersonTest extends WebTestCase
         $response = $this->request('PUT', 'people/' . $userId, json_encode($content), ['Authorization' => 'Bearer ' . $token]);
         $this->assertEquals(200, $response->getStatusCode());
 
+        sleep(7);
+
         /** @var PersonMessage $message */
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-
-        $isMessageExists = $this->purgeMessage($message, function($msg) use ($givenName, $emailToChange) {
-            if ($msg->data->person->givenName == $givenName && $msg->data->person->email == $emailToChange) return true;
-            return false;
-        });
-        $this->assertEquals(true, $isMessageExists);
+        $this->assertEquals($givenName, $message->data->person->givenName);
+        $this->assertEquals($emailToChange, $message->data->person->email);
     }
 
     public function testDeletePerson()
     {
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
         $person = $personRepo->findOneBy([], ['id' => 'DESC']);
-        $personId = $person->getId();
+        $givenName = $person->getGivenName();
         $this->assertNotEmpty($person);
 
-        $response = $this->request('DELETE', 'people/' . $personId, null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
+        $response = $this->request('DELETE', 'people/' . $person->getId(), null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(204, $response->getStatusCode());
 
-//        /** @var PersonMessage $message */
-//        $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
-//        $this->assertNotEmpty($message);
-//
-//        $isMessageExists = $this->purgeMessage($message, function($msg) use ($personId) {
-//            if ($msg->data->person->id == $personId) return true;
-//            return false;
-//        });
-//        $this->assertEquals(true, $isMessageExists);
-    }
+        sleep(7);
 
-    protected function purgeMessage(Message $message, $condition) {
-        while(!empty($message) && is_callable($condition)) {
-            if ($condition($message) === true) {
-                return true;
-            } else {
-                $this->sqsUtil->deleteMessage($message);
-                sleep(4);
-                $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
-            }
-//            print_r($message);
-        }
-        return false;
+        /** @var PersonMessage $message */
+        $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
+        $this->assertNotEmpty($message);
+        $this->assertEquals($givenName, $message->data->person->givenName);
     }
 
     protected function jwtToken(): string
