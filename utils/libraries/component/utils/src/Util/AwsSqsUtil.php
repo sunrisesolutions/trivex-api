@@ -55,7 +55,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     public function listQueues(): iterable
     {
 //        return   $result = $this->client->listQueues();
-        if(!empty($this->queues)){
+        if (!empty($this->queues)) {
             return $this->queues;
         }
         $queues = [];
@@ -142,6 +142,11 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     public function createClient(iterable $config, iterable $credentials): void
     {
         $this->client = $this->sdk->createSqs($config + $credentials);
+    }
+
+    public function addPermission($args = [])
+    {
+        $this->client->addPermission($args);
     }
 
     /**
