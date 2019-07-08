@@ -157,6 +157,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
 
         $message = null;
         if (null !== $result->get('Messages')) {
+
             $body = $result->get('Messages')[0]['Body'];
             $id = $result->get('Messages')[0]['MessageId'];
             $receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];

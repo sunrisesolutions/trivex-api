@@ -54,13 +54,13 @@ class BaseUtil
                 continue;
             }
 
-            echo 'prop is ' . $prop . '  ';
+//            echo 'prop is ' . $prop . '  ';
             if (is_scalar($val)) {
                 $reflectionDest = new \ReflectionClass($dest);
                 if ($reflectionDest->hasProperty($prop)) {
                     $setter = 'set' . ucfirst(strtolower($prop));
                     $getter = 'get' . ucfirst(strtolower($prop));
-                    
+
                     if ($dest->{$getter}() instanceof \DateTime) {
                         $val = new \DateTime($val);
                     }

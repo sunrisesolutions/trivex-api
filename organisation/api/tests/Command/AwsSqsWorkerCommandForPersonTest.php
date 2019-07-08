@@ -21,9 +21,9 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class AwsSqsWorkerCommandTest extends WebTestCase
+class AwsSqsWorkerCommandForPersonTest extends WebTestCase
 {
-    use RefreshDatabaseTrait;
+    //use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -39,10 +39,10 @@ class AwsSqsWorkerCommandTest extends WebTestCase
         parent::setUp();
         self::bootKernel();
         $this->client = static::createClient();
-        $this->queueName = 'PERSON';
         $this->sqsUtil = static::$container->get('app_util_aws_sqs_util');
+        $this->queueName = 'PERSON'; //TRIVEX_ORG_TEST_PERSON
         $this->queueUrl = $this->sqsUtil->getQueueUrl($this->queueName);
-        $this->purgeQueue();
+        //$this->purgeQueue();
     }
 
     protected function purgeQueue()
@@ -52,7 +52,7 @@ class AwsSqsWorkerCommandTest extends WebTestCase
         }
     }
 
-    public function PostPerson() {
+    public function testPostPerson() {
         $msg = [
             'Type' => 'Notification',
             'MessageId' => '22b80b92-fdea-4c2c-8f9d-bdfb0c7bf324',
@@ -66,16 +66,17 @@ class AwsSqsWorkerCommandTest extends WebTestCase
             'UnsubscribeURL' => 'https://sns.us-west-2.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-west-2:123456789012:MyTopic:c9135db0-26c4-47ec-8998-413945fb5a96'
         ];
 
-        $givenName = rand(10, 999) . time();
+        $random = rand(10, 9999) . time();
         $personAr = [
-            'birthDate' => new \DateTime(),
-            'givenName' => $givenName,
+            'givenName' => 'name-' . $random,
             'familyName' => 'faname',
             'gender' => 'MALE',
-            'email' => $givenName . '@gmail.com',
             'phoneNumber' => '0123456',
-            'uuid' => 'UID-' . $givenName,
             'middleName' => 'midname',
+            'name' => 'donal',
+            'email' => $random . '@gmail.com',
+            'phoneNumber' => '84123456789',
+            'uuid' => 'UID-' . $random,
             '_SYSTEM_OPERATION' => Message::OPERATION_POST,
         ];
         $data = [];
@@ -91,16 +92,17 @@ class AwsSqsWorkerCommandTest extends WebTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            '--queue' => 'PERSON',
-            '--limit' => 2,
+            '--queue' => $this->queueName,
+            '--limit' => 1,
             '--env' => 'test'
         ]);
+
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
-        $person = $personRepo->findOneBy(['givenName' => $givenName]);
+        $person = $personRepo->findOneBy(['uuid' => $personAr['uuid']]);
         $this->assertNotEmpty($person);
     }
 
-    public function PutPerson()
+    public function testPutPerson()
     {
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
         /** @var Person $person */
@@ -121,8 +123,8 @@ class AwsSqsWorkerCommandTest extends WebTestCase
         ];
 
         $serializer = static::$container->get('serializer');
-        $randVal = rand(1, 100000).time();
-        $person->setGivenName($randVal);
+        $randVal = 'name-'.rand(1, 9999).time();
+        $person->setName($randVal);
 
         $personAr = json_decode($serializer->serialize($person, 'json'), true);
         $personAr['_SYSTEM_OPERATION'] = Message::OPERATION_PUT;
@@ -140,13 +142,13 @@ class AwsSqsWorkerCommandTest extends WebTestCase
         $commandTester = new CommandTester($command);
         $commandTester->execute([
             'command' => $command->getName(),
-            '--queue' => 'PERSON',
+            '--queue' => $this->queueName,
             '--limit' => 1,
             '--env' => 'test'
         ]);
 
         $person = $personRepo->findOneBy(['uuid' => $person->getUuid()]);
-        $this->assertEquals($person->getGivenName(), '' . $randVal);
+        $this->assertEquals($person->getName(), $randVal);
     }
 
     public function testDeletePerson() {
@@ -168,11 +170,9 @@ class AwsSqsWorkerCommandTest extends WebTestCase
         ];
 
         $serializer = static::$container->get('serializer');
-        $randVal = rand(10, 1000).time();
-        $person->setGivenName($randVal);
 
         $personAr = json_decode($serializer->serialize($person, 'json'), true);
-        $personAr['_SYSTEM_OPERATION'] = Message::OPERATION_PUT;
+        $personAr['_SYSTEM_OPERATION'] = Message::OPERATION_DELETE;
 
         $data = [];
         $data['data']['person'] = $personAr;
@@ -181,8 +181,19 @@ class AwsSqsWorkerCommandTest extends WebTestCase
 
         $this->sqsUtil->sendMessage($this->queueUrl, json_encode($msg));
 
-        $person = $personRepo->findOneBy(['uuid' => $person->getUuid()]);
-        $this->assertEquals($person->getGivenName(), '' . $randVal);
+        $kernel = static::createKernel();
+        $app = new Application($kernel);
+        $command = $app->find('app:aws-sqs-worker');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute([
+            'command' => $command->getName(),
+            '--queue' => $this->queueName,
+            '--limit' => 1,
+            '--env' => 'test'
+        ]);
+
+        $del = $personRepo->findOneBy(['uuid' => $person->getUuid()]);
+        $this->assertEmpty($del);
     }
 
     protected function jwtToken(): string

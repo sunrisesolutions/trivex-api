@@ -72,6 +72,9 @@ WORKDIR /srv/api
 # build for production
 ARG APP_ENV=prod
 ARG MAILER_URL=''
+ARG AWS_KEY=''
+ARG AWS_SECRET=''
+ARG AWS_SNS_PREFIX=''
 
 # prevent the reinstallation of vendors at every changes in the source code
 COPY composer.json composer.lock symfony.lock ./

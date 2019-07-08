@@ -24,17 +24,17 @@ abstract class Message
     {
         $props = get_object_vars($this->data);
         foreach ($props as $prop => $obj) {
-            echo 'prop is ' . $prop . '  ';
+//            echo 'prop is ' . $prop . '  ';
             $supportedType = $this->getSupportedType();
             if (defined("$supportedType::$prop")) {
-                echo '///////////////////////////';
+//                echo '///////////////////////////';
 
                 $className = constant("$supportedType::$prop");
                 $repo = $manager->getRepository($className);
                 $entity = $repo->findOneBy(['uuid' => $obj->uuid]);
 
                 if (!empty($entity)) {
-                    echo '#################### '.$obj->uuid.' ################';
+//                    echo '#################### '.$obj->uuid.' ################';
                     echo get_class($entity);
 //                    var_dump($entity);
                     if ($obj->_SYSTEM_OPERATION === self::OPERATION_DELETE) {
@@ -46,16 +46,16 @@ abstract class Message
                     $entity = new $className();
                 }
 
-                echo '$obj->givenName is '.$obj->givenName;
+//                echo '$obj->givenName is '.$obj->givenName;
 
                 $nonScalarProps = AppUtil::copyObjectScalarProperties($obj, $entity);
-echo 'entity->givename is '.$entity->getGivenName();
+//echo 'entity->givename is '.$entity->getGivenName();
                 foreach ($nonScalarProps as $_prop => $_obj) {
                     if (defined("$supportedType::$_prop")) {
                         $_className = constant("$supportedType::$_prop");
                         $_repo = $manager->getRepository($_className);
                         $_entity = $_repo->findOneBy(['uuid' => $_obj->uuid]);
-                        echo '_prop is ' . $_prop . ' uuid: ' . $_obj->uuid . '  ' . $_className . ' ' . empty($_entity) . '  ';
+//                        echo '_prop is ' . $_prop . ' uuid: ' . $_obj->uuid . '  ' . $_className . ' ' . empty($_entity) . '  ';
                         if (empty($_entity)) {
                             $_entity = new $_className;
                             $_entity->setUuid($_obj->uuid);

@@ -18,7 +18,7 @@ use App\Message\Entity\V1\OrganisationMessage;
 
 class OrganisationTest extends WebTestCase
 {
-    use RefreshDatabaseTrait;
+    //use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -55,7 +55,13 @@ class OrganisationTest extends WebTestCase
             'type' => 'unknow type',
             'address' => '777 white house',
             'name' => $name,
-            'logoName' => 'logo text here'
+            'logoName' => 'logo text here',
+            'individualMembers' => [
+                [
+                    'uuid' => 'UID-IM-99999',
+                    'fulltextString' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                ],
+            ]
         ];
         $response = $this->request('POST', 'organisations', json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(201, $response->getStatusCode());
