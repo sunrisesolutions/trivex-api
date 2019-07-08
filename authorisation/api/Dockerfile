@@ -35,6 +35,7 @@ RUN set -eux; \
 		intl \
 		pdo_pgsql \
 		zip \
+		pcntl \
 	; \
 	pecl install \
 		apcu-${APCU_VERSION} \
@@ -43,6 +44,7 @@ RUN set -eux; \
 	docker-php-ext-enable \
 		apcu \
 		opcache \
+		pcntl \
 	; \
 	\
 	runDeps="$( \
@@ -71,6 +73,9 @@ WORKDIR /srv/api
 
 # build for production
 ARG APP_ENV=prod
+ARG AWS_KEY=''
+ARG AWS_SECRET=''
+ARG AWS_SNS_PREFIX=''
 
 # prevent the reinstallation of vendors at every changes in the source code
 COPY composer.json composer.lock symfony.lock ./

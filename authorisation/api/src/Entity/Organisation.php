@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -28,6 +29,25 @@ class Organisation
     }
 
     /**
+     * @ORM\PrePersist
+     */
+    public function initiateRoles()
+    {
+        if ($this->roles->count() === 0) {
+            $acrole = new ACRole();
+            $acrole->setName('ROLE_ADMIN');
+            $this->addRole($acrole);
+            $acrole = new ACRole();
+            $acrole->setName('ROLE_ORG_ADMIN');
+            $this->addRole($acrole);
+            $acrole = new ACRole();
+            $acrole->setName('ROLE_USER');
+            $this->addRole($acrole);
+
+        }
+    }
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\IndividualMember", mappedBy="organisation")
      */
     private $individualMembers;
@@ -43,7 +63,7 @@ class Organisation
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\ACRole", mappedBy="organisation")
+     * @ORM\OneToMany(targetEntity="App\Entity\ACRole", mappedBy="organisation", cascade={"persist","merge"})
      */
     private $roles;
 

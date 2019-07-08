@@ -1,0 +1,4 @@
+App\Entity\ACEntry:
+  acentry{1..3}:
+    role: '@acrole*'
+    permission: '<randomElement(["CREATE", "READ", "UPDATE", "DELETE", "LIST", "ASSIGN", "RECEIVE", "APPROVE", "REJECT"])>'

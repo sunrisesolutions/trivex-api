@@ -1,0 +1,5 @@
+App\Entity\ACRole:
+  acrole{1..3}:
+    name: '<randomElement(["ROLE_ADMIN", "ROLE_ORG_ADMIN", "ROLE_USER"])>'
+    organisation: '@organisation*'
+#    entries
