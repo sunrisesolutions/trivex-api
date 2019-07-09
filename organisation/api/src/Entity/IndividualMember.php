@@ -53,6 +53,12 @@ class IndividualMember
      */
     private $id;
 
+//    /**
+//     * @var boolean
+//     * @Groups({"read","write"})
+//     */
+//    private $isAdmin = false;
+
     /**
      * @var string
      * @Groups({"email"})

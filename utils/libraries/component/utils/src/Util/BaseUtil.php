@@ -13,7 +13,8 @@ class BaseUtil
     {
         $names = [
             'ORG' => 'Organisation',
-            'PERSON' => 'Person'
+            'PERSON' => 'Person',
+            'AUTH' => 'Authorisation'
         ];
         return $names[$name];
     }
