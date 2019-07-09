@@ -40,6 +40,8 @@ class TestCommand extends Command
 
         $filelist = array();
         $io->note(AppUtil::APP_NAME);
+        $io->note('hey AWS_SNS_PREFIX');
+        $io->note(getenv('AWS_SNS_PREFIX'));
         if ($handle = opendir("/srv/api/libraries/component/utils/src/Message")) {
             while ($entry = readdir($handle)) {
                 $io->note($entry);

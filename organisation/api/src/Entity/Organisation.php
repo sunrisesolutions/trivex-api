@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
@@ -21,6 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "subdomain": "exact", "code": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\OrganisationRepository")
  * @ORM\Table(name="organisation__organisation")
  * @ORM\HasLifecycleCallbacks()
@@ -66,6 +70,8 @@ class Organisation
             }
         }
     }
+
+    
 
     /**
      * @Groups({"read"})
@@ -155,11 +161,13 @@ class Organisation
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $code;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $subdomain;
 

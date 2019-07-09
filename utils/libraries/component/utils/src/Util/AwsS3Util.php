@@ -137,9 +137,10 @@ class AwsS3Util
 
     public function getObjectReadUrl($path, $expr = '+7 days')
     {
-        $apcuGetKey = 'GET_'.$path;
+        $apcuGetKey = 'GET2_'.$path;
+
         if (apcu_exists($apcuGetKey)) {
-            return apcu_fetch($apcuGetKey);
+//            return apcu_fetch($apcuGetKey);
         }
 
         $accessKey = getenv('S3_ACCESS_KEY');
