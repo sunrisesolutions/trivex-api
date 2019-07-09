@@ -20,7 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 class AwsSqsWorkerCommandForOrgTest extends WebTestCase
 {
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     protected $client;
 

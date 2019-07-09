@@ -43,7 +43,6 @@ class Organisation
             $acrole = new ACRole();
             $acrole->setName('ROLE_USER');
             $this->addRole($acrole);
-
         }
     }
 
