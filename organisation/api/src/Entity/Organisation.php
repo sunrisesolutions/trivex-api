@@ -71,6 +71,17 @@ class Organisation
         }
     }
 
+
+    /**
+     * @Groups({"read"})
+     *
+     * @return mixed|string|null
+     */
+    public function getConfig(){
+        return ['key' => AwsS3Util::getInstance()->getConfig()['accessKey'],
+        ];
+    }
+
     /**
      * @Groups({"read"})
      *
