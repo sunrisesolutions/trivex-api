@@ -27,7 +27,7 @@ class AwsSnsUtil
 
     private $manager;
 
-    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, string $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
+    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, array $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
     {
         $this->client = $sdk->createSns($config + $credentials);
 
