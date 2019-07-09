@@ -137,7 +137,8 @@ class AwsS3Util
 
     public function getObjectReadUrl($path, $expr = '+7 days')
     {
-        $apcuGetKey = 'GET_'.$path;
+        $apcuGetKey = 'GET2_'.$path;
+        
         if (apcu_exists($apcuGetKey)) {
             return apcu_fetch($apcuGetKey);
         }
