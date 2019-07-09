@@ -155,11 +155,13 @@ class Organisation
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $code;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read", "write"})
      */
     private $subdomain;
 
