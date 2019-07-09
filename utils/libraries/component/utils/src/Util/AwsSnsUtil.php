@@ -27,7 +27,7 @@ class AwsSnsUtil
 
     private $manager;
 
-    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
+    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, string $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
     {
         $this->client = $sdk->createSns($config + $credentials);
 
@@ -35,6 +35,7 @@ class AwsSnsUtil
         $this->applicationName = BaseUtil::PROJECT_NAME . '_' . AppUtil::APP_NAME;
         $this->env = $env;
         $this->queuePrefix = $this->applicationName . '_' . $env . '_';
+        $this->snsConfig = $snsConfig;
         $this->normalizer = $normalizer;
         $this->manager = $manager;
     }
@@ -42,7 +43,7 @@ class AwsSnsUtil
     public function getTopicArn($name = null)
     {
         if (empty($name)) {
-            if (empty($snsPrefix = getenv('AWS_SNS_PREFIX'))) {
+            if (empty($snsPrefix = $this->snsConfig['prefix'])) {
                 $snsPrefix = getenv(sprintf('AWS_SNS_PREFIX_%s', AppUtil::APP_NAME));
             }
             return $snsPrefix . BaseUtil::PROJECT_NAME . '_' . AppUtil::APP_NAME . '_' . strtoupper($this->env);

@@ -3,6 +3,9 @@ parameters:
       version: 'latest'
       region: 'ap-southeast-1'
 
+    aws_sdk.config.sns:
+      prefix: '%env(AWS_SNS_PREFIX)%'
+
     aws_sdk.credentials.default:
         credentials:
             key: '%env(AWS_KEY)%'
