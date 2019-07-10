@@ -37,14 +37,19 @@ class Role
     private $uuid;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $member;
-
-    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="roles")
      */
     private $individualMember;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $name;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="roles")
+     */
+    private $organisation;
 
     public function getId(): ?int
     {
@@ -63,18 +68,6 @@ class Role
         return $this;
     }
 
-    public function getMember(): ?string
-    {
-        return $this->member;
-    }
-
-    public function setMember(string $member): self
-    {
-        $this->member = $member;
-
-        return $this;
-    }
-
     public function getIndividualMember(): ?IndividualMember
     {
         return $this->individualMember;
@@ -83,6 +76,30 @@ class Role
     public function setIndividualMember(?IndividualMember $individualMember): self
     {
         $this->individualMember = $individualMember;
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    public function getOrganisation(): ?Organisation
+    {
+        return $this->organisation;
+    }
+
+    public function setOrganisation(?Organisation $organisation): self
+    {
+        $this->organisation = $organisation;
 
         return $this;
     }

@@ -10,6 +10,7 @@ use App\Util\AppUtil;
 use App\Util\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
@@ -53,12 +54,6 @@ class IndividualMember
      */
     private $id;
 
-//    /**
-//     * @var boolean
-//     * @Groups({"read","write"})
-//     */
-//    private $isAdmin = false;
-
     /**
      * @var string
      * @Groups({"email"})
@@ -86,9 +81,41 @@ class IndividualMember
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IM'));
+            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME . '_IM'));
         }
     }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function makeAdmin()
+    {
+        if ($this->isAdmin() === true) {
+            $c = Criteria::create();
+            $expr = Criteria::expr();
+            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+            $role = $this->roles->matching($c)->first();
+            $role->setName('ROLE_ORG_ADMIN');
+            $this->addRole($role);
+        }
+    }
+
+    public function isAdmin(): bool
+    {
+        return !empty($this->getAdmin());
+    }
+
+
+    public function getAdmin(): ?bool
+    {
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+        $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+        $this->admin = $this->roles->matching($c)->count() > 0;
+        return $this->admin;
+    }
+
 
     /**
      * @ORM\PrePersist
@@ -100,7 +127,7 @@ class IndividualMember
             $this->fulltextString = '';
         } else {
             $fulltextString = '';
-            $fulltextString .= 'name: '.$person->getName().' email: '.$person->getEmail().' employer: '.$person->getEmployerName();
+            $fulltextString .= 'name: ' . $person->getName() . ' email: ' . $person->getEmail() . ' employer: ' . $person->getEmployerName();
             $this->fulltextString = $fulltextString;
         }
     }
@@ -111,7 +138,7 @@ class IndividualMember
     public function initiateAccessToken()
     {
         if (empty($this->accessToken)) {
-            $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT'));
+            $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME . '_IMT'));
         }
     }
 
@@ -189,7 +216,7 @@ class IndividualMember
     private $accessToken;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="individualMember")
+     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="individualMember", cascade={"persist","merge"})
      */
     private $roles;
 
@@ -197,6 +224,12 @@ class IndividualMember
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $fulltextString;
+
+    /**
+     * @var boolean|null
+     * @Groups({"read","write"})
+     */
+    private $admin = false;
 
     public function __construct()
     {
@@ -396,6 +429,13 @@ class IndividualMember
     public function setOrganisationUuid(?string $organisationUuid): self
     {
         $this->organisationUuid = $organisationUuid;
+
+        return $this;
+    }
+
+    public function setAdmin(?bool $admin): self
+    {
+        $this->admin = $admin;
 
         return $this;
     }

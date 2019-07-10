@@ -172,14 +172,15 @@ class Organisation
     private $subdomain;
 
     /**
-     * @ORM\Column(type="magenta_json", nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="organisation")
      */
-    private $roles = [];
+    private $roles;
 
     public function __construct()
     {
         $this->children = new ArrayCollection();
         $this->individualMembers = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -362,15 +363,35 @@ class Organisation
         return $this;
     }
 
-    public function getRoles(): ?array
+    /**
+     * @return Collection|Role[]
+     */
+    public function getRoles(): Collection
     {
         return $this->roles;
     }
 
-    public function setRoles(?array $roles): self
+    public function addRole(Role $role): self
     {
-        $this->roles = $roles;
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->setOrganisation($this);
+        }
 
         return $this;
     }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+            // set the owning side to null (unless already changed)
+            if ($role->getOrganisation() === $this) {
+                $role->setOrganisation(null);
+            }
+        }
+
+        return $this;
+    }
+
 }
