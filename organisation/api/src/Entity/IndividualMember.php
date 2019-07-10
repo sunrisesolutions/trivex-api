@@ -91,7 +91,7 @@ class IndividualMember
      */
     public function makeAdmin()
     {
-        if ($this->isAdmin() === true) {
+        if ($this->admin === true) {
             $c = Criteria::create();
             $expr = Criteria::expr();
             $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
@@ -101,11 +101,14 @@ class IndividualMember
         }
     }
 
+    /**
+     * @return bool
+     * @Groups("read_member")
+     */
     public function isAdmin(): bool
     {
         return !empty($this->getAdmin());
     }
-
 
     public function getAdmin(): ?bool
     {
@@ -227,7 +230,7 @@ class IndividualMember
 
     /**
      * @var boolean|null
-     * @Groups({"read","write"})
+     * @Groups("write")
      */
     private $admin = false;
 

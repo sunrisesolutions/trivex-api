@@ -47,7 +47,7 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
         }
     }
 
-    public function testRolePost() {
+    public function RolePost() {
         $org = static::$container->get('doctrine')->getRepository(Organisation::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($org);
 
@@ -101,14 +101,16 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
 
         $authAr = [
             'uuid' => $role->getUuid(),
-            'name' => 'ROLE_USER',
+            'name' => 'ROLE_SUPER_ADMIN',
+            'organisationUuid' => '',
             '_SYSTEM_OPERATION' => Message::OPERATION_PUT,
         ];
 
         $data = [];
-        $data['data']['authorisation'] = $authAr;
+        $data['data']['acrole'] = $authAr;
         $data['version'] = 1; //AppUtil::MESSAGE_VERSION
         $msg['Message'] = json_encode($data);
+        print_r($msg);
 
         $this->sqsUtil->sendMessage($this->queueUrl, json_encode($msg));
 
@@ -122,10 +124,10 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
             '--limit' => 1,
             '--env' => 'test'
         ]);
-
-        $new = $roleRepo->find($role->getId());
+        sleep(3);
+        $new = $roleRepo->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($new);
-        $this->assertEquals('ROLE_USER', $new->getName());
+        $this->assertEquals('ROLE_SUPER_ADMIN', $new->getName());
     }
 
     public function RoleRemove() {
