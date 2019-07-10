@@ -18,7 +18,7 @@ use App\Util\AppUtil;
 
 class AwsSqsWorkerCommandForOrganisationTest extends WebTestCase
 {
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -40,7 +40,7 @@ class AwsSqsWorkerCommandForOrganisationTest extends WebTestCase
         $this->purgeQueue();
     }
 
-    public function PostOrg() {
+    public function testPostOrg() {
         $msg = [
             'Type' => 'Notification',
             'MessageId' => '22b80b92-fdea-4c2c-8f9d-bdfb0c7bf324',
@@ -120,7 +120,7 @@ class AwsSqsWorkerCommandForOrganisationTest extends WebTestCase
         }
     }
 
-    public function PutPerson()
+    public function testPutPerson()
     {
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
         /** @var Person $person */
@@ -169,7 +169,7 @@ class AwsSqsWorkerCommandForOrganisationTest extends WebTestCase
         $this->assertEquals($person->getName(), $randVal);
     }
 
-    public function DeletePerson() {
+    public function testDeletePerson() {
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
         $person = $personRepo->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($person);

@@ -14,7 +14,7 @@ class BaseUtil
         $names = [
             'ORG' => 'Organisation',
             'PERSON' => 'Person',
-            'AUTH' => 'Authorisation'
+            'AUTH' => 'Acrole'
         ];
         return $names[$name];
     }

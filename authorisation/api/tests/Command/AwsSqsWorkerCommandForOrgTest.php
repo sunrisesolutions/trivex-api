@@ -48,7 +48,7 @@ class AwsSqsWorkerCommandForOrgTest extends WebTestCase
         }
     }
 
-    public function testOrgPost() {
+    public function OrgPost() {
         $msg = [
             'Type' => 'Notification',
             'MessageId' => '22b80b92-fdea-4c2c-8f9d-bdfb0c7bf324',

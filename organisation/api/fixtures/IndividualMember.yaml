@@ -1,0 +1,6 @@
+App\Entity\IndividualMember:
+  individualmember{1..3}:
+    emailBody: '<sentence()>'
+    emailSubject: '<sentence()>'
+    person: '@person*'
+    organisation: '@organisation*'

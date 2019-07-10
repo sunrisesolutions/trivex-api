@@ -34,3 +34,9 @@ services:
         arguments: ['@app_util_aws_sns_util']
         tags:
             - { name: doctrine.event_subscriber }
+
+    magenta_org.role_event_subscriber:
+        class: App\Doctrine\Subscriber\RoleEventSubscriber
+        arguments: ['@app_util_aws_sns_util']
+        tags:
+            - { name: doctrine.event_subscriber }

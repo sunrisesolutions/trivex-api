@@ -27,21 +27,24 @@ class ACRoleEventSubscriber implements EventSubscriber {
         ];
     }
 
-    public function prePersist(LifecycleEventArgs $args) {
+    public function postPersist(LifecycleEventArgs $args) {
         $object = $args->getObject();
         if (!$object instanceof ACRole) return;
+        $object->organisationUuid = $object->getOrganisation()->getUuid();
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
     }
 
     public function postUpdate(LifecycleEventArgs $args) {
         $object = $args->getObject();
         if (!$object instanceof ACRole) return;
+        $object->organisationUuid = $object->getOrganisation()->getUuid();
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
     }
 
     public function postRemove(LifecycleEventArgs $args) {
         $object = $args->getObject();
         if (!$object instanceof ACRole) return;
+        $object->organisationUuid = $object->getOrganisation()->getUuid();
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_DELETE);
     }
 }

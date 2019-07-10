@@ -18,7 +18,7 @@ use App\Message\Entity\V1\OrganisationMessage;
 
 class OrganisationTest extends WebTestCase
 {
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -73,7 +73,8 @@ class OrganisationTest extends WebTestCase
 
     public function testPutOrg() {
         $orgRepo = static::$container->get('doctrine')->getRepository(Organisation::class);
-        $org = $orgRepo->findOneBy(['uuid' => 'UID-4444']);
+        $org = $orgRepo->findOneBy([], ['id' => 'DESC']);
+        $this->assertNotEmpty($org);
 
         $changedAddr = '372 CMT8';
         $content = [
@@ -103,19 +104,6 @@ class OrganisationTest extends WebTestCase
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
         $this->assertEquals($message->data->organisation->uuid, $orgUid);
-    }
-
-    protected function purgeMessage(Message $message, $condition) {
-        while(!empty($message) && is_callable($condition)) {
-            if ($condition($message) === true) {
-                return true;
-            } else {
-                $this->sqsUtil->deleteMessage($message);
-                sleep(4);
-                $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
-            }
-        }
-        return false;
     }
 
     protected function jwtToken(): string

@@ -20,6 +20,11 @@ abstract class Message
 
     protected abstract function getSupportedType(): string;
 
+    protected function prePersist($obj, $entity)
+    {
+
+    }
+
     public function updateEntity(EntityManagerInterface $manager)
     {
         $props = get_object_vars($this->data);
@@ -42,7 +47,7 @@ abstract class Message
                         break;
                     }
                 } else {
-                    echo 'new entity';
+//                    echo 'new entity from Message.php';
                     $entity = new $className();
                 }
 
@@ -65,6 +70,8 @@ abstract class Message
                         $manager->persist($_entity);
                     }
                 }
+                $this->prePersist($obj, $entity);
+//                echo 'prePERSSTTT';
                 $manager->persist($entity);
             }else{
 //                echo $supportedType.'::'.$prop.' NOT DEFINED';
