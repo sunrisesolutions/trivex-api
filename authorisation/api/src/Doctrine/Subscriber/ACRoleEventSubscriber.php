@@ -7,6 +7,7 @@ use App\Message\Message;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use App\Util\AwsSnsUtil;
+use Doctrine\ORM\Events;
 
 class ACRoleEventSubscriber implements EventSubscriber {
 
