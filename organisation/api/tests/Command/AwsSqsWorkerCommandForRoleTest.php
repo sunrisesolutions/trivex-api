@@ -19,7 +19,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 
 class AwsSqsWorkerCommandForRoleTest extends WebTestCase
 {
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -47,7 +47,7 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
         }
     }
 
-    public function RolePost() {
+    public function testRolePost() {
         $org = static::$container->get('doctrine')->getRepository(Organisation::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($org);
 
@@ -94,7 +94,7 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
         $this->assertNotEmpty($role);
     }
 
-    public function RolePut() {
+    public function testRolePut() {
         $roleRepo = static::$container->get('doctrine')->getRepository(Role::class);
         $role = $roleRepo->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($role);
@@ -110,7 +110,6 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
         $data['data']['acrole'] = $authAr;
         $data['version'] = 1; //AppUtil::MESSAGE_VERSION
         $msg['Message'] = json_encode($data);
-        print_r($msg);
 
         $this->sqsUtil->sendMessage($this->queueUrl, json_encode($msg));
 
@@ -124,23 +123,27 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
             '--limit' => 1,
             '--env' => 'test'
         ]);
-        sleep(3);
-        $new = $roleRepo->findOneBy([], ['id' => 'DESC']);
+
+        $new = $roleRepo->findOneBy(['uuid' => $role->getUuid()]);
         $this->assertNotEmpty($new);
         $this->assertEquals('ROLE_SUPER_ADMIN', $new->getName());
     }
 
-    public function RoleRemove() {
+    public function testRoleRemove() {
         $acRoleRepo = static::$container->get('doctrine')->getRepository(Role::class);
         $acrole = $acRoleRepo->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($acrole);
 
         $serializer = static::$container->get('serializer');
-        $authAr = json_decode($serializer->serialize($acrole, 'json', ['ignored_attributes' => ['organisation']]), true);
-        $authAr['_SYSTEM_OPERATION'] = Message::OPERATION_DELETE;
+        $authAr = [
+            'uuid' => $acrole->getUuid(),
+            'name' => 'ROLE_SUPER_ADMIN',
+            'organisationUuid' => '',
+            '_SYSTEM_OPERATION' => Message::OPERATION_DELETE,
+        ];
 
         $data = [];
-        $data['data']['authorisation'] = $authAr;
+        $data['data']['acrole'] = $authAr;
         $data['version'] = 1; //AppUtil::MESSAGE_VERSION
         $msg['Message'] = json_encode($data);
 
@@ -159,14 +162,5 @@ class AwsSqsWorkerCommandForRoleTest extends WebTestCase
 
         $acrole = $acRoleRepo->findOneBy(['uuid' => $acrole->getUuid()]);
         $this->assertEmpty($acrole);
-    }
-
-    protected function jwtToken(): string
-    {
-        $requestStack = static::$container->get('request_stack');
-        $requestStack->push(new Request([], [], [], [], [], ['REMOTE_ADDR' => '10.10.10.10']));
-        $jwtManager = static::$container->get('lexik_jwt_authentication.jwt_manager');
-        $user = new JWTUser('admin', ['ROLE_ADMIN'], '123', '456', 'U1-024290123');
-        return $jwtManager->create($user);
     }
 }

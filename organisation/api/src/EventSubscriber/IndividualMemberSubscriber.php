@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class IndividualMemberSubscriber implements EventSubscriberInterface
 {
