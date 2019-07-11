@@ -106,6 +106,15 @@ class IndividualMember
                 $this->organisation->addRole($role);
             }
             $this->addRole($role);
+        } else {
+            $c = Criteria::create();
+            $expr = Criteria::expr();
+            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+            $roles = $this->roles->matching($c);
+            foreach ($roles as $role) {
+                $this->removeRole($role);
+                $this->organisation->removeRole($role);
+            }
         }
     }
 

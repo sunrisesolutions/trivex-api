@@ -4,6 +4,7 @@ namespace App\Tests\Api;
 
 use App\Entity\Organisation;
 use App\Entity\Person;
+use App\Entity\Role;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,7 +14,7 @@ use App\Entity\IndividualMember;
 
 class IndividualMemberTest extends WebTestCase {
 
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     private $client;
 
@@ -34,10 +35,13 @@ class IndividualMemberTest extends WebTestCase {
         $content = [
             'organisationUuid' => $org->getUuid(),
             'personUuid' => $person->getUuid(),
-            'admin' => true,
+            'admin' => false,
         ];
         $response = $this->request('POST', 'individual_members', json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(201, $response->getStatusCode());
+
+        $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId()]);
+        $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
     protected function jwtToken(): string
