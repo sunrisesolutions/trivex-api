@@ -57,6 +57,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         $imRepo = $this->registry->getRepository(IndividualMember::class);
         $im = $imRepo->findOneBy(['uuid' => $imUuid,
         ]);
+
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
 
         if (!empty($personUuid = $member->getPersonUuid())) {

@@ -1,5 +1,5 @@
 App\Entity\Role:
-  role{1..6}:
+  role{1..3}:
     name: '<randomElement(["ROLE_ADMIN", "ROLE_ORG_ADMIN", "ROLE_USER"])>'
     individualMember: '@individualmember*'
     uuid: 'AUTH-<numberBetween(100000, 900000)>'

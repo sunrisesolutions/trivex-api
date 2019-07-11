@@ -21,9 +21,6 @@ class Role
      */
     private $id;
 
-    /**
-     * @ORM\PrePersist
-     */
     public function initiateUuid()
     {
         if (empty($this->uuid)) {

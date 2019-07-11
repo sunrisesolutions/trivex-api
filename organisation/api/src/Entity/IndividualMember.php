@@ -96,7 +96,13 @@ class IndividualMember
             $expr = Criteria::expr();
             $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
             $role = $this->roles->matching($c)->first();
-            $role->setName('ROLE_ORG_ADMIN');
+            if (empty($role)) {
+                $role = new Role();
+                $role->initiateUuid();
+                $role->setName('ROLE_ORG_ADMIN');
+                $role->setOrganisation($this->organisation);
+                $this->organisation->addRole($role);
+            }
             $this->addRole($role);
         }
     }
