@@ -85,6 +85,7 @@ class IndividualMember
         }
     }
 
+
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
@@ -168,7 +169,9 @@ class IndividualMember
     public function getPersonData()
     {
         $person = $this->person;
-
+        if (empty($person)) {
+            return [];
+        }
         return [
             'name' => $person->getName(),
             'jobTitle' => $person->getJobTitle(),

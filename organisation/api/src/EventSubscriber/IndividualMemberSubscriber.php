@@ -50,13 +50,12 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
 
         /** @var JWTUser $user */
         $user = $this->security->getUser();
-        if (empty($user) or empty($imUuid = $user->getImUuid())) {
+        if (empty($user) or (empty($imUuid = $user->getImUuid() and !in_array('ROLE_ADMIN',$user->getRoles())))) {
             $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
         }
 
-        $imRepo = $this->registry->getRepository(IndividualMember::class);
-        $im = $imRepo->findOneBy(['uuid' => $imUuid,
-        ]);
+//        $imRepo = $this->registry->getRepository(IndividualMember::class);
+//        $im = $imRepo->findOneBy(['uuid' => $imUuid,]);
 
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
 

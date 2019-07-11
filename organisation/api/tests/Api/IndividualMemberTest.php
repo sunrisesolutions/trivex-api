@@ -19,7 +19,7 @@ class IndividualMemberTest extends WebTestCase {
     }
 
     public function testGettoken() {
-
+        print_r($this->jwtToken());
     }
 
     protected function jwtToken(): string
