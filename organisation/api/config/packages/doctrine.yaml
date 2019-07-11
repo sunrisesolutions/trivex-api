@@ -40,9 +40,3 @@ services:
         arguments: ['@app_util_aws_sns_util']
         tags:
             - { name: doctrine.event_subscriber }
-
-    magenta_org.im_event_subscriber:
-        class: App\Doctrine\Subscriber\IndividualMemberEventSubscriber
-        arguments: ['@app_util_aws_sns_util']
-        tags:
-            - { name: doctrine.event_subscriber }

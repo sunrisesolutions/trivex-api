@@ -18,6 +18,11 @@ class IndividualMemberTest extends WebTestCase {
         self::bootKernel();
     }
 
+    public function testGettoken() {
+        print_r($this->jwtToken());
+
+    }
+
     protected function jwtToken(): string
     {
         $requestStack = static::$container->get('request_stack');
