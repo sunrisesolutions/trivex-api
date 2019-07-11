@@ -27,11 +27,11 @@ class SendEmailToIndividualMember
 //        $member = $this->registry->getRepository(IndividualMember::class)->find($data->emailTo);
         if (!empty($data)) {
             if (!empty($toEmail = $data->getPerson()->getEmail())) {
-                $message = (new \Swift_Message($data->emailSubject))
-                    ->setFrom('no-reply-member@magentapulse.com')
+                $message = (new \Swift_Message($data->getEmailSubject()))
+                    ->setFrom('no-reply.member@magentapulse.com')
                     ->setTo($toEmail)
                     ->setBody(
-                        $data->emailBody,
+                        $data->getEmailBody(),
                         'text/html'
                     )/*
                  * If you also want to include a plaintext version of the message

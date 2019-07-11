@@ -55,13 +55,13 @@ class IndividualMember
     private $id;
 
     /**
-     * @var string
+     * @var string|null
      * @Groups({"email"})
      */
     public $emailBody;
 
     /**
-     * @var string
+     * @var string|null
      * @Groups({"email"})
      */
     public $emailSubject;
@@ -442,4 +442,37 @@ class IndividualMember
 
         return $this;
     }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailBody(): ?string
+    {
+        return $this->emailBody;
+    }
+
+    /**
+     * @param string|null $emailBody
+     */
+    public function setEmailBody(?string $emailBody): void
+    {
+        $this->emailBody = $emailBody;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getEmailSubject(): ?string
+    {
+        return $this->emailSubject;
+    }
+
+    /**
+     * @param string|null $emailSubject
+     */
+    public function setEmailSubject(?string $emailSubject): void
+    {
+        $this->emailSubject = $emailSubject;
+    }
+
 }
