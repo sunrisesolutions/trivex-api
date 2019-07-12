@@ -3,10 +3,13 @@
 namespace App\Doctrine\Subscriber;
 
 use App\Entity\IndividualMember;
+use App\Entity\Role;
 use App\Message\Message;
 use App\Util\AwsSnsUtil;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Events;
 
 class IndividualMemberEventSubscriber implements EventSubscriber
@@ -19,15 +22,35 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         $this->awsSnsUtil = $awsSnsUtil;
     }
 
-    public function getSubscribedEvents(){
+    public function getSubscribedEvents()
+    {
         return [
             Events::postPersist,
             Events::postUpdate,
             Events::postRemove,
+            Events::prePersist,
+            Events::preUpdate
         ];
     }
 
-    public function postPersist(LifecycleEventArgs $args) {
+    public function prePersist(LifecycleEventArgs $args)
+    {
+        $object = $args->getObject();
+        if (!$object instanceof IndividualMember) {
+            return;
+        }
+    }
+
+    public function preUpdate(LifecycleEventArgs $args)
+    {
+        $object = $args->getObject();
+        if (!$object instanceof IndividualMember) {
+            return;
+        }
+    }
+
+    public function postPersist(LifecycleEventArgs $args)
+    {
         $object = $args->getObject();
         if (!$object instanceof IndividualMember) {
             return;
@@ -35,7 +58,8 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
     }
 
-    public function postUpdate(LifecycleEventArgs $args) {
+    public function postUpdate(LifecycleEventArgs $args)
+    {
         $object = $args->getObject();
         if (!$object instanceof IndividualMember) {
             return;
@@ -43,7 +67,8 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
     }
 
-    public function postRemove(LifecycleEventArgs $args) {
+    public function postRemove(LifecycleEventArgs $args)
+    {
         $object = $args->getObject();
         if (!$object instanceof IndividualMember) {
             return;

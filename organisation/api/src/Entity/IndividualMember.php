@@ -86,38 +86,6 @@ class IndividualMember
         }
     }
 
-
-    /**
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
-     */
-    public function makeAdmin()
-    {
-        if ($this->admin === true) {
-            $c = Criteria::create();
-            $expr = Criteria::expr();
-            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
-            $role = $this->roles->matching($c)->first();
-            if (empty($role)) {
-                $role = new Role();
-                $role->initiateUuid();
-                $role->setName('ROLE_ORG_ADMIN');
-                $role->setOrganisation($this->organisation);
-                $this->organisation->addRole($role);
-            }
-            $this->addRole($role);
-        } else {
-            $c = Criteria::create();
-            $expr = Criteria::expr();
-            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
-            $roles = $this->roles->matching($c);
-            foreach ($roles as $role) {
-                $this->removeRole($role);
-                $this->organisation->removeRole($role);
-            }
-        }
-    }
-
     /**
      * @return bool
      * @Groups("read_member")
@@ -251,7 +219,7 @@ class IndividualMember
      * @var boolean|null
      * @Groups("write")
      */
-    private $admin = false;
+    public $admin = false;
 
     public function __construct()
     {

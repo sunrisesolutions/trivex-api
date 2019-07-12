@@ -8,7 +8,12 @@ use App\Entity\Connection;
 use App\Entity\IndividualMember;
 use App\Entity\Organisation;
 use App\Entity\Person;
+use App\Entity\Role;
 use App\Security\JWTUser;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\Entity;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,12 +28,14 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
     private $registry;
     private $mailer;
     private $security;
+    private $manager;
 
-    public function __construct(RegistryInterface $registry, \Swift_Mailer $mailer, Security $security)
+    public function __construct(RegistryInterface $registry, \Swift_Mailer $mailer, Security $security,EntityManagerInterface $manager)
     {
         $this->registry = $registry;
         $this->mailer = $mailer;
         $this->security = $security;
+        $this->manager = $manager;
     }
 
     public static function getSubscribedEvents()
@@ -38,21 +45,54 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         ];
     }
 
+    private function makeAdmin(IndividualMember $member, ObjectManager $manager)
+    {
+        if ($member->admin === true) {
+            $c = Criteria::create();
+            $expr = Criteria::expr();
+            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+            $role = $member->getRoles()->matching($c)->first();
+            if (empty($role)) {
+                $role = new Role();
+                $role->initiateUuid();
+                $role->setName('ROLE_ORG_ADMIN');
+                $role->setOrganisation($member->getOrganisation());
+                $member->getOrganisation()->addRole($role);
+            }
+            $member->addRole($role);
+        } elseif ($member->admin === false) {
+            $c = Criteria::create();
+            $expr = Criteria::expr();
+            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+            $roles = $member->getRoles()->matching($c);
+            if ($roles->count() > 0) {
+                foreach ($roles as $role) {
+                    $member->removeRole($role);
+                    $manager->persist($role);
+                }
+            }
+
+        }
+    }
+
     public function onKernelView(GetResponseForControllerResultEvent $event)
     {
         /** @var IndividualMember $member */
         $member = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
 
-        if (!$member instanceof IndividualMember || Request::METHOD_POST !== $method) {
+        if (!$member instanceof IndividualMember || !in_array($method, [Request::METHOD_POST, Request::METHOD_PUT])) {
             return;
         }
 
         /** @var JWTUser $user */
         $user = $this->security->getUser();
-        if (empty($user) or (empty($imUuid = $user->getImUuid()) and !in_array('ROLE_ADMIN',$user->getRoles()))) {
+        if (empty($user) or (empty($imUuid = $user->getImUuid()) and !in_array('ROLE_ADMIN', $user->getRoles()))) {
             $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
         }
+
+        $this->makeAdmin($member, $this->manager);
+
 
 //        $imRepo = $this->registry->getRepository(IndividualMember::class);
 //        $im = $imRepo->findOneBy(['uuid' => $imUuid,]);

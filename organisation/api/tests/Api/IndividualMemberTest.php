@@ -5,6 +5,7 @@ namespace App\Tests\Api;
 use App\Entity\Organisation;
 use App\Entity\Person;
 use App\Entity\Role;
+use Doctrine\Common\Collections\Criteria;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Hautelook\AliceBundle\PhpUnit\RefreshDatabaseTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,7 +15,7 @@ use App\Entity\IndividualMember;
 
 class IndividualMemberTest extends WebTestCase {
 
-    use RefreshDatabaseTrait;
+    //use RefreshDatabaseTrait;
 
     private $client;
 
@@ -35,14 +36,35 @@ class IndividualMemberTest extends WebTestCase {
         $content = [
             'organisationUuid' => $org->getUuid(),
             'personUuid' => $person->getUuid(),
-            'admin' => false,
+            'admin' => true,
         ];
         $response = $this->request('POST', 'individual_members', json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(201, $response->getStatusCode());
-
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId()]);
         $this->assertEquals($content['admin'], $im->isAdmin());
     }
+
+    public function testInvididualMemberPut() {
+        $doctrine = static::$container->get('doctrine');
+        $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
+        $this->assertNotEmpty($org);
+        $person = $doctrine->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
+        $this->assertNotEmpty($person);
+        $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
+        $this->assertNotEmpty($im);
+
+        $content = [
+            'organisationUuid' => $org->getUuid(),
+            'personUuid' => $person->getUuid(),
+            'admin' => false,
+        ];
+        $response = $this->request('PUT', 'individual_members/' . $im->getId(), json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
+        $this->assertEquals(200, $response->getStatusCode());
+        $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId()]);
+        $this->assertEquals($content['admin'], $im->isAdmin());
+    }
+
+    public function IndividualMemberDelete() {}
 
     protected function jwtToken(): string
     {

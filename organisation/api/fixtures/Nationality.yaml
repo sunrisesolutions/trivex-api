@@ -1,5 +1,5 @@
 App\Entity\Nationality:
-  nationality{1..3}:
+  nationality{1..2}:
     country: '<country()>'
     nricNumber: 'NN-<numberBetween(1000, 9000)>'
     passportNumber: 'PN-<numberBetween(1000, 9000)>'
