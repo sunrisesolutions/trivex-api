@@ -57,7 +57,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 $role->initiateUuid();
                 $role->setName('ROLE_ORG_ADMIN');
                 $role->setOrganisation($member->getOrganisation());
-                $member->getOrganisation()->addRole($role);
+                $member->addRole($role);
             }
             $member->addRole($role);
         } elseif ($member->admin === false) {

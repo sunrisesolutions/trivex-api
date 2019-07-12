@@ -44,7 +44,7 @@ class IndividualMemberTest extends WebTestCase {
         $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
-    public function testInvididualMemberPut() {
+    public function InvididualMemberPut() {
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -60,8 +60,8 @@ class IndividualMemberTest extends WebTestCase {
         ];
         $response = $this->request('PUT', 'individual_members/' . $im->getId(), json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(200, $response->getStatusCode());
-        $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId()]);
-        $this->assertEquals($content['admin'], $im->isAdmin());
+        $roles = $doctrine->getRepository(Role::class)->findBy(['organisation' => $org->getId(), 'individualMember' => $im->getId()]);
+        $this->assertEmpty($roles);
     }
 
     public function IndividualMemberDelete() {}
