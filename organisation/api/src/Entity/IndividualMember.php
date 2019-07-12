@@ -151,6 +151,7 @@ class IndividualMember
             return [];
         }
         return [
+            'uuid' => $person->getUuid(),
             'name' => $person->getName(),
             'jobTitle' => $person->getJobTitle(),
             'employerName' => $person->getEmployerName(),
