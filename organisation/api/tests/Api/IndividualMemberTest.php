@@ -65,6 +65,8 @@ class IndividualMemberTest extends WebTestCase {
     }
 
     public function testIndividualMemberDelete() {
+        print_r($this->jwtToken());
+        exit();
         $doctrine = static::$container->get('doctrine');
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($im);
