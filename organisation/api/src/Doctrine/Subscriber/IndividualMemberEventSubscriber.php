@@ -28,25 +28,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
             Events::postPersist,
             Events::postUpdate,
             Events::postRemove,
-            Events::prePersist,
-            Events::preUpdate
         ];
-    }
-
-    public function prePersist(LifecycleEventArgs $args)
-    {
-        $object = $args->getObject();
-        if (!$object instanceof IndividualMember) {
-            return;
-        }
-    }
-
-    public function preUpdate(LifecycleEventArgs $args)
-    {
-        $object = $args->getObject();
-        if (!$object instanceof IndividualMember) {
-            return;
-        }
     }
 
     public function postPersist(LifecycleEventArgs $args)
