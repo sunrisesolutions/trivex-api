@@ -15,7 +15,7 @@ use App\Entity\IndividualMember;
 
 class IndividualMemberTest extends WebTestCase {
 
-    use RefreshDatabaseTrait;
+    //use RefreshDatabaseTrait;
 
     private $client;
 
@@ -26,7 +26,7 @@ class IndividualMemberTest extends WebTestCase {
         $this->client = static::createClient();
     }
 
-    public function InvididualMemberPost() {
+    public function testInvididualMemberPost() {
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -40,11 +40,12 @@ class IndividualMemberTest extends WebTestCase {
         ];
         $response = $this->request('POST', 'individual_members', json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(201, $response->getStatusCode());
-        $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId()]);
+        $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId(), 'organisation' => $org->getId()]);
+        $this->assertNotEmpty($im);
         $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
-    public function InvididualMemberPut() {
+    public function testInvididualMemberPut() {
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -52,25 +53,24 @@ class IndividualMemberTest extends WebTestCase {
         $this->assertNotEmpty($person);
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($im);
+        $imID = $im->getId();
 
         $content = [
             'organisationUuid' => $org->getUuid(),
             'personUuid' => $person->getUuid(),
             'admin' => false,
         ];
-        $response = $this->request('PUT', 'individual_members/' . $im->getId(), json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
+        $response = $this->request('PUT', 'individual_members/' . $imID, json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(200, $response->getStatusCode());
-        $roles = $doctrine->getRepository(Role::class)->findBy(['organisation' => $org->getId(), 'individualMember' => $im->getId()]);
-        $this->assertEmpty($roles);
+        $role = $doctrine->getRepository(Role::class)->findOneBy(['individualMember' => $imID]);
+        $this->assertEmpty($role);
     }
 
     public function testIndividualMemberDelete() {
-        print_r($this->jwtToken());
-        exit();
         $doctrine = static::$container->get('doctrine');
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
-        $id = $im->getId();
         $this->assertNotEmpty($im);
+        $id = $im->getId();
         $response = $this->request('DELETE', 'individual_members/' . $id, null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(204, $response->getStatusCode());
         $im = $doctrine->getRepository(IndividualMember::class)->find($id);

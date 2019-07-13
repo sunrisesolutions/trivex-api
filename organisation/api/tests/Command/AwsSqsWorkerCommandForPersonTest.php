@@ -23,7 +23,7 @@ use Symfony\Component\Console\Tester\CommandTester;
 
 class AwsSqsWorkerCommandForPersonTest extends WebTestCase
 {
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -42,7 +42,7 @@ class AwsSqsWorkerCommandForPersonTest extends WebTestCase
         $this->sqsUtil = static::$container->get('app_util_aws_sqs_util');
         $this->queueName = 'PERSON'; //TRIVEX_ORG_TEST_PERSON
         $this->queueUrl = $this->sqsUtil->getQueueUrl($this->queueName);
-        //$this->purgeQueue();
+        $this->purgeQueue();
     }
 
     protected function purgeQueue()
