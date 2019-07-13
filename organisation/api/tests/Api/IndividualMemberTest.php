@@ -69,10 +69,11 @@ class IndividualMemberTest extends WebTestCase {
         exit();
         $doctrine = static::$container->get('doctrine');
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
+        $id = $im->getId();
         $this->assertNotEmpty($im);
-        $response = $this->request('DELETE', 'individual_members/' . $im->getId(), null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
+        $response = $this->request('DELETE', 'individual_members/' . $id, null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(204, $response->getStatusCode());
-        $im = $doctrine->getRepository(IndividualMember::class)->find($im->getId());
+        $im = $doctrine->getRepository(IndividualMember::class)->find($id);
         $this->assertEmpty($im);
     }
 

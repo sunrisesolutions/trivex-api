@@ -5,6 +5,7 @@ namespace App\Doctrine\Subscriber;
 use App\Entity\IndividualMember;
 use App\Entity\Role;
 use App\Message\Message;
+use App\Util\AppUtil;
 use App\Util\AwsSnsUtil;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\EventSubscriber;
@@ -55,6 +56,8 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         if (!$object instanceof IndividualMember) {
             return;
         }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_DELETE);
+        $obj = new IndividualMember();
+        $obj->setUuid($object->getUuid());
+        return $this->awsSnsUtil->publishMessage($obj, Message::OPERATION_DELETE);
     }
 }

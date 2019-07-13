@@ -35,6 +35,7 @@ class Role
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="roles")
+     * @ORM\JoinColumn(name="id_individual_member", referencedColumnName="id", onDelete="SET NULL")
      */
     private $individualMember;
 
@@ -45,6 +46,7 @@ class Role
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="roles")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="SET NULL")
      */
     private $organisation;
 
