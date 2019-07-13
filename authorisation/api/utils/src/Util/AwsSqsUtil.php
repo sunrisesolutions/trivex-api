@@ -55,7 +55,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
     public function listQueues(): iterable
     {
 //        return   $result = $this->client->listQueues();
-        if(!empty($this->queues)){
+        if (!empty($this->queues)) {
             return $this->queues;
         }
         $queues = [];
@@ -144,6 +144,11 @@ class AwsSqsUtil implements AwsSqsUtilInterface
         $this->client = $this->sdk->createSqs($config + $credentials);
     }
 
+    public function addPermission($args = [])
+    {
+        $this->client->addPermission($args);
+    }
+
     /**
      * @link https://docs.aws.amazon.com/aws-sdk-php/v3/api/api-sqs-2012-11-05.html#receivemessage
      */
@@ -157,6 +162,7 @@ class AwsSqsUtil implements AwsSqsUtilInterface
 
         $message = null;
         if (null !== $result->get('Messages')) {
+
             $body = $result->get('Messages')[0]['Body'];
             $id = $result->get('Messages')[0]['MessageId'];
             $receiptHandle = $result->get('Messages')[0]['ReceiptHandle'];

@@ -22,7 +22,6 @@ class Consumer implements ConsumerInterface
         foreach ($this->strategies as $strategy) {
             if ($strategy->canProcess($message, $queue)) {
                 $strategy->process($message);
-                
                 break;
             }
         }

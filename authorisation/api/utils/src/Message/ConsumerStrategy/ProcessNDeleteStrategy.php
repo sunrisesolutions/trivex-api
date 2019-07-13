@@ -30,8 +30,8 @@ class ProcessNDeleteStrategy implements StrategyInterface
 
     public function canProcess(Message $message = null, string $queue = null): bool
     {
-//        return true;
-        return self::QUEUE_NAME === strtoupper($queue);
+        return true;
+//        return self::QUEUE_NAME === strtoupper($queue);
     }
 
     public function process(Message $message): void
