@@ -1,5 +1,5 @@
 App\Entity\Role:
-  role{1..2}:
+  role{1..5}:
 #    name: '<randomElement(["ROLE_ORG_ADMIN", "ROLE_USER"])>'
     name: 'ROLE_USER'
     individualMember: '@individualmember*'

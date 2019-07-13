@@ -188,14 +188,14 @@ class IndividualMember
 
     /**
      * @var Person
-     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers", cascade={"persist","merge", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers")
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="SET NULL")
      */
     private $person;
 
     /**
      * @var Organisation
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers", cascade={"persist","merge", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="SET NULL")
      */
     private $organisation;
