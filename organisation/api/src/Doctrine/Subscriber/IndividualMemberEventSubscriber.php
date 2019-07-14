@@ -38,7 +38,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         if (!$object instanceof IndividualMember) {
             return;
         }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
+        //return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST); //TRIVEX_ORG_TEST_PERSON
     }
 
     public function postUpdate(LifecycleEventArgs $args)
@@ -47,7 +47,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         if (!$object instanceof IndividualMember) {
             return;
         }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
+        //return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
     }
 
     public function postRemove(LifecycleEventArgs $args)
@@ -58,6 +58,6 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         }
         $obj = new IndividualMember();
         $obj->setUuid($object->getUuid());
-        return $this->awsSnsUtil->publishMessage($obj, Message::OPERATION_DELETE);
+        //return $this->awsSnsUtil->publishMessage($obj, Message::OPERATION_DELETE);
     }
 }

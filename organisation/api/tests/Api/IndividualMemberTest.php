@@ -31,21 +31,31 @@ class IndividualMemberTest extends WebTestCase {
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
         $person = $doctrine->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
-        $this->assertNotEmpty($person);
+
+        if (empty($person)) $pid = 'PERSON-' . time();
+        else $pid = $person->getUuid();
 
         $content = [
             'organisationUuid' => $org->getUuid(),
-            'personUuid' => $person->getUuid(),
+            'personUuid' => $pid,
             'admin' => true,
         ];
         $response = $this->request('POST', 'individual_members', json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(201, $response->getStatusCode());
+
+        $person = $doctrine->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId(), 'organisation' => $org->getId()]);
         $this->assertNotEmpty($im);
         $this->assertEquals($content['admin'], $im->isAdmin());
+
+        //test personData
+//        $data = json_decode($response->getContent(), true);
+//        $this->assertNotNull($data['personData']['name']);
+//        $this->assertNotNull($data['personData']['email']);
+//        $this->assertNotNull($data['personData']['jobTitle']);
     }
 
-    public function testInvididualMemberPut() {
+    public function InvididualMemberPut() {
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -64,9 +74,12 @@ class IndividualMemberTest extends WebTestCase {
         $this->assertEquals(200, $response->getStatusCode());
         $role = $doctrine->getRepository(Role::class)->findOneBy(['individualMember' => $imID]);
         $this->assertEmpty($role);
+        $im = $doctrine->getRepository(IndividualMember::class)->find($imID);
+        $this->assertNotEmpty($im);
+        $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
-    public function testIndividualMemberDelete() {
+    public function IndividualMemberDelete() {
         $doctrine = static::$container->get('doctrine');
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($im);

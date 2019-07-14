@@ -57,9 +57,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 $role->initiateUuid();
                 $role->setName('ROLE_ORG_ADMIN');
                 $role->setOrganisation($member->getOrganisation());
-                $member->addRole($role);
             }
             $member->addRole($role);
+            $manager->persist($role);
         } elseif ($member->admin === false) {
             $c = Criteria::create();
             $expr = Criteria::expr();
@@ -91,9 +91,6 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
         }
 
-        $this->makeAdmin($member, $this->manager);
-
-
 //        $imRepo = $this->registry->getRepository(IndividualMember::class);
 //        $im = $imRepo->findOneBy(['uuid' => $imUuid,]);
 
@@ -102,8 +99,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         if (!empty($personUuid = $member->getPersonUuid())) {
             $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
             if (empty($person)) {
-                $person = new Person();
-                $person->setUuid($personUuid);
+                //$person = new Person();
+                //$person->setUuid($personUuid);
+                $event->setResponse(new JsonResponse(['Person not found'], 404));
             }
             $member->setPerson($person);
             $person->addIndividualMember($member);
@@ -114,11 +112,11 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             if (empty($org)) {
                 throw new InvalidArgumentException('Invalid Organisation');
             }
-            $member->setPerson($person);
             $member->setOrganisation($org);
-            $person->addIndividualMember($member);
             $org->addIndividualMember($member);
         }
+
+        $this->makeAdmin($member, $this->manager);
 
 //        $event->setControllerResult($member);
 
