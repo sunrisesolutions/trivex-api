@@ -15,7 +15,7 @@ use App\Entity\IndividualMember;
 
 class IndividualMemberTest extends WebTestCase {
 
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     private $client;
 
@@ -47,12 +47,6 @@ class IndividualMemberTest extends WebTestCase {
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy(['person' => $person->getId(), 'organisation' => $org->getId()]);
         $this->assertNotEmpty($im);
         $this->assertEquals($content['admin'], $im->isAdmin());
-
-        //test personData
-//        $data = json_decode($response->getContent(), true);
-//        $this->assertNotNull($data['personData']['name']);
-//        $this->assertNotNull($data['personData']['email']);
-//        $this->assertNotNull($data['personData']['jobTitle']);
     }
 
     public function testInvididualMemberPut() {

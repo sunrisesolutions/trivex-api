@@ -17,7 +17,7 @@ use App\Message\Message;
 
 class PersonTest extends WebTestCase
 {
-    //use RefreshDatabaseTrait;
+    use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -69,57 +69,55 @@ class PersonTest extends WebTestCase
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
         $this->assertEquals($content['givenName'], $message->data->person->givenName);
+        $this->assertEquals($content['email'], $message->data->person->email);
     }
 
     public function testPutPerson()
     {
-        $givenName = 'person4';
-        $emailToChange = 'changed@gmail.com';
-        $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
-        $person = $personRepo->findOneBy(['givenName' => $givenName]);
-        $this->assertEquals('person4@gmail.com', $person->getEmail());
+        $person = static::$container->get('doctrine')->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
+        $this->assertNotEmpty($person);
 
-        $token = $this->jwtToken();
-        $userId = $person->getId();
+        $random = time();
         $content = [
-            'birthDate' => '2019-07-04T07:20:21.115Z',
-            'givenName' => $givenName,
-            'familyName' => 'family name',
-            'gender' => 'FEMALE',
-            'email' => $emailToChange,
-            'phoneNumber' => '123456',
-            'uuid' => 'UID-789',
-            'middleName' => 'midname2',
+            'givenName' => 'name-' . $random,
+            'email' => $random . '@gmail.com',
+            'phoneNumber' => '84123456789',
+            'employerName' => 'magenta',
         ];
 
-        $response = $this->request('PUT', 'people/' . $userId, json_encode($content), ['Authorization' => 'Bearer ' . $token]);
+        $response = $this->request('PUT', 'people/' . $person->getId(), json_encode($content), ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(200, $response->getStatusCode());
 
-        sleep(7);
+        sleep(2);
 
-        /** @var PersonMessage $message */
+        $changed = static::$container->get('doctrine')->getRepository(Person::class)->find($person->getId());
+        $this->assertNotEmpty($changed);
+        $this->assertEquals($content['givenName'], $changed->getGivenName());
+        $this->assertEquals($content['email'], $changed->getEmail());
+
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-        $this->assertEquals($givenName, $message->data->person->givenName);
-        $this->assertEquals($emailToChange, $message->data->person->email);
+        $this->assertEquals($person->getUuid(), $message->data->person->uuid);
+        $this->assertEquals($content['email'], $message->data->person->email);
     }
 
     public function testDeletePerson()
     {
-        $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
-        $person = $personRepo->findOneBy([], ['id' => 'DESC']);
-        $givenName = $person->getGivenName();
+        $person = static::$container->get('doctrine')->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($person);
+        $id = $person->getId();
 
-        $response = $this->request('DELETE', 'people/' . $person->getId(), null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
+        $response = $this->request('DELETE', 'people/' . $id, null, ['Authorization' => 'Bearer ' . $this->jwtToken()]);
         $this->assertEquals(204, $response->getStatusCode());
 
-        sleep(7);
+        sleep(2);
 
-        /** @var PersonMessage $message */
         $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
         $this->assertNotEmpty($message);
-        $this->assertEquals($givenName, $message->data->person->givenName);
+        $this->assertEquals($person->getGivenName(), $message->data->person->givenName);
+
+        $rm = static::$container->get('doctrine')->getRepository(Person::class)->find($id);
+        $this->assertEmpty($rm);
     }
 
     protected function jwtToken(): string
