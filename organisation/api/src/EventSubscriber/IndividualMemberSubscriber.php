@@ -99,9 +99,8 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         if (!empty($personUuid = $member->getPersonUuid())) {
             $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
             if (empty($person)) {
-                //$person = new Person();
-                //$person->setUuid($personUuid);
-                $event->setResponse(new JsonResponse(['Person not found'], 404));
+                $person = new Person();
+                $person->setUuid($personUuid);
             }
             $member->setPerson($person);
             $person->addIndividualMember($member);
