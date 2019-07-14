@@ -55,7 +55,7 @@ class IndividualMemberTest extends WebTestCase {
 //        $this->assertNotNull($data['personData']['jobTitle']);
     }
 
-    public function InvididualMemberPut() {
+    public function testInvididualMemberPut() {
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -79,7 +79,7 @@ class IndividualMemberTest extends WebTestCase {
         $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
-    public function IndividualMemberDelete() {
+    public function testIndividualMemberDelete() {
         $doctrine = static::$container->get('doctrine');
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($im);

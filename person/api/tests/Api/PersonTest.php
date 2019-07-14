@@ -63,16 +63,15 @@ class PersonTest extends WebTestCase
         $person = static::$container->get('doctrine')->getRepository(Person::class)->findOneBy(['givenName' => $content['givenName']]);
         $this->assertNotEmpty($person);
 
-        echo 'Send name: ' . $content['givenName'];
-//        sleep(2);
-//
-//        /** @var PersonMessage $message */
-//        $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
-//        $this->assertNotEmpty($message);
-//        $this->assertEquals($content['givenName'], $message->data->person->givenName);
+        sleep(2);
+
+        /** @var PersonMessage $message */
+        $message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName);
+        $this->assertNotEmpty($message);
+        $this->assertEquals($content['givenName'], $message->data->person->givenName);
     }
 
-    public function PutPerson()
+    public function testPutPerson()
     {
         $givenName = 'person4';
         $emailToChange = 'changed@gmail.com';
@@ -105,7 +104,7 @@ class PersonTest extends WebTestCase
         $this->assertEquals($emailToChange, $message->data->person->email);
     }
 
-    public function DeletePerson()
+    public function testDeletePerson()
     {
         $personRepo = static::$container->get('doctrine')->getRepository(Person::class);
         $person = $personRepo->findOneBy([], ['id' => 'DESC']);

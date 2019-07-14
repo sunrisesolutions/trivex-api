@@ -57,9 +57,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 $role->initiateUuid();
                 $role->setName('ROLE_ORG_ADMIN');
                 $role->setOrganisation($member->getOrganisation());
+                $manager->persist($role);
             }
             $member->addRole($role);
-            $manager->persist($role);
         } elseif ($member->admin === false) {
             $c = Criteria::create();
             $expr = Criteria::expr();
@@ -111,7 +111,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             if (empty($org)) {
                 throw new InvalidArgumentException('Invalid Organisation');
             }
+            $member->setPerson($person);
             $member->setOrganisation($org);
+            $person->addIndividualMember($member);
             $org->addIndividualMember($member);
         }
 
