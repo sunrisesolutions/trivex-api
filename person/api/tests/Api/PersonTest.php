@@ -17,7 +17,7 @@ use App\Message\Message;
 
 class PersonTest extends WebTestCase
 {
-    use RefreshDatabaseTrait;
+    //use RefreshDatabaseTrait;
 
     protected $client;
 
@@ -72,7 +72,7 @@ class PersonTest extends WebTestCase
         $this->assertEquals($content['email'], $message->data->person->email);
     }
 
-    public function testPutPerson()
+    public function PutPerson()
     {
         $person = static::$container->get('doctrine')->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($person);
@@ -101,7 +101,7 @@ class PersonTest extends WebTestCase
         $this->assertEquals($content['email'], $message->data->person->email);
     }
 
-    public function testDeletePerson()
+    public function DeletePerson()
     {
         $person = static::$container->get('doctrine')->getRepository(Person::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($person);

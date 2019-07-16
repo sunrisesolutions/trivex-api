@@ -15,7 +15,7 @@ use App\Entity\IndividualMember;
 
 class IndividualMemberTest extends WebTestCase {
 
-    use RefreshDatabaseTrait;
+    //use RefreshDatabaseTrait;
 
     private $client;
 
@@ -27,6 +27,8 @@ class IndividualMemberTest extends WebTestCase {
     }
 
     public function testInvididualMemberPost() {
+        print_r($this->jwtToken());
+        exit();
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -49,7 +51,7 @@ class IndividualMemberTest extends WebTestCase {
         $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
-    public function testInvididualMemberPut() {
+    public function InvididualMemberPut() {
         $doctrine = static::$container->get('doctrine');
         $org = $doctrine->getRepository(Organisation::class)->findOneBy([], ['id' => 'ASC']);
         $this->assertNotEmpty($org);
@@ -73,7 +75,7 @@ class IndividualMemberTest extends WebTestCase {
         $this->assertEquals($content['admin'], $im->isAdmin());
     }
 
-    public function testIndividualMemberDelete() {
+    public function IndividualMemberDelete() {
         $doctrine = static::$container->get('doctrine');
         $im = $doctrine->getRepository(IndividualMember::class)->findOneBy([], ['id' => 'DESC']);
         $this->assertNotEmpty($im);

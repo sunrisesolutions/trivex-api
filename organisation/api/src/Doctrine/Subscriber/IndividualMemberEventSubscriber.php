@@ -3,6 +3,8 @@
 namespace App\Doctrine\Subscriber;
 
 use App\Entity\IndividualMember;
+use App\Entity\Organisation;
+use App\Entity\Person;
 use App\Entity\Role;
 use App\Message\Message;
 use App\Util\AppUtil;
@@ -38,7 +40,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         if (!$object instanceof IndividualMember) {
             return;
         }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
+        //return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
     }
 
     public function postUpdate(LifecycleEventArgs $args)
@@ -47,7 +49,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         if (!$object instanceof IndividualMember) {
             return;
         }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
+        //return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
     }
 
     public function postRemove(LifecycleEventArgs $args)

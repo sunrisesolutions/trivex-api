@@ -92,15 +92,23 @@ class IndividualMember
      */
     public function isAdmin(): bool
     {
-        return !empty($this->getAdmin());
-    }
+//        return !empty($this->getAdmin());
 
-    public function getAdmin(): ?bool
-    {
         $c = Criteria::create();
         $expr = Criteria::expr();
         $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
         $this->admin = $this->roles->matching($c)->count() > 0;
+        return !empty($this->admin);
+    }
+
+    public function getAdmin(): ?bool
+    {
+//        $c = Criteria::create();
+//        $expr = Criteria::expr();
+//        $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+//        $this->admin = $this->roles->matching($c)->count() > 0;
+//        return $this->admin;
+
         return $this->admin;
     }
 
