@@ -173,17 +173,17 @@ class Person
         return $this;
     }
 
-//    public function getBirthDate(): ?\DateTimeInterface
-//    {
-//        return $this->birthDate;
-//    }
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
 
-//    public function setBirthDate(?\DateTimeInterface $birthDate): self
-//    {
-//        $this->birthDate = $birthDate;
-//
-//        return $this;
-//    }
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
 
     /**
      * @return Collection|Nationality[]
