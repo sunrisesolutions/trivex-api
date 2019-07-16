@@ -25,6 +25,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 class IndividualMemberSubscriber implements EventSubscriberInterface
 {
@@ -101,57 +102,32 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
 
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
 
-//        if (!empty($personUuid = $member->getPersonUuid())) {
-//            $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
-//            if (empty($person)) {
-//                $person = new Person();
-//                $person->setUuid($personUuid);
-//            }
-//            $member->setPerson($person);
-//            $person->addIndividualMember($member);
-//        }
-//
-//        if (!empty($orgUuid = $member->getOrganisationUuid())) {
-//            $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
-//            if (empty($org)) {
-//                throw new InvalidArgumentException('Invalid Organisation');
-//            }
-//            $member->setPerson($person);
-//            $member->setOrganisation($org);
-//            $person->addIndividualMember($member);
-//            $org->addIndividualMember($member);
-//        }
-
-        //$this->makeAdmin($member, $this->manager);
-
-//        $event->setControllerResult($member);
-
-//        throw new InvalidArgumentException('hello');
-
-//        $event->setResponse(new JsonResponse(['attendee'=>$attendee->getRegistration()->getFamilyName(), 'user' => [
-//            'im' => $user->getImUuid(),
-//            'username' => $user->getUsername(), 'org' => $user->getOrgUuid()]], 200));
+        if (!empty($personUuid = $member->getPersonUuid())) {
+            $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
+            if (empty($person)) {
+                $person = new Person();
+                $person->setUuid($personUuid);
+            }
+            $member->setPerson($person);
+            $person->addIndividualMember($member);
+        }
 
         if (!empty($orgUuid = $member->getOrganisationUuid())) {
             $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
-            if (empty($org)) throw new InvalidArgumentException('Invalid Organisation');
-
-            if (!empty($personUuid = $member->getPersonUuid())) {
-                $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
-                if (empty($person)) {
-                    $person = new Person();
-                    $person->setUuid($personUuid);
-                    $this->manager->persist($person);
-                }
-            } else throw new InvalidArgumentException('Invalid Person');
-
-            $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-            if (!empty($im)) $this->manager->remove($im);
-
+            if (empty($org)) {
+                throw new InvalidArgumentException('Invalid Organisation');
+            }
             $member->setPerson($person);
             $member->setOrganisation($org);
+            $person->addIndividualMember($member);
+            $org->addIndividualMember($member);
+            //$this->makeAdmin($member, $this->manager);
 
-            //makeAdmin
+            if ($method === Request::METHOD_POST) {
+                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
+                if (!empty($im)) $this->manager->remove($im);
+            }
+
             $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_ORG_ADMIN'));
 
             if ($member->admin === true) {
@@ -180,5 +156,14 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             $object->setOrganisation(null);
             $this->awsSnsUtil->publishMessage($object, $method);
         }
+
+
+//        $event->setControllerResult($member);
+
+//        throw new InvalidArgumentException('hello');
+
+//        $event->setResponse(new JsonResponse(['attendee'=>$attendee->getRegistration()->getFamilyName(), 'user' => [
+//            'im' => $user->getImUuid(),
+//            'username' => $user->getUsername(), 'org' => $user->getOrgUuid()]], 200));
     }
 }
