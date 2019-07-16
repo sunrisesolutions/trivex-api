@@ -155,7 +155,7 @@ class IndividualMember
             'name' => $person->getName(),
             'jobTitle' => $person->getJobTitle(),
             'employerName' => $person->getEmployerName(),
-//            'dob' => $person->getBirthDate(),
+            'dob' => $person->getBirthDate(),
             'nric' => ($nat = $person->getNationality()) ? $nat->getNricNumber() : '',
             'email' => $person->getEmail(),
             'phone' => $person->getPhoneNumber()

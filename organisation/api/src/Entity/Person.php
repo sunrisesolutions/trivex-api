@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * @ApiResource
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
  * @ORM\Table(name="organisation__person")
  */
@@ -35,10 +36,10 @@ class Person
      */
     private $nationalities;
 
-//    /**
-//     * @ORM\Column(type="datetime", nullable=true)
-//     */
-//    private $birthDate;
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $birthDate;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -173,17 +174,17 @@ class Person
         return $this;
     }
 
-//    public function getBirthDate(): ?\DateTimeInterface
-//    {
-//        return $this->birthDate;
-//    }
-//
-//    public function setBirthDate(?\DateTimeInterface $birthDate): self
-//    {
-//        $this->birthDate = $birthDate;
-//
-//        return $this;
-//    }
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
 
     /**
      * @return Collection|Nationality[]
