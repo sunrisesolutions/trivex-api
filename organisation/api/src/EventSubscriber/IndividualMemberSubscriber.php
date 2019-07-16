@@ -146,7 +146,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             } else throw new InvalidArgumentException('Invalid Person');
 
             $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-            if (!empty($im)) $this->manager->remove($im);
+            if (!empty($im)) {
+                $this->manager->remove($im);
+            }
 
             $member->setPerson($person);
             $member->setOrganisation($org);
@@ -156,7 +158,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             $expr = Criteria::expr();
             $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
 
-            if ($member->admin == true) {
+            if ($member->admin === true) {
                 $role = $member->getRoles()->matching($c)->first();
                 if (empty($role)) {
                     $role = new Role();
@@ -167,7 +169,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                     $this->manager->persist($role);
                 }
                 $member->addRole($role);
-            } else {
+            } else if ($member === false) {
                 $roles = $member->getRoles()->matching($c);
                 if ($roles->count() > 0) foreach ($roles as $role) $member->removeRole($role);
             }
