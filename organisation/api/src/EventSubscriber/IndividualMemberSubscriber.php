@@ -139,10 +139,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             if (!empty($personUuid = $member->getPersonUuid())) {
                 $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
                 if (empty($person)) {
-//                    $person = new Person();
-//                    $person->setUuid($personUuid);
-//                    $this->manager->persist($person);
-                    throw new InvalidArgumentException('Person not found');
+                    $person = new Person();
+                    $person->setUuid($personUuid);
+                    $this->manager->persist($person);
                 }
             } else throw new InvalidArgumentException('Invalid Person');
 
@@ -157,7 +156,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             $expr = Criteria::expr();
             $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
 
-            if ($member->getAdmin() == true) {
+            if ($member->admin == true) {
                 $role = $member->getRoles()->matching($c)->first();
                 if (empty($role)) {
                     $role = new Role();
