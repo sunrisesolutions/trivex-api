@@ -42,14 +42,7 @@ class AwsSqsWorkerCommandForPersonTest extends WebTestCase
         $this->sqsUtil = static::$container->get('app_util_aws_sqs_util');
         $this->queueName = 'PERSON'; //TRIVEX_ORG_TEST_PERSON
         $this->queueUrl = $this->sqsUtil->getQueueUrl($this->queueName);
-        //$this->purgeQueue();
-    }
-
-    protected function purgeQueue()
-    {
-        while (!empty($message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName))) {
-            $this->sqsUtil->deleteMessage($message);
-        }
+        $this->purgeQueue();
     }
 
     public function testPostPerson() {
@@ -68,15 +61,13 @@ class AwsSqsWorkerCommandForPersonTest extends WebTestCase
 
         $random = rand(10, 9999) . time();
         $personAr = [
-            'givenName' => 'name-' . $random,
-            'familyName' => 'faname',
-            'gender' => 'MALE',
-            'phoneNumber' => '0123456',
-            'middleName' => 'midname',
-            'name' => 'donal',
+            'name' => 'name-' . $random,
             'email' => $random . '@gmail.com',
             'phoneNumber' => '84123456789',
             'uuid' => 'UID-' . $random,
+            'jobTitle' => 'cheater',
+            'employerName' => 'magenta',
+            'birthDate' => new \DateTime("now"),
             '_SYSTEM_OPERATION' => Message::OPERATION_POST,
         ];
         $data = [];
@@ -203,6 +194,13 @@ class AwsSqsWorkerCommandForPersonTest extends WebTestCase
         $jwtManager = static::$container->get('lexik_jwt_authentication.jwt_manager');
         $user = new JWTUser('admin', ['ROLE_ADMIN'], '123', '456', 'U1-024290123');
         return $jwtManager->create($user);
+    }
+
+    protected function purgeQueue()
+    {
+        while (!empty($message = $this->sqsUtil->receiveMessage($this->queueUrl, $this->queueName))) {
+            $this->sqsUtil->deleteMessage($message);
+        }
     }
 
     protected function request(string $method, string $uri, $content = null, array $headers = []): Response

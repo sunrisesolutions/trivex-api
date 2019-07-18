@@ -1,4 +1,4 @@
-App\Entity\Connection:
-  connection{1..3}:
-    fromMember: '@individualmember*'
-    toMember: '@individualmember*'
+#App\Entity\Connection:
+#  connection{1..5}:
+#    fromMember: '@individualmember*'
+#    toMember: '@individualmember*'

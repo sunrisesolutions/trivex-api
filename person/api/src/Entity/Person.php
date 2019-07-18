@@ -105,6 +105,12 @@ class Person
      */
     private $middleName;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $jobTitle;
+
     public function __construct()
     {
         $this->nationalities = new ArrayCollection();
@@ -238,6 +244,18 @@ class Person
     public function setMiddleName(?string $middleName): self
     {
         $this->middleName = $middleName;
+
+        return $this;
+    }
+
+    public function getJobTitle(): ?string
+    {
+        return $this->jobTitle;
+    }
+
+    public function setJobTitle(?string $jobTitle): self
+    {
+        $this->jobTitle = $jobTitle;
 
         return $this;
     }

@@ -9,6 +9,8 @@ use Aws\Result;
 use Aws\Sdk;
 use Aws\Sns\SnsClient;
 use Aws\Sqs\SqsClient;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class AwsSnsUtil
@@ -23,24 +25,28 @@ class AwsSnsUtil
 
     private $normalizer;
 
-    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, ObjectNormalizer $normalizer)
+    private $manager;
+
+    public function __construct(Sdk $sdk, iterable $config, iterable $credentials, string $env, iterable $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
     {
         $this->client = $sdk->createSns($config + $credentials);
 
         $this->sdk = $sdk;
-        $this->applicationName = BaseUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME;
+        $this->applicationName = BaseUtil::PROJECT_NAME . '_' . AppUtil::APP_NAME;
         $this->env = $env;
-        $this->queuePrefix = $this->applicationName.'_'.$env.'_';
+        $this->queuePrefix = $this->applicationName . '_' . $env . '_';
+        $this->snsConfig = $snsConfig;
         $this->normalizer = $normalizer;
+        $this->manager = $manager;
     }
 
     public function getTopicArn($name = null)
     {
         if (empty($name)) {
-            if (empty($snsPrefix = getenv('AWS_SNS_PREFIX'))) {
+            if (empty($snsPrefix = $this->snsConfig['prefix'])) {
                 $snsPrefix = getenv(sprintf('AWS_SNS_PREFIX_%s', AppUtil::APP_NAME));
             }
-            return $snsPrefix.BaseUtil::PROJECT_NAME.'_'.AppUtil::APP_NAME.'_'.strtoupper(getenv('APP_ENV'));
+            return $snsPrefix . BaseUtil::PROJECT_NAME . '_' . AppUtil::APP_NAME . '_' . strtoupper($this->env);
         }
 
         if (!empty($this->topics)) {
@@ -85,7 +91,7 @@ class AwsSnsUtil
                 'ReturnSubscriptionArn' => true,
                 'TopicArn' => $topic,
             ]);
-            var_dump($result);
+//            var_dump($result);
             return $result;
         } catch (AwsException $e) {
             // output error message if fails
@@ -152,11 +158,31 @@ class AwsSnsUtil
             $message = $object;
         } else {
             $messageArray = [];
-            $className = (new \ReflectionClass($object))->getShortName();
-            $normalised = $this->normalizer->normalize($object);
+            $reflection = new \ReflectionClass($object);
+            $className = $reflection->getShortName();
+            $fqClassname = get_class($object);
+            $dto = new $fqClassname();
+            $nonScalar = AppUtil::copyObjectScalarProperties($object, $dto);
+
+            $normalised = $this->normalizer->normalize($dto);
+
             $normalised['_SYSTEM_OPERATION'] = $operation;
 
-            $messageArray['data'] = [lcfirst($className) => $normalised];
+            foreach ($nonScalar as $prop => $val) {
+                if ($val instanceof Collection || is_iterable($val) || empty($val)) {
+                    continue;
+                }
+                $fqClonedValClassname = get_class($val);
+                $clonedVal = new $fqClonedValClassname();
+                AppUtil::copyObjectScalarProperties($val, $clonedVal);
+                $setter = 'set' . ucfirst(strtolower($prop));
+                $dto->{$setter}($clonedVal);
+            }
+
+            $messageArray['data'] = [
+                lcfirst($className) => $normalised
+            ];
+
 //        $first = $member->getOrganisationUsers()->first();
 
 //        $message['data']['first'] = $this->normalizer->normalize($first);

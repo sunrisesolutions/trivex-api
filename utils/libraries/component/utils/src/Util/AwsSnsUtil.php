@@ -171,10 +171,9 @@ class AwsSnsUtil
             $normalised['_SYSTEM_OPERATION'] = $operation;
 
             foreach ($nonScalar as $prop => $val) {
-                if ($val instanceof Collection || is_iterable($val)) {
+                if ($val instanceof Collection || is_iterable($val) || empty($val)) {
                     continue;
                 }
-
                 $fqClonedValClassname = get_class($val);
                 $clonedVal = new $fqClonedValClassname();
                 AppUtil::copyObjectScalarProperties($val, $clonedVal);

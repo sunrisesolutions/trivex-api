@@ -25,6 +25,7 @@ use App\Controller\SendEmailToIndividualMember;
  *     itemOperations={
  *     "get",
  *     "delete"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
+ *     "put"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
  *     "put_email"={
  *         "method"="PUT",
  *         "path"="/individual_members/{id}/email",
@@ -86,6 +87,7 @@ class IndividualMember
     }
 
     /**
+<<<<<<< HEAD
      * @ORM\PrePersist
      * @ORM\PreUpdate
      */
@@ -101,6 +103,8 @@ class IndividualMember
     }
 
     /**
+=======
+>>>>>>> d7ff815c4da7738f1bcd98f6157c79833e1fb51a
      * @return bool
      * @Groups("read_member")
      */
@@ -161,8 +165,11 @@ class IndividualMember
     public function getPersonData()
     {
         $person = $this->person;
-
+        if (empty($person)) {
+            return [];
+        }
         return [
+            'uuid' => $person->getUuid(),
             'name' => $person->getName(),
             'jobTitle' => $person->getJobTitle(),
             'employerName' => $person->getEmployerName(),
@@ -200,14 +207,14 @@ class IndividualMember
     /**
      * @var Person
      * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="individualMembers", cascade={"persist","merge"})
-     * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="SET NULL")
      */
     private $person;
 
     /**
      * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="individualMembers", cascade={"persist","merge"})
-     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="SET NULL")
      */
     private $organisation;
 
@@ -218,7 +225,7 @@ class IndividualMember
     private $accessToken;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="individualMember", cascade={"persist","merge"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="individualMember", cascade={"persist"})
      */
     private $roles;
 
@@ -231,7 +238,7 @@ class IndividualMember
      * @var boolean|null
      * @Groups("write")
      */
-    private $admin = false;
+    public $admin = false;
 
     public function __construct()
     {

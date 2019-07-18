@@ -49,6 +49,8 @@ class OrganisationEventSubscriber implements EventSubscriber {
         if (!$object instanceof Organisation) {
             return;
         }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_DELETE);
+        $obj = new Organisation();
+        $obj->setUuid($object->getUuid());
+        return $this->awsSnsUtil->publishMessage($obj, Message::OPERATION_DELETE);
     }
 }

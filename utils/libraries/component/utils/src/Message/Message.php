@@ -6,6 +6,7 @@ namespace App\Message;
 
 use App\Message\Entity\OrganisationSupportedType;
 use App\Util\AppUtil;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 abstract class Message
@@ -25,6 +26,11 @@ abstract class Message
 
     }
 
+    protected function getEntity(EntityManagerInterface $manager, ObjectRepository $repo, $obj)
+    {
+        return $entity = $repo->findOneBy(['uuid' => $obj->uuid]);
+    }
+
     public function updateEntity(EntityManagerInterface $manager)
     {
         $props = get_object_vars($this->data);
@@ -36,7 +42,7 @@ abstract class Message
 
                 $className = constant("$supportedType::$prop");
                 $repo = $manager->getRepository($className);
-                $entity = $repo->findOneBy(['uuid' => $obj->uuid]);
+                $entity = $this->getEntity($manager, $repo, $obj);
 
                 if (!empty($entity)) {
 //                    echo '#################### '.$obj->uuid.' ################';
@@ -73,7 +79,7 @@ abstract class Message
                 $this->prePersist($obj, $entity);
 //                echo 'prePERSSTTT';
                 $manager->persist($entity);
-            }else{
+            } else {
 //                echo $supportedType.'::'.$prop.' NOT DEFINED';
             }
         }
