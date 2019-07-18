@@ -87,6 +87,24 @@ class IndividualMember
     }
 
     /**
+<<<<<<< HEAD
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function makeAdmin()
+    {
+        if ($this->admin === true) {
+            $c = Criteria::create();
+            $expr = Criteria::expr();
+            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+            $role = $this->roles->matching($c)->first();
+            $this->addRole($role);
+        }
+    }
+
+    /**
+=======
+>>>>>>> d7ff815c4da7738f1bcd98f6157c79833e1fb51a
      * @return bool
      * @Groups("read_member")
      */

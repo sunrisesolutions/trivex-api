@@ -142,12 +142,14 @@ class AwsSnsUtil
      */
     public function listTopics($options = [])
     {
+        $result = null;
         try {
             $result = $this->client->listTopics($options);
             var_dump($result);
         } catch (AwsException $e) {
             // output error message if fails
             error_log($e->getMessage());
+            echo ($e->getMessage());
         }
         return $result;
     }
