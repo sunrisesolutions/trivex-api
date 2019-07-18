@@ -21,23 +21,23 @@ class BaseUtil
 
     public static function getRemoteObject($endpoint)
     {
-        $client = new GuzzleHttp\Client();
-        $res = $client->request('GET', 'https://api.github.com/user', [
-            'auth' => ['user', 'pass']
-        ]);
-        echo $res->getStatusCode();
-// "200"
-        echo $res->getHeader('content-type')[0];
-// 'application/json; charset=utf8'
-        echo $res->getBody();
-// {"type":"User"...'
-
-// Send an asynchronous request.
-        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://httpbin.org');
-        $promise = $client->sendAsync($request)->then(function ($response) {
-            echo 'I completed! ' . $response->getBody();
-        });
-        $promise->wait();
+//        $client = new GuzzleHttp\Client();
+//        $res = $client->request('GET', 'https://api.github.com/user', [
+//            'auth' => ['user', 'pass']
+//        ]);
+//        echo $res->getStatusCode();
+//// "200"
+//        echo $res->getHeader('content-type')[0];
+//// 'application/json; charset=utf8'
+//        echo $res->getBody();
+//// {"type":"User"...'
+//
+//// Send an asynchronous request.
+//        $request = new \GuzzleHttp\Psr7\Request('GET', 'http://httpbin.org');
+//        $promise = $client->sendAsync($request)->then(function ($response) {
+//            echo 'I completed! ' . $response->getBody();
+//        });
+//        $promise->wait();
     }
 
     public static function generateUuid($prefix = AppUtil::APP_NAME)
@@ -84,6 +84,12 @@ class BaseUtil
                     $getter = 'get' . ucfirst(strtolower($prop));
 
                     if ($dest->{$getter}() instanceof \DateTime) {
+                        $val = new \DateTime($val);
+                    }
+
+                    $p = $reflectionDest->getMethod($setter)->getParameters()[0];
+                    $n = $p->getType()->getName();
+                    if ($n === 'DateTimeInterface') {
                         $val = new \DateTime($val);
                     }
 

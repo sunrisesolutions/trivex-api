@@ -128,6 +128,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 if (!empty($im)) $this->manager->remove($im);
             }
 
+            //make admin
             $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_ORG_ADMIN'));
 
             if ($member->admin === true) {

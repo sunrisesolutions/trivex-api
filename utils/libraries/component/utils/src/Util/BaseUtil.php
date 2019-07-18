@@ -89,7 +89,7 @@ class BaseUtil
 
                     $p = $reflectionDest->getMethod($setter)->getParameters()[0];
                     $n = $p->getType()->getName();
-                    if ($n === 'DateTimeInterface' || $n === 'DateTime') {
+                    if ($n === 'DateTimeInterface') {
                         $val = new \DateTime($val);
                     }
 
