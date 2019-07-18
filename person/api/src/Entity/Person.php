@@ -111,6 +111,12 @@ class Person
      */
     private $jobTitle;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
+     */
+    private $userUuid;
+
     public function __construct()
     {
         $this->nationalities = new ArrayCollection();
@@ -256,6 +262,18 @@ class Person
     public function setJobTitle(?string $jobTitle): self
     {
         $this->jobTitle = $jobTitle;
+
+        return $this;
+    }
+
+    public function getUserUuid(): ?string
+    {
+        return $this->userUuid;
+    }
+
+    public function setUserUuid(string $userUuid): self
+    {
+        $this->userUuid = $userUuid;
 
         return $this;
     }
