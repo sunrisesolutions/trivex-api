@@ -175,7 +175,6 @@ class User implements UserInterface
     /**
      * @var string|null
      * @Groups({"write"})
-     * @Assert\NotBlank()
      */
     private $plainPassword;
 
