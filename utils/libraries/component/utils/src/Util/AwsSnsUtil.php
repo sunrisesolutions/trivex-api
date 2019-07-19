@@ -159,10 +159,10 @@ class AwsSnsUtil
         if (is_string($object)) {
             $message = $object;
         } else {
-            $className = get_class($object->getOrganisation());
-            if(StringUtil::startsWith($className,'Proxies\__CG__')){
-
-            }
+//            $className = get_class($object->getOrganisation());
+//            if(StringUtil::startsWith($className,'Proxies\__CG__')){
+//
+//            }
             $messageArray = [];
             $reflection = new \ReflectionClass($object);
             $className = $reflection->getShortName();
