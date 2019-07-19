@@ -24,7 +24,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"email": "exact", "username": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"email": "exact", "username": "exact", "uuid": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Table(name="user__user")
  * @ORM\HasLifecycleCallbacks()
