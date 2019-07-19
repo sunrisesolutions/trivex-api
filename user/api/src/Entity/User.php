@@ -163,6 +163,7 @@ class User implements UserInterface
     /**
      * @var string The Universally Unique Id
      * @ORM\Column(type="string", length=191, unique=true)
+     * @Groups({"read"})
      */
     private $uuid;
 
