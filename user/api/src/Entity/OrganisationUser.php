@@ -65,6 +65,24 @@ class OrganisationUser
      */
     private $accessToken;
 
+    private $organisationUuid;
+
+    /**
+     * @return mixed
+     */
+    public function getOrganisationUuid()
+    {
+        return $this->organisationUuid;
+    }
+
+    /**
+     * @param mixed $organisationUuid
+     */
+    public function setOrganisationUuid(string $organisationUuid): void
+    {
+        $this->organisationUuid = $organisationUuid;
+    }
+
     /**
      * @return Organisation|null
      */

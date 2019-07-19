@@ -112,7 +112,7 @@ class Person
     private $jobTitle;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
      */
     private $userUuid;

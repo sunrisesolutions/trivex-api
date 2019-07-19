@@ -117,16 +117,18 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             if (empty($org)) {
                 throw new InvalidArgumentException('Invalid Organisation');
             }
+            $person->setEmployerName($org->getName());
             $member->setPerson($person);
             $member->setOrganisation($org);
             $person->addIndividualMember($member);
             $org->addIndividualMember($member);
+
             //$this->makeAdmin($member, $this->manager);
 
-            if ($method === Request::METHOD_POST) {
-                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-                if (!empty($im)) $this->manager->remove($im);
-            }
+//            if ($method === Request::METHOD_POST) {
+//                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
+//                if (!empty($im)) $this->manager->remove($im);
+//            }
 
             //make admin
             $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_ORG_ADMIN'));
@@ -150,12 +152,6 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                     }
                 }
             }
-
-            //publishMessage
-            $object = clone $member;
-            $object->setPerson(null);
-            $object->setOrganisation(null);
-            $this->awsSnsUtil->publishMessage($object, $method);
         }
 
 

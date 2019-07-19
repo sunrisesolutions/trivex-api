@@ -37,6 +37,10 @@ services:
             - '@service_container'
         tags: ['doctrine.event_subscriber']
 
+    magenta_user.orguser_event_subscriber:
+        class: App\Doctrine\Subscriber\OrganisationUserEventSubsriber
+        tags: ['doctrine.event_subscriber']
+
     magenta_user.util.password_updater:
         class: App\Util\User\PasswordUpdater
         public: true # false in FOSUser

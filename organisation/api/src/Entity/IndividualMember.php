@@ -133,7 +133,7 @@ class IndividualMember
             $this->fulltextString = '';
         } else {
             $fulltextString = '';
-            $fulltextString .= 'name: ' . $person->getName() . ' email: ' . $person->getEmail() . ' employer: ' . $person->getEmployerName();
+            $fulltextString .= 'name: ' . $person->getGivenName() . ' email: ' . $person->getEmail() . ' employer: ' . $person->getEmployerName();
             $this->fulltextString = $fulltextString;
         }
     }
@@ -170,7 +170,7 @@ class IndividualMember
         }
         return [
             'uuid' => $person->getUuid(),
-            'name' => $person->getName(),
+            'name' => $person->getGivenName(),
             'jobTitle' => $person->getJobTitle(),
             'employerName' => $person->getEmployerName(),
             'dob' => $person->getBirthDate(),

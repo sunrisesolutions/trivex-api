@@ -56,7 +56,7 @@ class BaseUtil
         foreach ($reflectionProps as $reflectionProp) {
             $prop = $reflectionProp->getName();
 
-            if ($prop === 'id') {
+            if (in_array($prop,['id','__initializer__','__cloner__','__isInitialized__','lazyPropertiesDefaults'])) {
                 continue;
             }
 
@@ -72,7 +72,7 @@ class BaseUtil
 
         $props = get_object_vars($source);
         foreach ($props as $prop => $val) {
-            if ($prop === 'id') {
+            if (in_array($prop,['id','__initializer__','__cloner__','__isInitialized__','lazyPropertiesDefaults'])) {
                 continue;
             }
 
@@ -83,14 +83,14 @@ class BaseUtil
                     $setter = 'set' . ucfirst(strtolower($prop));
                     $getter = 'get' . ucfirst(strtolower($prop));
 
-                    if ($dest->{$getter}() instanceof \DateTime) {
+//                    if ($dest->{$getter}() instanceof \DateTime) { //tuan fix
+//                        $val = new \DateTime($val);
+//                    }
+
+                    $p = $reflectionDest->getMethod($setter)->getParameters()[0];
+                    $n = $p->getType()->getName();
+                    if ($n === 'DateTimeInterface' || $n === 'DateTime') {
                         $val = new \DateTime($val);
-                    } else {
-                        $p = $reflectionDest->getMethod($setter)->getParameters()[0];
-                        $n = $p->getType()->getName();
-                        if ($n === 'DateTimeInterface' || $n === 'DateTime') {
-                            $val = new \DateTime($val);
-                        }
                     }
 
                     $dest->{$setter}($val);
