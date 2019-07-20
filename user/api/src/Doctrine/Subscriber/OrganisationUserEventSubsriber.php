@@ -20,12 +20,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Events;
 use GuzzleHttp\Client;
+use mysql_xdevapi\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
 use Symfony\Component\Dotenv\Dotenv;
 use GuzzleHttp\Psr7\Uri;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrganisationUserEventSubsriber implements EventSubscriber
 {
@@ -48,10 +50,12 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $em->persist($org);
                 $em->flush();
             }
+        } else {
+            throw new NotFoundHttpException('Org not found');
         }
 
         if (!empty($object->getPersonUuid())) {
-            $url = 'https://' . $_ENV['SERVICE_HOST'] . '/user/' . $object->getPersonUuid();
+            $url = 'https://' . $_ENV['PERSON_SERVICE_HOST'] . '/user/' . $object->getPersonUuid();
 
             $client = new Client([
                 'verify' => false,
@@ -65,17 +69,17 @@ class OrganisationUserEventSubsriber implements EventSubscriber
             $res = $client->request('GET', $url, []);
 
             if ($res->getStatusCode() != 200) {
-                return;
+                throw new NotFoundHttpException('Request: (' . $url . ') got error code: (' . $res->getStatusCode() . ')');
             }
 
             $data = json_decode($res->getBody(), true);
             if (!isset($data['userUuid'])) {
-                return;
+                throw new NotFoundHttpException('userUuid null');
             }
 
             $user = $em->getRepository(User::class)->findOneBy(['uuid' => $data['userUuid']]);
             if (empty($user)) {
-                return;
+                throw new NotFoundHttpException('person with userUuid: (' . $data['userUuid'] . ') not found');
             }
 
             $user->addOrganisationUser($object);
