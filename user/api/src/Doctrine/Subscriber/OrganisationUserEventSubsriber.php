@@ -34,7 +34,10 @@ class OrganisationUserEventSubsriber implements EventSubscriber
 {
     public function getSubscribedEvents()
     {
-        return [Events::postPersist];
+        return [
+            Events::postPersist,
+            Events::postRemove,
+        ];
     }
 
     public function postPersist(LifecycleEventArgs $args)
@@ -50,8 +53,6 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $object->setOrganisation($org);
                 $em->persist($org);
             }
-        } else {
-            throw new NotFoundHttpException('organisationUuid not found');
         }
 
         if (!empty($object->getPersonUuid())) {
@@ -83,8 +84,6 @@ class OrganisationUserEventSubsriber implements EventSubscriber
             $object->setUser($user);
             $em->persist($user);
             $em->flush();
-        } else {
-            throw new NotFoundHttpException('personUuid not found');
         }
     }
 }
