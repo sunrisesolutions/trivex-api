@@ -46,10 +46,16 @@ class Organisation
      */
     private $messages;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\OptionSet", mappedBy="organisation")
+     */
+    private $optionSets;
+
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->optionSets = new ArrayCollection();
     }
 
     public function getIndividualMembersByPage($page = null, $limit = AppUtil::BATCH_SIZE)
@@ -162,6 +168,37 @@ class Organisation
             // set the owning side to null (unless already changed)
             if ($message->getOrganisation() === $this) {
                 $message->setOrganisation(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|OptionSet[]
+     */
+    public function getOptionSets(): Collection
+    {
+        return $this->optionSets;
+    }
+
+    public function addOptionSet(OptionSet $optionSet): self
+    {
+        if (!$this->optionSets->contains($optionSet)) {
+            $this->optionSets[] = $optionSet;
+            $optionSet->setOrganisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOptionSet(OptionSet $optionSet): self
+    {
+        if ($this->optionSets->contains($optionSet)) {
+            $this->optionSets->removeElement($optionSet);
+            // set the owning side to null (unless already changed)
+            if ($optionSet->getOrganisation() === $this) {
+                $optionSet->setOrganisation(null);
             }
         }
 
