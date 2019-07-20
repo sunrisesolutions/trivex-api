@@ -6,6 +6,7 @@ use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Attendee;
 use App\Entity\Connection;
 use App\Entity\IndividualMember;
+use App\Entity\Nationality;
 use App\Entity\Organisation;
 use App\Entity\Person;
 use App\Entity\Role;
@@ -17,6 +18,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
+use GuzzleHttp\Client;
 use mysql_xdevapi\Exception;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -113,6 +115,34 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             if (empty($person)) {
                 $person = new Person();
                 $person->setUuid($personUuid);
+
+                $token = $event->getRequest()->headers->get('Authorization');
+                $url = 'https://' . $_ENV['PERSON_SERVICE_HOST'] . '/people?uuid=' . $personUuid;
+                $client = new Client([
+                    'verify' => false,
+                    'curl' => [
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_SSL_VERIFYPEER => false,
+                        CURLOPT_SSL_VERIFYHOST => false,
+                    ],
+                ]);
+                $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
+                if ($res->getStatusCode() === 200) {
+                    $data = json_decode($res->getBody(), true);
+                    $person->setGivenName($data['givenName']);
+                    $person->setJobTitle($data['jobTitle']);
+                    $person->setBirthDate($data['birthDate']);
+                    $person->setEmail($data['email']);
+                    $person->setPhoneNumber($data['phoneNumber']);
+                    if (count($data['nationalities']) > 0) {
+                        $na = new Nationality();
+                        $na->setCountry($data['nationalities'][0]['country']);
+                        $na->setPassportNumber($data['nationalities'][0]['passportNumber']);
+                        $na->setNricNumber($data['nationalities'][0]['nricNumber']);
+                        $na->setPerson($person);
+                        $person->addNationality($na);
+                    }
+                }
                 $this->manager->persist($person);
             }
 
