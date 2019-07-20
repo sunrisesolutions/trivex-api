@@ -115,10 +115,10 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 throw new InvalidArgumentException('Invalid Organisation');
             }
 
-            if ($method === Request::METHOD_POST) {
-                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-                if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
-            }
+//            if ($method === Request::METHOD_POST) {
+//                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
+//                if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
+//            }
 
             $person->setEmployerName($org->getName());
             $member->setPerson($person);
