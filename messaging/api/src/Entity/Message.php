@@ -182,6 +182,11 @@ class Message
      */
     private $deliveries;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messages")
+     */
+    private $optionSet;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -317,6 +322,18 @@ class Message
     public function getPublished(): ?bool
     {
         return $this->published;
+    }
+
+    public function getOptionSet(): ?OptionSet
+    {
+        return $this->optionSet;
+    }
+
+    public function setOptionSet(?OptionSet $optionSet): self
+    {
+        $this->optionSet = $optionSet;
+
+        return $this;
     }
 
 }
