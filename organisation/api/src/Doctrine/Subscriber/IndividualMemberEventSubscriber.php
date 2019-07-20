@@ -29,7 +29,6 @@ class IndividualMemberEventSubscriber implements EventSubscriber
     {
         return [
             Events::postPersist,
-            Events::postUpdate,
             Events::postRemove,
         ];
     }
@@ -41,15 +40,6 @@ class IndividualMemberEventSubscriber implements EventSubscriber
             return;
         }
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
-    }
-
-    public function postUpdate(LifecycleEventArgs $args)
-    {
-        $object = $args->getObject();
-        if (!$object instanceof IndividualMember) {
-            return;
-        }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_PUT);
     }
 
     public function postRemove(LifecycleEventArgs $args)

@@ -145,5 +145,3 @@ services:
 volumes:
   db-data-trivex-person: {}
   db-test-trivex-person: {}
-
-

@@ -14,8 +14,10 @@ use App\Util\AwsSnsUtil;
 use App\Util\AwsSqsUtil;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Exception\TableExistsException;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Entity;
+use mysql_xdevapi\Exception;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -53,10 +55,9 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
 
     private function makeAdmin(IndividualMember $member, ObjectManager $manager)
     {
+        $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_ORG_ADMIN'));
+
         if ($member->admin === true) {
-            $c = Criteria::create();
-            $expr = Criteria::expr();
-            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
             $role = $member->getRoles()->matching($c)->first();
             if (empty($role)) {
                 $role = new Role();
@@ -66,17 +67,13 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 $manager->persist($role);
             }
             $member->addRole($role);
-        } elseif ($member->admin === false) {
-            $c = Criteria::create();
-            $expr = Criteria::expr();
-            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
+        } else {
             $roles = $member->getRoles()->matching($c);
             if ($roles->count() > 0) {
                 foreach ($roles as $role) {
                     $member->removeRole($role);
                 }
             }
-
         }
     }
 
@@ -117,41 +114,18 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             if (empty($org)) {
                 throw new InvalidArgumentException('Invalid Organisation');
             }
+
+//            if ($method === Request::METHOD_POST) {
+//                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
+//                if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
+//            }
+
             $person->setEmployerName($org->getName());
             $member->setPerson($person);
             $member->setOrganisation($org);
             $person->addIndividualMember($member);
             $org->addIndividualMember($member);
-
-            //$this->makeAdmin($member, $this->manager);
-
-//            if ($method === Request::METHOD_POST) {
-//                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-//                if (!empty($im)) $this->manager->remove($im);
-//            }
-
-            //make admin
-            $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_ORG_ADMIN'));
-
-            if ($member->admin === true) {
-                $role = $member->getRoles()->matching($c)->first();
-                if (empty($role)) {
-                    $role = new Role();
-                    $role->initiateUuid();
-                    $role->setName('ROLE_ORG_ADMIN');
-                    $role->setOrganisation($org);
-                    $role->setIndividualMember($member);
-                    $this->manager->persist($role);
-                }
-                $member->addRole($role);
-            } else {
-                $roles = $member->getRoles()->matching($c);
-                if ($roles->count() > 0) {
-                    foreach ($roles as $role) {
-                        $member->removeRole($role);
-                    }
-                }
-            }
+            $this->makeAdmin($member, $this->manager);
         }
 
 

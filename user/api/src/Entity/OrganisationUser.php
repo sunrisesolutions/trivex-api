@@ -67,6 +67,24 @@ class OrganisationUser
 
     private $organisationUuid;
 
+    private $personUuid;
+
+    /**
+     * @return mixed
+     */
+    public function getPersonUuid()
+    {
+        return $this->personUuid;
+    }
+
+    /**
+     * @param mixed $personUuid
+     */
+    public function setPersonUuid(string $personUuid): void
+    {
+        $this->personUuid = $personUuid;
+    }
+
     /**
      * @return mixed
      */
@@ -94,7 +112,7 @@ class OrganisationUser
     /**
      * @param Organisation $organisation
      */
-    public function setOrganisation($organisation): void
+    public function setOrganisation(Organisation $organisation): void
     {
         $this->organisation = $organisation;
     }
