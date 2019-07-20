@@ -29,11 +29,13 @@ class OptionSet
 
     /**
      * @ORM\Column(type="string", length=191)
+     * @Groups("read")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $name;
 

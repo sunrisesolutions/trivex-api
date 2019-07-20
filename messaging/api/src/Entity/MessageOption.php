@@ -28,11 +28,13 @@ class MessageOption
 
     /**
      * @ORM\Column(type="string", length=191)
+     * @Groups("read")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"read","write"})
      */
     private $name;
 
