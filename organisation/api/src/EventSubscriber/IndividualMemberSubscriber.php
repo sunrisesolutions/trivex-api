@@ -99,32 +99,33 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
 
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
 
-        if (!empty($personUuid = $member->getPersonUuid())) {
-            $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
-            if (empty($person)) {
-                $person = new Person();
-                $person->setUuid($personUuid);
-            }
-            $member->setPerson($person);
-            $person->addIndividualMember($member);
-        }
-
         if (!empty($orgUuid = $member->getOrganisationUuid())) {
             $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
             if (empty($org)) {
                 throw new InvalidArgumentException('Invalid Organisation');
             }
 
-//            if ($method === Request::METHOD_POST) {
-//                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-//                if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
-//            }
+            if (empty($personUuid = $member->getPersonUuid())) {
+                throw new InvalidArgumentException('Invalid Person');
+            }
+
+            $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
+            if (empty($person)) {
+                $person = new Person();
+                $person->setUuid($personUuid);
+                $this->manager->persist($person);
+            }
+
+            if ($method === Request::METHOD_POST && !empty($person->getId())) {
+                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
+                if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
+            }
 
             $person->setEmployerName($org->getName());
-            $member->setPerson($person);
-            $member->setOrganisation($org);
             $person->addIndividualMember($member);
+            $member->setPerson($person);
             $org->addIndividualMember($member);
+            $member->setOrganisation($org);
             $this->makeAdmin($member, $this->manager);
         }
 
