@@ -52,6 +52,7 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $org->addOrganisationUser($object);
                 $object->setOrganisation($org);
                 $em->persist($org);
+                $em->flush();
             }
         }
 
@@ -83,6 +84,7 @@ class OrganisationUserEventSubsriber implements EventSubscriber
             $user->addOrganisationUser($object);
             $object->setUser($user);
             $em->persist($user);
+            $em->flush();
         }
     }
 }
