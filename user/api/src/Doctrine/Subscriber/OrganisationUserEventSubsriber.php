@@ -27,6 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
 use Symfony\Component\Dotenv\Dotenv;
 use GuzzleHttp\Psr7\Uri;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrganisationUserEventSubsriber implements EventSubscriber
@@ -51,7 +52,7 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $em->flush();
             }
         } else {
-            throw new NotFoundHttpException('Org not found');
+            throw new HttpException(500, 'organisationUuid not found');
         }
 
         if (!empty($object->getPersonUuid())) {
@@ -69,23 +70,25 @@ class OrganisationUserEventSubsriber implements EventSubscriber
             $res = $client->request('GET', $url, []);
 
             if ($res->getStatusCode() != 200) {
-                throw new NotFoundHttpException('Request: (' . $url . ') got error code: (' . $res->getStatusCode() . ')');
+                throw new HttpException(500, 'Request: (' . $url . ') got error code: (' . $res->getStatusCode() . ')');
             }
 
             $data = json_decode($res->getBody(), true);
             if (!isset($data['userUuid'])) {
-                throw new NotFoundHttpException('userUuid null');
+                throw new HttpException(500, 'userUuid null');
             }
 
             $user = $em->getRepository(User::class)->findOneBy(['uuid' => $data['userUuid']]);
             if (empty($user)) {
-                throw new NotFoundHttpException('person with userUuid: (' . $data['userUuid'] . ') not found');
+                throw new HttpException(500, 'person with userUuid: (' . $data['userUuid'] . ') not found');
             }
 
             $user->addOrganisationUser($object);
             $object->setUser($user);
             $em->persist($user);
             $em->flush();
+        } else {
+            throw new HttpException(500, 'personUuid not found');
         }
     }
 }
