@@ -39,9 +39,6 @@ services:
 
     magenta_user.orguser_event_subscriber:
         class: App\Doctrine\Subscriber\OrganisationUserEventSubsriber
-        arguments:
-            - '@service_container'
-            - '@doctrine.orm.entity_manager'
         tags: ['doctrine.event_subscriber']
 
     magenta_user.util.password_updater:

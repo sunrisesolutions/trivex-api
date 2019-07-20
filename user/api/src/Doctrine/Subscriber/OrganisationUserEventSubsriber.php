@@ -29,17 +29,6 @@ use GuzzleHttp\Psr7\Uri;
 
 class OrganisationUserEventSubsriber implements EventSubscriber
 {
-
-    private $container;
-    private $manager;
-    private $env;
-
-    public function __construct(ContainerInterface $container, EntityManager $entityManager)
-    {
-        $this->container = $container;
-        $this->manager = $entityManager;
-    }
-
     public function getSubscribedEvents()
     {
         return [Events::postPersist];
