@@ -11,11 +11,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class UserController extends AbstractController
 {
     /**
-     * @Route("/user/{uuid}", name="user")
+     * @Route("/user/{personUuid}", name="getUserByPersonUuid")
      */
-    public function getUserByPersonUuid($uuid)
+    public function getUserByPersonUuid($personUuid)
     {
-        $person = $this->getDoctrine()->getRepository(Person::class)->findOneBy(['uuid' => $uuid]);
+        $person = $this->getDoctrine()->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
         if (empty($person) || empty($person->getUserUuid())) throw new NotFoundHttpException('Not found');
         return new JsonResponse(['userUuid' => $person->getUserUuid()]);
     }

@@ -49,7 +49,6 @@ class PersonEventSubsriber implements EventSubscriber {
         if (!$object instanceof Person) {
             return;
         }
-        //var_dump($object);
         return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_DELETE);
     }
 }

@@ -52,12 +52,11 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $em->flush();
             }
         } else {
-            throw new HttpException(500, 'organisationUuid not found');
+            throw new NotFoundHttpException('organisationUuid not found');
         }
 
         if (!empty($object->getPersonUuid())) {
             $url = 'https://' . $_ENV['PERSON_SERVICE_HOST'] . '/user/' . $object->getPersonUuid();
-
             $client = new Client([
                 'verify' => false,
                 'curl' => [
@@ -66,16 +65,14 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                     CURLOPT_SSL_VERIFYHOST => false,
                 ],
             ]);
-
             $res = $client->request('GET', $url, []);
-
             if ($res->getStatusCode() != 200) {
-                throw new HttpException(500, 'Request: (' . $url . ') got error code: (' . $res->getStatusCode() . ')');
+                throw new HttpException(500, 'Request: (' . $url . ') error code: (' . $res->getStatusCode() . ')');
             }
 
             $data = json_decode($res->getBody(), true);
             if (!isset($data['userUuid'])) {
-                throw new HttpException(500, 'userUuid null');
+                throw new NotFoundHttpException('userUuid null');
             }
 
             $user = $em->getRepository(User::class)->findOneBy(['uuid' => $data['userUuid']]);
@@ -88,7 +85,7 @@ class OrganisationUserEventSubsriber implements EventSubscriber
             $em->persist($user);
             $em->flush();
         } else {
-            throw new HttpException(500, 'personUuid not found');
+            throw new NotFoundHttpException('personUuid not found');
         }
     }
 }
