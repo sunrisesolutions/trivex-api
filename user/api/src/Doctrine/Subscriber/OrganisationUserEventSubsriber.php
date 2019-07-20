@@ -49,7 +49,6 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $org->addOrganisationUser($object);
                 $object->setOrganisation($org);
                 $em->persist($org);
-                $em->flush();
             }
         } else {
             throw new NotFoundHttpException('organisationUuid not found');
