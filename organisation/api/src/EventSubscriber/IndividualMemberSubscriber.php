@@ -25,6 +25,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Security;
@@ -118,14 +119,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
 
                 $token = $event->getRequest()->headers->get('Authorization');
                 $url = 'https://' . $_ENV['PERSON_SERVICE_HOST'] . '/people?uuid=' . $personUuid;
-                $client = new Client([
-                    'verify' => false,
-                    'curl' => [
-                        CURLOPT_TIMEOUT => 30,
-                        CURLOPT_SSL_VERIFYPEER => false,
-                        CURLOPT_SSL_VERIFYHOST => false,
-                    ],
-                ]);
+                $client = new Client(['verify' => false, 'curl' => [CURLOPT_TIMEOUT => 30, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false]]);
                 $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
                 if ($res->getStatusCode() === 200) {
                     $data = json_decode($res->getBody(), true);
@@ -140,8 +134,11 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                         $na->setPassportNumber($data['nationalities'][0]['passportNumber']);
                         $na->setNricNumber($data['nationalities'][0]['nricNumber']);
                         $na->setPerson($person);
+                        $this->manager->persist($na);
                         $person->addNationality($na);
                     }
+                } else {
+                    throw new HttpException(500, 'Request: ('.$url.') error code: ('.$res->getStatusCode().')');
                 }
                 $this->manager->persist($person);
             }
