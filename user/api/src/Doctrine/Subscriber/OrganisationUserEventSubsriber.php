@@ -35,8 +35,7 @@ class OrganisationUserEventSubsriber implements EventSubscriber
     public function getSubscribedEvents()
     {
         return [
-            Events::postPersist,
-            Events::postRemove,
+            Events::postPersist
         ];
     }
 
@@ -52,12 +51,14 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                 $org->addOrganisationUser($object);
                 $object->setOrganisation($org);
                 $em->persist($org);
+                $em->flush();
             }
         }
 
         if (!empty($object->getPersonUuid())) {
             $url = 'https://' . $_ENV['PERSON_SERVICE_HOST'] . '/user/' . $object->getPersonUuid();
             $client = new Client([
+                'http_errors' => false,
                 'verify' => false,
                 'curl' => [
                     CURLOPT_TIMEOUT => 30,
@@ -65,25 +66,27 @@ class OrganisationUserEventSubsriber implements EventSubscriber
                     CURLOPT_SSL_VERIFYHOST => false,
                 ],
             ]);
-            $res = $client->request('GET', $url, []);
-            if ($res->getStatusCode() != 200) {
-                throw new HttpException(500, 'Request: (' . $url . ') error code: (' . $res->getStatusCode() . ')');
-            }
+            try {
+                $res = $client->request('GET', $url, []);
+                if ($res->getStatusCode() != 200) {
+                    throw new HttpException(500, 'Request: (' . $url . ') error code: (' . $res->getStatusCode() . ')');
+                }
 
-            $data = json_decode($res->getBody(), true);
-            if (!isset($data['userUuid'])) {
-                throw new NotFoundHttpException('userUuid null');
-            }
+                $data = json_decode($res->getBody()->getContents(), true);
+                if (!isset($data['userUuid'])) {
+                    throw new NotFoundHttpException('userUuid null');
+                }
 
-            $user = $em->getRepository(User::class)->findOneBy(['uuid' => $data['userUuid']]);
-            if (empty($user)) {
-                throw new HttpException(500, 'person with userUuid: (' . $data['userUuid'] . ') not found');
-            }
+                $user = $em->getRepository(User::class)->findOneBy(['uuid' => $data['userUuid']]);
+                if (empty($user)) {
+                    throw new HttpException(500, 'person with userUuid: (' . $data['userUuid'] . ') not found');
+                }
 
-            $user->addOrganisationUser($object);
-            $object->setUser($user);
-            $em->persist($user);
-            $em->flush();
+                $user->addOrganisationUser($object);
+                $object->setUser($user);
+                $em->persist($user);
+                $em->flush();
+            } catch (\Exception $exception) {}
         }
     }
 }

@@ -29,6 +29,8 @@ class UserTests extends WebTestCase
 
     public function testUserList()
     {
+        print_r($this->jwtToken());
+        exit();
         $token = $this->jwtToken();
         $response = $this->request('GET', 'users?page=1', null, ['Authorization' => 'Bearer ' . $token]);
         $this->assertEquals(200, $response->getStatusCode());
@@ -47,7 +49,7 @@ class UserTests extends WebTestCase
         $this->assertTrue(is_string($responseArray['hydra:member'][0]['birthDate']));
     }
 
-    public function testPostUser() {
+    public function PostUser() {
         $token = $this->jwtToken();
         $response = $this->request('POST', 'users', [
             'email' => 'user7@gmail.com',
@@ -63,7 +65,7 @@ class UserTests extends WebTestCase
         $this->assertNotEmpty($user);
     }
 
-    public function testGetUser() {
+    public function GetUser() {
         $user = static::$container->get('doctrine')->getRepository(User::class)->findOneBy(['username' => 'user1']);
         $token = $this->jwtToken();
         $response = $this->request('GET', 'users/' . $user->getId(), null, ['Authorization' => 'Bearer ' . $token]);
@@ -83,7 +85,7 @@ class UserTests extends WebTestCase
         $this->assertTrue(is_string($responseArray['birthDate']));
     }
 
-    public function testDeleteUser() {
+    public function DeleteUser() {
         $repository = static::$container->get('doctrine')->getRepository(User::class);
         $token = $this->jwtToken();
         $user = $repository->findOneBy([], ['id' => 'DESC']);
@@ -95,7 +97,7 @@ class UserTests extends WebTestCase
         $this->assertNull($u);
     }
 
-    public function testEditUser() {
+    public function EditUser() {
         $repository = static::$container->get('doctrine')->getRepository(User::class);
         $token = $this->jwtToken();
         $user = $repository->findOneBy(['username' => 'user1']);
@@ -119,8 +121,7 @@ class UserTests extends WebTestCase
 
     protected function jwtToken(): string {
         /** @var User $user */
-        $user = static::$container->get('doctrine')->getRepository(User::class)->findOneBy(['username' => 'user1']);
-        $this->assertEquals('user1@gmail.com', $user->getEmail());
+        $user = static::$container->get('doctrine')->getRepository(User::class)->findOneBy([], ['id' => 'ASC']);
 
         /** @var OrganisationUser $im */
         $im = static::$container->get('doctrine')->getRepository(OrganisationUser::class)->findOneBy(['user'=>$user]);

@@ -119,26 +119,25 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
 
                 $token = $event->getRequest()->headers->get('Authorization');
                 $url = 'https://' . $_ENV['PERSON_SERVICE_HOST'] . '/people?uuid=' . $personUuid;
-                $client = new Client(['verify' => false, 'curl' => [CURLOPT_TIMEOUT => 30, CURLOPT_SSL_VERIFYPEER => false, CURLOPT_SSL_VERIFYHOST => false]]);
+                $client = new Client([
+                    'http_errors' => false,
+                    'verify' => false,
+                    'curl' => [
+                        CURLOPT_TIMEOUT => 30,
+                        CURLOPT_SSL_VERIFYPEER => false,
+                        CURLOPT_SSL_VERIFYHOST => false
+                    ]
+                ]);
                 $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
                 if ($res->getStatusCode() === 200) {
-                    $data = json_decode($res->getBody(), true);
-                    $person->setGivenName($data['givenName']);
-                    $person->setJobTitle($data['jobTitle']);
-                    $person->setBirthDate($data['birthDate']);
-                    $person->setEmail($data['email']);
-                    $person->setPhoneNumber($data['phoneNumber']);
-                    if (count($data['nationalities']) > 0) {
-                        $na = new Nationality();
-                        $na->setCountry($data['nationalities'][0]['country']);
-                        $na->setPassportNumber($data['nationalities'][0]['passportNumber']);
-                        $na->setNricNumber($data['nationalities'][0]['nricNumber']);
-                        $na->setPerson($person);
-                        $this->manager->persist($na);
-                        $person->addNationality($na);
+                    $data = json_decode($res->getBody()->getContents(), true);
+                    if (isset($data['hydra:totalItems']) && $data['hydra:totalItems'] > 0) {
+                        $person->setGivenName($data['hydra:member'][0]['givenName'] ?? null);
+                        $person->setJobTitle($data['hydra:member'][0]['jobTitle'] ?? null);
+                        $person->setBirthDate($data['hydra:member'][0]['birthDate'] ? new \DateTime($data['hydra:member'][0]['birthDate']) : null);
+                        $person->setEmail($data['hydra:member'][0]['email'] ?? null);
+                        $person->setPhoneNumber($data['hydra:member'][0]['phoneNumber'] ?? null);
                     }
-                } else {
-                    throw new HttpException(500, 'Request: ('.$url.') error code: ('.$res->getStatusCode().')');
                 }
                 $this->manager->persist($person);
             }
