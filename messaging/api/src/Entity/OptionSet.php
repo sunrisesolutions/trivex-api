@@ -51,6 +51,8 @@ class OptionSet
      */
     private $organisation;
 
+    private $organisationUuid;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="optionSet")
      */

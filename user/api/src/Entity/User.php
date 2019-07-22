@@ -19,7 +19,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
  *         "get",
- *         "post"={"access_control"="is_granted('ROLE_ADMIN')"}
+ *         "post"={"access_control"="is_granted('ROLE_ADMIN') or is_granted('ROLE_ORG_ADMIN')"}
  *     },
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
@@ -114,7 +114,6 @@ class User implements UserInterface
 
     /**
      * @see UserInterface
-     * @Groups({"read"})
      */
     public function getRoles(): array
     {
