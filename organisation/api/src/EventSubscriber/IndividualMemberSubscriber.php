@@ -128,17 +128,19 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                         CURLOPT_SSL_VERIFYHOST => false
                     ]
                 ]);
-                $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
-                if ($res->getStatusCode() === 200) {
-                    $data = json_decode($res->getBody()->getContents(), true);
-                    if (isset($data['hydra:totalItems']) && $data['hydra:totalItems'] > 0) {
-                        $person->setGivenName($data['hydra:member'][0]['givenName'] ?? null);
-                        $person->setJobTitle($data['hydra:member'][0]['jobTitle'] ?? null);
-                        $person->setBirthDate($data['hydra:member'][0]['birthDate'] ? new \DateTime($data['hydra:member'][0]['birthDate']) : null);
-                        $person->setEmail($data['hydra:member'][0]['email'] ?? null);
-                        $person->setPhoneNumber($data['hydra:member'][0]['phoneNumber'] ?? null);
+                try {
+                    $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
+                    if ($res->getStatusCode() === 200) {
+                        $data = json_decode($res->getBody()->getContents(), true);
+                        if (isset($data['hydra:totalItems']) && $data['hydra:totalItems'] > 0) {
+                            $person->setGivenName($data['hydra:member'][0]['givenName'] ?? null);
+                            $person->setJobTitle($data['hydra:member'][0]['jobTitle'] ?? null);
+                            $person->setBirthDate($data['hydra:member'][0]['birthDate'] ? new \DateTime($data['hydra:member'][0]['birthDate']) : null);
+                            $person->setEmail($data['hydra:member'][0]['email'] ?? null);
+                            $person->setPhoneNumber($data['hydra:member'][0]['phoneNumber'] ?? null);
+                        }
                     }
-                }
+                } catch (\Exception $exception) {}
                 $this->manager->persist($person);
             }
 

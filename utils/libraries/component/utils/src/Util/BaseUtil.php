@@ -88,9 +88,11 @@ class BaseUtil
 //                    }
 
                     $p = $reflectionDest->getMethod($setter)->getParameters()[0];
-                    $n = $p->getType()->getName();
-                    if ($n === 'DateTimeInterface' || $n === 'DateTime') {
-                        $val = new \DateTime($val);
+                    if ($n = $p->getType()) {
+                        $n = $p->getType()->getName();
+                        if ($n === 'DateTimeInterface' || $n === 'DateTime') {
+                            $val = new \DateTime($val);
+                        }
                     }
 
                     $dest->{$setter}($val);

@@ -57,7 +57,8 @@ class User implements UserInterface
             $member['accessToken'] = $im->getAccessToken();
             $member['id'] = $im->getId();
             $member['uuid'] = $im->getUuid();
-            $data[]= $member;
+            foreach ($im->getRole() as $r) $member['roles'][] = $r;
+            $data[] = $member;
         }
         return $data;
     }

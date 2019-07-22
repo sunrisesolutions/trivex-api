@@ -36,10 +36,25 @@ class IndividualMemberEventSubscriber implements EventSubscriber
     public function postPersist(LifecycleEventArgs $args)
     {
         $object = $args->getObject();
-        if (!$object instanceof IndividualMember) {
-            return;
-        }
-        return $this->awsSnsUtil->publishMessage($object, Message::OPERATION_POST);
+        if (!$object instanceof IndividualMember) return;
+
+        $ar = [
+            'data' => [
+                'individualMember' => [
+                    'uuid' => $object->getUuid(),
+                    'accessToken' => $object->getAccessToken(),
+                    'personUuid' => $object->getPersonUuid(),
+                    'organisationUuid' => $object->getOrganisationUuid(),
+                    '_SYSTEM_OPERATION' => Message::OPERATION_POST,
+                ]
+            ],
+            'version' => AppUtil::MESSAGE_VERSION,
+        ];
+
+        foreach($object->getRoles() as $role) $ar['data']['individualMember']['role'][] = $role->getName();
+        $ar['data']['individualMember']['role'] = json_encode($ar['data']['individualMember']['role']);
+
+        return $this->awsSnsUtil->publishMessage(json_encode($ar), Message::OPERATION_POST);
     }
 
     public function postRemove(LifecycleEventArgs $args)

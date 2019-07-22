@@ -84,6 +84,7 @@ class OrganisationUserEventSubsriber implements EventSubscriber
 
                 $user->addOrganisationUser($object);
                 $object->setUser($user);
+
                 $em->persist($user);
                 $em->flush();
             } catch (\Exception $exception) {}

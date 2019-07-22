@@ -171,7 +171,6 @@ class AwsSnsUtil
             $nonScalar = AppUtil::copyObjectScalarProperties($object, $dto);
 
             $normalised = $this->normalizer->normalize($dto);
-
             $normalised['_SYSTEM_OPERATION'] = $operation;
 
             foreach ($nonScalar as $prop => $val) {

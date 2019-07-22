@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Doctrine\Types\JsonType;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * ApiResource(
@@ -68,6 +70,12 @@ class OrganisationUser
     private $organisationUuid;
 
     private $personUuid;
+
+    /**
+     * @ORM\Column(type="magenta_json")
+     * @Groups({"read"})
+     */
+    private $role = [];
 
     /**
      * @return mixed
@@ -153,6 +161,19 @@ class OrganisationUser
     public function setAccessToken(?string $accessToken): self
     {
         $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    public function setRole($role): self
+    {
+        if (is_array($role)) $this->role = $role;
+        else $this->role = json_decode($role);
 
         return $this;
     }
