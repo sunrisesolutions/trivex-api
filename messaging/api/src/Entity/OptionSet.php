@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Util\AppUtil;
 
 /**
  * @ApiResource(
@@ -28,6 +29,16 @@ class OptionSet
     private $id;
 
     /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
+
+    /**
      * @ORM\Column(type="string", length=191)
      * @Groups("read")
      */
@@ -47,10 +58,13 @@ class OptionSet
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="optionSets")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
-     * @Groups({"read","write"})
      */
     private $organisation;
 
+    /**
+     * @var string
+     * @Groups({"read", "write"})
+     */
     private $organisationUuid;
 
     /**
@@ -165,5 +179,18 @@ class OptionSet
         }
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getOrganisationUuid(): ?string
+    {
+        return $this->organisationUuid;
+    }
+
+    public function setOrganisationUuid(string $organisationUuid)
+    {
+        $this->organisationUuid = $organisationUuid;
     }
 }

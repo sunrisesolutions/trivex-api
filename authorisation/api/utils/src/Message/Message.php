@@ -46,14 +46,14 @@ abstract class Message
 
                 if (!empty($entity)) {
 //                    echo '#################### '.$obj->uuid.' ################';
-                    echo get_class($entity);
+//                    echo get_class($entity);
 //                    var_dump($entity);
                     if ($obj->_SYSTEM_OPERATION === self::OPERATION_DELETE) {
                         $manager->remove($entity);
                         break;
                     }
                 } else {
-//                    echo 'new entity from Message.php';
+//                    echo 'new entity from Message.php' . $className;
                     $entity = new $className();
                 }
 
@@ -65,15 +65,18 @@ abstract class Message
                     if (defined("$supportedType::$_prop")) {
                         $_className = constant("$supportedType::$_prop");
                         $_repo = $manager->getRepository($_className);
-                        $_entity = $_repo->findOneBy(['uuid' => $_obj->uuid]);
+                        if (!empty($_obj)) {
+                            $_entity = $_repo->findOneBy(['uuid' => $_obj->uuid]);
+
 //                        echo '_prop is ' . $_prop . ' uuid: ' . $_obj->uuid . '  ' . $_className . ' ' . empty($_entity) . '  ';
-                        if (empty($_entity)) {
-                            $_entity = new $_className;
-                            $_entity->setUuid($_obj->uuid);
+                            if (empty($_entity)) {
+                                $_entity = new $_className;
+                                $_entity->setUuid($_obj->uuid);
+                            }
+                            $setter = 'set' . ucfirst(strtolower($_prop));
+                            $entity->{$setter}($_entity);
+                            $manager->persist($_entity);
                         }
-                        $setter = 'set' . ucfirst(strtolower($_prop));
-                        $entity->{$setter}($_entity);
-                        $manager->persist($_entity);
                     }
                 }
                 $this->prePersist($obj, $entity);

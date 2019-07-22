@@ -142,12 +142,14 @@ class AwsSnsUtil
      */
     public function listTopics($options = [])
     {
+        $result = null;
         try {
             $result = $this->client->listTopics($options);
             var_dump($result);
         } catch (AwsException $e) {
             // output error message if fails
             error_log($e->getMessage());
+            echo ($e->getMessage());
         }
         return $result;
     }
@@ -157,6 +159,10 @@ class AwsSnsUtil
         if (is_string($object)) {
             $message = $object;
         } else {
+//            $className = get_class($object->getOrganisation());
+//            if(StringUtil::startsWith($className,'Proxies\__CG__')){
+//
+//            }
             $messageArray = [];
             $reflection = new \ReflectionClass($object);
             $className = $reflection->getShortName();
@@ -165,7 +171,6 @@ class AwsSnsUtil
             $nonScalar = AppUtil::copyObjectScalarProperties($object, $dto);
 
             $normalised = $this->normalizer->normalize($dto);
-
             $normalised['_SYSTEM_OPERATION'] = $operation;
 
             foreach ($nonScalar as $prop => $val) {

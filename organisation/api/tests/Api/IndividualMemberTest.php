@@ -91,7 +91,7 @@ class IndividualMemberTest extends WebTestCase {
         $requestStack = static::$container->get('request_stack');
         $requestStack->push(new Request([], [], [], [], [], ['REMOTE_ADDR' => '10.10.10.10']));
         $jwtManager = static::$container->get('lexik_jwt_authentication.jwt_manager');
-        $user = new JWTUser('admin', ['ROLE_ADMIN'], '123', '456', 'U1-024290123');
+        $user = new JWTUser('admin', ['ROLE_ADMIN', 'ROLE_USER', 'ROLE_ORG_ADMIN'], '123', '456', 'U1-024290123');
         return $jwtManager->create($user);
     }
 

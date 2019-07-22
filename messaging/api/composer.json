@@ -18,7 +18,10 @@
         "symfony/mercure-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
         "symfony/swiftmailer-bundle": "^3.2",
-        "symfony/yaml": "4.2.*"
+        "symfony/yaml": "4.2.*",
+        "symfony/form": "4.2.*",
+        "symfony/translation": "4.2.*",
+        "symfony/validator": "4.2.*"
     },
     "require-dev": {
         "api-platform/schema-generator": "^2.1",
