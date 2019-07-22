@@ -122,16 +122,15 @@ class User implements UserInterface
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
-        /** @var OrganisationUser $im */
-        foreach($this->organisationUsers as $im) {
+        foreach ($this->organisationUsers as $im) {
             if (!empty($im->getRoles())) {
                 foreach($im->getRoles() as $r) {
-                    if (is_string($r)) $roles[] = $r;
+                    if ($r != null && !in_array($r, $roles)) $roles[] = $r;
                 }
             }
         }
 
-        return array_unique($roles);
+        return array_values(array_unique($roles));
     }
 
     /**
