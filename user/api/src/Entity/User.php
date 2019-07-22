@@ -57,7 +57,7 @@ class User implements UserInterface
             $member['accessToken'] = $im->getAccessToken();
             $member['id'] = $im->getId();
             $member['uuid'] = $im->getUuid();
-            foreach ($im->getRole() as $r) $member['roles'][] = $r;
+            $member['roles'] = $im->getRoles();
             $data[] = $member;
         }
         return $data;
@@ -120,6 +120,11 @@ class User implements UserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
+
+        /** @var OrganisationUser $im */
+        foreach($this->organisationUsers as $im) {
+            $roles = array_merge($roles, $im->getRoles());
+        }
 
         return array_unique($roles);
     }

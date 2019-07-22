@@ -51,8 +51,9 @@ class IndividualMemberEventSubscriber implements EventSubscriber
             'version' => AppUtil::MESSAGE_VERSION,
         ];
 
-        foreach($object->getRoles() as $role) $ar['data']['individualMember']['role'][] = $role->getName();
-        $ar['data']['individualMember']['role'] = json_encode($ar['data']['individualMember']['role']);
+        $names = [];
+        foreach($object->getRoles() as $role) $names[] = $role->getName();
+        $ar['data']['individualMember']['roleString'] = json_encode($names);
 
         return $this->awsSnsUtil->publishMessage(json_encode($ar), Message::OPERATION_POST);
     }

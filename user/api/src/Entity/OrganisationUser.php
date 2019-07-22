@@ -73,9 +73,8 @@ class OrganisationUser
 
     /**
      * @ORM\Column(type="magenta_json")
-     * @Groups({"read"})
      */
-    private $role = [];
+    private $roles = [];
 
     /**
      * @return mixed
@@ -165,15 +164,14 @@ class OrganisationUser
         return $this;
     }
 
-    public function getRole()
+    public function getRoles()
     {
-        return $this->role;
+        return $this->roles;
     }
 
-    public function setRole($role): self
+    public function setRoles($roles): self
     {
-        if (is_array($role)) $this->role = $role;
-        else $this->role = json_decode($role);
+        $this->roles = $roles;
 
         return $this;
     }
