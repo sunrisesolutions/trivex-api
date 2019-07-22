@@ -169,7 +169,7 @@ class OrganisationUser
         return $this->roles;
     }
 
-    public function setRoles($roles): self
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 

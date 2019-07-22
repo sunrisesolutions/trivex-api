@@ -114,6 +114,7 @@ class User implements UserInterface
 
     /**
      * @see UserInterface
+     * @Groups({"read"})
      */
     public function getRoles(): array
     {
@@ -124,7 +125,9 @@ class User implements UserInterface
         /** @var OrganisationUser $im */
         foreach($this->organisationUsers as $im) {
             if (!empty($im->getRoles())) {
-                foreach($im->getRoles() as $r) $roles[] = $r;
+                foreach($im->getRoles() as $r) {
+                    if (is_string($r)) $roles[] = $r;
+                }
             }
         }
 
