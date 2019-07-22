@@ -124,7 +124,7 @@ class User implements UserInterface
         /** @var OrganisationUser $im */
         foreach($this->organisationUsers as $im) {
             if (!empty($im->getRoles())) {
-                $roles = array_merge($roles, $im->getRoles());
+                foreach($im->getRoles() as $r) $roles[] = $r;
             }
         }
 
