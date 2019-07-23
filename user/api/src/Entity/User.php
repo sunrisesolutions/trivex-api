@@ -125,7 +125,7 @@ class User implements UserInterface
 
     /**
      * @Groups({"read"})
-     * @return mixed|string|null
+     * @return array|null
      */
     public function getLogoWriteForm()
     {
