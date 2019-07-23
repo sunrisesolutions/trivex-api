@@ -192,7 +192,7 @@ class Delivery
         return $this;
     }
 
-    public function getSelectedOptions(): array
+    public function getSelectedOptions()
     {
         return $this->selectedOptions;
     }
