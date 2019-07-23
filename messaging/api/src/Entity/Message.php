@@ -130,7 +130,6 @@ class Message
      * @var Conversation
      * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="messages")
      * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id")
-     * @Groups({"read", "write"})
      */
     private $conversation;
 
@@ -138,7 +137,6 @@ class Message
      * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="messages")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
-     * @Groups("read")
      */
     private $organisation;
 

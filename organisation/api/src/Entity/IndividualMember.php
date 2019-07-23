@@ -149,7 +149,8 @@ class IndividualMember
     }
 
     /**
-     * @Groups("write")
+     * @var string
+     * @Groups({"read_member", "write"})
      */
     private $organisationUuid;
 
