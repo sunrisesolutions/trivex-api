@@ -104,17 +104,12 @@ class User implements UserInterface
      */
     private $pictureName;
 
-    private function buildProfilePicturePath()
-    {
-        return 'user/photo/profile/'.$this->uuid;
-    }
-
-    public function getProfilePicture(): ?string
+    public function getPictureName(): ?string
     {
         return $this->pictureName;
     }
 
-    public function setProfilePicture(?string $pictureName): self
+    public function setPictureName(?string $pictureName): self
     {
         if (empty($pictureName) && !empty($this->pictureName)) {
             AwsS3Util::getInstance()->deleteObject($this->buildProfilePicturePath());
@@ -123,11 +118,16 @@ class User implements UserInterface
         return $this;
     }
 
+    private function buildProfilePicturePath()
+    {
+        return 'user/photo/profile/'.$this->uuid;
+    }
+
     /**
      * @Groups({"read"})
-     * @return array|null
+     * @return mixed|string|null
      */
-    public function getPictureWriteForm()
+    public function getProfilePictureWriteForm()
     {
         $path = $this->buildProfilePicturePath();
         return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'. $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
@@ -137,7 +137,7 @@ class User implements UserInterface
      * @Groups({"read"})
      * @return mixed|string|null
      */
-    public function getPictureReadUrl()
+    public function getProfilePictureReadUrl()
     {
         if (empty($this->pictureName)) {
             return null;
