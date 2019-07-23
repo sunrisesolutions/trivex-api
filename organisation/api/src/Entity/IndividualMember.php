@@ -150,11 +150,12 @@ class IndividualMember
 
     /**
      * @var string
-     * @Groups({"read_member", "write"})
+     * @Groups("write")
      */
     private $organisationUuid;
 
     /**
+     * @var string
      * @Groups("write")
      */
     private $personUuid;
@@ -482,4 +483,11 @@ class IndividualMember
         $this->emailSubject = $emailSubject;
     }
 
+    /**
+     * @return string
+     * @Groups({"read_member"})
+     */
+    public function getOrgUuid(): string {
+        return $this->organisation->getUuid();
+    }
 }
