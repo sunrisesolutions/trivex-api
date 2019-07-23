@@ -63,7 +63,7 @@ class OptionSet
 
     /**
      * @var string
-     * @Groups({"read", "write"})
+     * @Groups({"write"})
      */
     private $organisationUuid;
 

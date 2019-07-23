@@ -97,29 +97,29 @@ class User implements UserInterface
     }
 
     /**
-     * File name of the logo.
+     * File name of the profile picture.
      *
      * @ORM\Column(type="string", length=25, nullable=true)
      * @Groups({"read", "write"})
      */
-    private $logoName;
+    private $pictureName;
 
-    private function buildLogoPath()
+    private function buildProfilePicturePath()
     {
-        return 'user/logo/'.$this->uuid;
+        return 'user/photo/profile/'.$this->uuid;
     }
 
-    public function getLogoName(): ?string
+    public function getProfilePicture(): ?string
     {
-        return $this->logoName;
+        return $this->pictureName;
     }
 
-    public function setLogoName(?string $logoName): self
+    public function setProfilePicture(?string $pictureName): self
     {
-        if (empty($logoName) && !empty($this->logoName)) {
-            AwsS3Util::getInstance()->deleteObject($this->buildLogoPath());
+        if (empty($pictureName) && !empty($this->pictureName)) {
+            AwsS3Util::getInstance()->deleteObject($this->buildProfilePicturePath());
         }
-        $this->logoName = $logoName;
+        $this->pictureName = $pictureName;
         return $this;
     }
 
@@ -127,9 +127,9 @@ class User implements UserInterface
      * @Groups({"read"})
      * @return array|null
      */
-    public function getLogoWriteForm()
+    public function getPictureWriteForm()
     {
-        $path = $this->buildLogoPath();
+        $path = $this->buildProfilePicturePath();
         return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'. $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
     }
 
@@ -137,12 +137,12 @@ class User implements UserInterface
      * @Groups({"read"})
      * @return mixed|string|null
      */
-    public function getLogoReadUrl()
+    public function getPictureReadUrl()
     {
-        if (empty($this->logoName)) {
+        if (empty($this->pictureName)) {
             return null;
         }
-        $path = $this->buildLogoPath();
+        $path = $this->buildProfilePicturePath();
         return AwsS3Util::getInstance()->getObjectReadUrl($path);
     }
 
