@@ -61,7 +61,7 @@ class Delivery
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_DELIV_'.$this->message->getId().'_'.$this->recipient->getId());
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_DELIV_');
             if (empty($this->code)) {
                 $this->code = $this->uuid;
             }
@@ -107,6 +107,13 @@ class Delivery
      * @Groups("read")
      */
     private $recipient;
+
+    /**
+     * @var array
+     * @ORM\Column(type="magenta_json", nullable=true)
+     * @Groups({"read", "write"})
+     */
+    private $selectedOptions = [];
 
     public function getId(): ?int
     {
@@ -181,6 +188,18 @@ class Delivery
     public function setRecipient(?IndividualMember $recipient): self
     {
         $this->recipient = $recipient;
+
+        return $this;
+    }
+
+    public function getSelectedOptions(): array
+    {
+        return $this->selectedOptions;
+    }
+
+    public function setSelectedOptions(array $selectedOptions): self
+    {
+        $this->selectedOptions = $selectedOptions;
 
         return $this;
     }

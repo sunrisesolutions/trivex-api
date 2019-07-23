@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 use App\Util\AppUtil;
+use App\Util\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
@@ -93,6 +94,56 @@ class User implements UserInterface
             ->setMaxResults(1);
 
         return $this->organisationUsers->matching($criteria)->first();
+    }
+
+    /**
+     * File name of the logo.
+     *
+     * @ORM\Column(type="string", length=25, nullable=true)
+     * @Groups({"read", "write"})
+     */
+    private $logoName;
+
+    private function buildLogoPath()
+    {
+        return 'user/logo/'.$this->uuid;
+    }
+
+    public function getLogoName(): ?string
+    {
+        return $this->logoName;
+    }
+
+    public function setLogoName(?string $logoName): self
+    {
+        if (empty($logoName) && !empty($this->logoName)) {
+            AwsS3Util::getInstance()->deleteObject($this->buildLogoPath());
+        }
+        $this->logoName = $logoName;
+        return $this;
+    }
+
+    /**
+     * @Groups({"read"})
+     * @return mixed|string|null
+     */
+    public function getLogoWriteForm()
+    {
+        $path = $this->buildLogoPath();
+        return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'. $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
+    }
+
+    /**
+     * @Groups({"read"})
+     * @return mixed|string|null
+     */
+    public function getLogoReadUrl()
+    {
+        if (empty($this->logoName)) {
+            return null;
+        }
+        $path = $this->buildLogoPath();
+        return AwsS3Util::getInstance()->getObjectReadUrl($path);
     }
 
     /**

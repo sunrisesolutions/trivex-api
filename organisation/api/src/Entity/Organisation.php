@@ -71,8 +71,6 @@ class Organisation
         }
     }
 
-
-
     /**
      * @Groups({"read"})
      *
