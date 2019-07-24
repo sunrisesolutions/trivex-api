@@ -5,6 +5,7 @@ namespace App\EventSubscriber;
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\IndividualMember;
 use App\Entity\Message;
+use App\Entity\OptionSet;
 use App\Entity\Organisation;
 use App\Entity\Person;
 use App\Security\JWTUser;

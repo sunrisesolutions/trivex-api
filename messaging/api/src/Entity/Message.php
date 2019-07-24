@@ -182,6 +182,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messages")
+     * @Groups("write")
      */
     private $optionSet;
 
