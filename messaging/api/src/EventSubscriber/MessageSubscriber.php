@@ -56,38 +56,38 @@ class MessageSubscriber implements EventSubscriberInterface
         }
 
         $imRepo = $this->registry->getRepository(IndividualMember::class);
+        $imUuid = 'ORG_IM-2';
         $im = $imRepo->findOneBy(['uuid' => $imUuid]);
         if (empty($im)) {
             $token = $event->getRequest()->headers->get('Authorization');
             $imData = $this->request('https://' . getenv('ORG_SERVICE_HOST') . '/individual_members?uuid=' . $imUuid, $token);
 
-            if (empty($personUuid = $imData['personData']['uuid']) || empty($orgUuid = $imData['organisationUuid'])) {
-                throw new \Exception('personUuid | organisationUuid not found');
+            if (empty($personUuid = $imData['personData']['uuid']) || empty($orgUuid = $imData['orgUuid'])) {
+                throw new \Exception('personUuid | orgUuid not found');
             }
 
             $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
-            $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
             $im = new IndividualMember();
             $im->setUuid($imData['uuid']);
 
             if (empty($person)) {
-                $personData = $this->request('https://' . getenv('PERSON_SERVICE_HOST') . '/people?uuid=' . $personUuid, $token);
                 $person = new Person();
                 $person->setUuid($personUuid);
-                $person->setName($personData['givenName']);
-                $person->addIndividualMember($im);
-                $manager->persist($person);
+                $person->setName($imData['personData']['name']);
             }
+            $person->addIndividualMember($im);
+            $manager->persist($person);
 
+            $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
             if (empty($org)) {
                 $orgData = $this->request('https://' . getenv('ORG_SERVICE_HOST') . '/organisations?uuid=' . $orgUuid, $token);
                 $org = new Organisation();
                 $org->setUuid($orgData['uuid']);
                 $org->setName($orgData['name']);
-                $org->addIndividualMember($im);
-                $org->addMessage($message);
-                $manager->persist($org);
             }
+            $org->addIndividualMember($im);
+            $org->addMessage($message);
+            $manager->persist($org);
 
             $im->setOrganisation($org);
             $im->setPerson($person);
