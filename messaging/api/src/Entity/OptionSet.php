@@ -53,9 +53,27 @@ class OptionSet
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MessageOption", mappedBy="optionSet")
-     * @ApiSubresource()
      */
     private $messageOptions;
+
+    /**
+     * @Groups("read")
+     * @return mixed|array|null
+     */
+    public function getMessageOptionsData() {
+        if (empty($this->messageOptions)) return null;
+
+        $res = [];
+        /** @var MessageOption $mo */
+        foreach ($this->messageOptions as $mo) {
+            $res[] = [
+                'uuid' => $mo->getUuid(),
+                'name' => $mo->getName(),
+            ];
+        }
+
+        return $res;
+    }
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="optionSets")
