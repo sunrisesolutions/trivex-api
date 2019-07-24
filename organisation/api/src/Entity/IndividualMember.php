@@ -487,7 +487,7 @@ class IndividualMember
      * @return string
      * @Groups({"read_member"})
      */
-    public function getOrgUuid(): string {
+    public function getOrgUuid() {
         if (empty($this->organisation)) {
             return null;
         }
