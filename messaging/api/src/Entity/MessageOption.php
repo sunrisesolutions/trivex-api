@@ -39,11 +39,21 @@ class MessageOption
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messageOptions")
+     * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messageOptions", cascade={"persist"})
      * @ORM\JoinColumn(name="id_option_set", referencedColumnName="id")
      * @Groups({"read","write"})
      */
     private $optionSet;
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
 
     public function getId(): ?int
     {
