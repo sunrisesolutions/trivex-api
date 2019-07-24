@@ -488,6 +488,10 @@ class IndividualMember
      * @Groups({"read_member"})
      */
     public function getOrgUuid(): string {
+        if (empty($this->organisation)) {
+            return null;
+        }
+
         return $this->organisation->getUuid();
     }
 }

@@ -56,7 +56,6 @@ class MessageSubscriber implements EventSubscriberInterface
         }
 
         $imRepo = $this->registry->getRepository(IndividualMember::class);
-        $imUuid = 'ORG_IM-2';
         $im = $imRepo->findOneBy(['uuid' => $imUuid]);
         if (empty($im)) {
             $token = $event->getRequest()->headers->get('Authorization');
