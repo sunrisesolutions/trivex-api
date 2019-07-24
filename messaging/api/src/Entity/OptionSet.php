@@ -67,6 +67,7 @@ class OptionSet
         /** @var MessageOption $mo */
         foreach ($this->messageOptions as $mo) {
             $res[] = [
+                'id' => $mo->getId(),
                 'uuid' => $mo->getUuid(),
                 'name' => $mo->getName(),
             ];
