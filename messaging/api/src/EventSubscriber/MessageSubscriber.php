@@ -56,14 +56,18 @@ class MessageSubscriber implements EventSubscriberInterface
             $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
         }
 
+        if (!in_array('ROLE_ORG_ADMIN', $user->getRoles()) && $message->getPublished() === true) {
+            $message->setStatus(Message::STATUS_PENDING_APPROVAL);
+        }
+
         $imRepo = $this->registry->getRepository(IndividualMember::class);
         $im = $imRepo->findOneBy(['uuid' => $imUuid]);
         if (empty($im)) {
             $token = $event->getRequest()->headers->get('Authorization');
             $imData = $this->request('https://' . getenv('ORG_SERVICE_HOST') . '/individual_members?uuid=' . $imUuid, $token);
 
-            if (empty($personUuid = $imData['personData']['uuid']) || empty($orgUuid = $imData['orgUuid'])) {
-                throw new \Exception('personUuid | orgUuid not found');
+            if (empty($personUuid = $imData['personData']['uuid']) || empty($orgUuid = $imData['organisationUuid'])) {
+                throw new \Exception('personUuid | organisationUuid not found');
             }
 
             $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);

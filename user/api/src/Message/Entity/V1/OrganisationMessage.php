@@ -19,6 +19,9 @@ class OrganisationMessage extends Message
     protected function prePersist($obj, $entity)
     {
         if (!$entity instanceof OrganisationUser) return;
-        if (!empty($obj->roleString)) $entity->setRoles(json_decode($obj->roleString));
+        if (!empty($obj->roleString)) {
+            $roles = json_decode($obj->roleString);
+            $entity->setRoles($roles);
+        }
     }
 }

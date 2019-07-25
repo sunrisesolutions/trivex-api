@@ -87,24 +87,23 @@ class IndividualMember
     }
 
     /**
-<<<<<<< HEAD
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
+     * @return bool
+     * @Groups("read_member")
      */
-    public function makeAdmin()
+    public function isMessageDeliverable(): bool
     {
-        if ($this->admin === true) {
-            $c = Criteria::create();
-            $expr = Criteria::expr();
-            $c->andWhere($expr->eq('name', 'ROLE_ORG_ADMIN'));
-            $role = $this->roles->matching($c)->first();
-            $this->addRole($role);
-        }
+        return !empty($this->getMessageDeliverable());
+    }
+
+    public function getMessageDeliverable() {
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+        $c->andWhere($expr->eq('name', 'ROLE_MESSAGE'));
+        $this->messageDeliverable = $this->roles->matching($c)->count() > 0;
+        return $this->messageDeliverable;
     }
 
     /**
-=======
->>>>>>> d7ff815c4da7738f1bcd98f6157c79833e1fb51a
      * @return bool
      * @Groups("read_member")
      */
@@ -150,7 +149,7 @@ class IndividualMember
 
     /**
      * @var string
-     * @Groups("write")
+     * @Groups({"read_member", "write"})
      */
     private $organisationUuid;
 
@@ -241,6 +240,12 @@ class IndividualMember
      * @Groups("write")
      */
     public $admin = false;
+
+    /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    public $messageDeliverable = false;
 
     public function __construct()
     {
@@ -434,6 +439,9 @@ class IndividualMember
 
     public function getOrganisationUuid(): ?string
     {
+        if (empty($this->organisationUuid) && !empty($this->organisation)) {
+            $this->organisationUuid = $this->organisation->getUuid();
+        }
         return $this->organisationUuid;
     }
 
@@ -447,6 +455,12 @@ class IndividualMember
     public function setAdmin(?bool $admin): self
     {
         $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function setMessageDeliverable(?bool $messageDeliverable): self {
+        $this->messageDeliverable = $messageDeliverable;
 
         return $this;
     }
@@ -481,17 +495,5 @@ class IndividualMember
     public function setEmailSubject(?string $emailSubject): void
     {
         $this->emailSubject = $emailSubject;
-    }
-
-    /**
-     * @return string
-     * @Groups({"read_member"})
-     */
-    public function getOrgUuid() {
-        if (empty($this->organisation)) {
-            return null;
-        }
-
-        return $this->organisation->getUuid();
     }
 }

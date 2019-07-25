@@ -2,6 +2,7 @@
 
 namespace App\Doctrine\Subscriber;
 
+use App\Entity\Event;
 use App\Entity\IndividualMember;
 use App\Entity\Organisation;
 use App\Entity\Person;
@@ -29,6 +30,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
     {
         return [
             Events::postPersist,
+            Events::postUpdate,
             Events::postRemove,
         ];
     }
@@ -56,6 +58,30 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         $ar['data']['individualMember']['roleString'] = json_encode($names);
 
         return $this->awsSnsUtil->publishMessage(json_encode($ar), Message::OPERATION_POST);
+    }
+
+    public function postUpdate(LifecycleEventArgs $args) {
+        $object = $args->getObject();
+        if (!$object instanceof IndividualMember) return;
+
+        $ar = [
+            'data' => [
+                'individualMember' => [
+                    'uuid' => $object->getUuid(),
+                    'accessToken' => $object->getAccessToken(),
+                    'personUuid' => $object->getPersonUuid(),
+                    'organisationUuid' => $object->getOrganisationUuid(),
+                    '_SYSTEM_OPERATION' => Message::OPERATION_PUT,
+                ]
+            ],
+            'version' => AppUtil::MESSAGE_VERSION,
+        ];
+
+        $names = [];
+        foreach($object->getRoles() as $role) $names[] = $role->getName();
+        $ar['data']['individualMember']['roleString'] = json_encode($names);
+
+        return $this->awsSnsUtil->publishMessage(json_encode($ar), Message::OPERATION_PUT);
     }
 
     public function postRemove(LifecycleEventArgs $args)

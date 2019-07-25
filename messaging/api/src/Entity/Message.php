@@ -10,12 +10,26 @@ use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
+use App\Controller\MessageApprovalController;
 
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     denormalizationContext={"groups"={"write"}},
+ *     itemOperations={
+ *      "get",
+ *      "post_message_approval"={
+ *          "method"="POST",
+ *          "path"="/messages/{id}/approval",
+ *          "controller"=MessageApprovalController::class,
+ *          "access_control"="is_granted('ROLE_ORG_ADMIN')",
+ *          "normalization_context"={"groups"={"post_message_approval"}},
+ *          "denormalization_context"={"groups"={"post_message_approval"}},
+ *      },
+ *      "put",
+ *      "delete",
+ *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
  * @ORM\Table(name="messaging__message")
@@ -25,6 +39,7 @@ class Message
 {
     const STATUS_DRAFT = 'MESSAGE_DRAFT';
     const STATUS_NEW = 'MESSAGE_NEW';
+    const STATUS_PENDING_APPROVAL = 'MESSAGE_PENDING_APPROVAL';
     const STATUS_DELIVERY_IN_PROGRESS = 'DELIVERY_IN_PROGRESS';
     const STATUS_DELIVERY_SUCCESSFUL = 'DELIVERY_SUCCESSFUL';
     const STATUS_RECEIVED = 'MESSAGE_RECEIVED';
@@ -53,8 +68,8 @@ class Message
                 return null;
             }
         } else {
-            throw new UnsupportedException('Not yet implemented');
-//                $members = $this->conversation->getParticipants();
+//            throw new UnsupportedException('Not yet implemented');
+            $members = $this->conversation->getParticipants();
 //                $this->status = self::STATUS_DELIVERY_SUCCESSFUL;
         }
         return $members;

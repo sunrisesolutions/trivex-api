@@ -31,6 +31,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use App\Message\Message;
+use App\Util\AppUtil;
 
 class IndividualMemberSubscriber implements EventSubscriberInterface
 {
@@ -59,13 +61,36 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
     private function makeAdmin(IndividualMember $member, ObjectManager $manager)
     {
         $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_ORG_ADMIN'));
-
         if ($member->admin === true) {
             $role = $member->getRoles()->matching($c)->first();
             if (empty($role)) {
                 $role = new Role();
                 $role->initiateUuid();
                 $role->setName('ROLE_ORG_ADMIN');
+                $role->setIndividualMember($member);
+                $role->setOrganisation($member->getOrganisation());
+                $manager->persist($role);
+            }
+            $member->addRole($role);
+        } else {
+            $roles = $member->getRoles()->matching($c);
+            if ($roles->count() > 0) {
+                foreach ($roles as $role) {
+                    $member->removeRole($role);
+                }
+            }
+        }
+    }
+
+    private function addMessageRole(IndividualMember $member, ObjectManager $manager) {
+        $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_MESSAGE'));
+        if ($member->messageDeliverable === true) {
+            $role = $member->getRoles()->matching($c)->first();
+            if (empty($role)) {
+                $role = new Role();
+                $role->initiateUuid();
+                $role->setName('ROLE_MESSAGE');
+                $role->setIndividualMember($member);
                 $role->setOrganisation($member->getOrganisation());
                 $manager->persist($role);
             }
@@ -155,6 +180,28 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             $org->addIndividualMember($member);
             $member->setOrganisation($org);
             $this->makeAdmin($member, $this->manager);
+            $this->addMessageRole($member, $this->manager);
+
+            //publishMessage
+            if ($method === Request::METHOD_PUT) {
+                $ar = [
+                    'data' => [
+                        'individualMember' => [
+                            'uuid' => $member->getUuid(),
+                            'accessToken' => $member->getAccessToken(),
+                            'personUuid' => $member->getPersonUuid(),
+                            'organisationUuid' => $member->getOrganisationUuid(),
+                            '_SYSTEM_OPERATION' => Message::OPERATION_PUT,
+                        ]
+                    ],
+                    'version' => AppUtil::MESSAGE_VERSION,
+                ];
+
+                $names = [];
+                foreach($member->getRoles() as $role) $names[] = $role->getName();
+                $ar['data']['individualMember']['roleString'] = json_encode($names);
+                $this->awsSnsUtil->publishMessage(json_encode($ar), $method);
+            }
         }
 
 
