@@ -56,6 +56,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
             && !empty($request->request->get('phone'))
 
             && $request->isMethod('POST');
+        echo 'supported '.$supported;
         return $supported;
     }
 
