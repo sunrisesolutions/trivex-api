@@ -101,3 +101,4 @@ security:
     access_control:
         # ...
         - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/login/nric-phone-birthdate, roles: IS_AUTHENTICATED_ANONYMOUSLY }
