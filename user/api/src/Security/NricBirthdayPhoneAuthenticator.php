@@ -50,14 +50,13 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     {
 //        return 'app_login' === $request->attributes->get('_route')
 //            && $request->isMethod('POST');
-        $supported = !empty($request->request->get('org-code'))
+        echo 'i m here';exit();
+        return !empty($request->request->get('org-code'))
             && !empty($request->request->get('birth-date'))
             && !empty($request->request->get('id-number'))
             && !empty($request->request->get('phone'))
 
             && $request->isMethod('POST');
-        echo 'supported '.$supported;
-        return $supported;
     }
 
     public function getCredentials(Request $request)
@@ -141,7 +140,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
 
     protected function getLoginUrl()
     {
-        return $this->router->generate('app_login');
+        return $this->router->generate('nric_phone_birthday_auth');
     }
 
     /**
@@ -170,7 +169,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     {
         $data = [
             // you might translate this message
-            'message' => 'Authentication Required for NricBirthdayPhoneAuth',
+            'message' => 'Authentication Required',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
