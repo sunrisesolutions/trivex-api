@@ -168,7 +168,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     {
         $data = [
             // you might translate this message
-            'message' => 'Authentication Required',
+            'message' => 'Authentication Required for NricBirthdayPhoneAuth',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
