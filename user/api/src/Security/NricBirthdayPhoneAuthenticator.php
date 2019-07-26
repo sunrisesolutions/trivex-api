@@ -50,7 +50,13 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
     {
 //        return 'app_login' === $request->attributes->get('_route')
 //            && $request->isMethod('POST');
-        echo 'i m here';exit();
+        $sss = !empty($request->request->get('org-code'))
+            && !empty($request->request->get('birth-date'))
+            && !empty($request->request->get('id-number'))
+            && !empty($request->request->get('phone'))
+
+            && $request->isMethod('POST');
+        echo 'i m here sss '.$sss;exit();
         return !empty($request->request->get('org-code'))
             && !empty($request->request->get('birth-date'))
             && !empty($request->request->get('id-number'))
