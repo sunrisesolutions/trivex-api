@@ -139,7 +139,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
 
     protected function getLoginUrl()
     {
-        return $this->router->generate('nric_phone_birthday_auth');
+        return $this->router->generate('app_login');
     }
 
     /**
