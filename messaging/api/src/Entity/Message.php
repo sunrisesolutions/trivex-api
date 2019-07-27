@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -197,6 +198,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messages")
+     * @ApiSubresource()
      * @Groups("write")
      */
     private $optionSet;
