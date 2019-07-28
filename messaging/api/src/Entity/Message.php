@@ -198,8 +198,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messages")
-     * @ApiSubresource()
-     * @Groups("write")
+     * @Groups({"read", "write"})
      */
     private $optionSet;
 
