@@ -164,7 +164,7 @@ class Message
     private $sender;
 
     /**
-     * @return mixed
+     * @return string
      * @Groups("read")
      */
     public function getSenderId()
