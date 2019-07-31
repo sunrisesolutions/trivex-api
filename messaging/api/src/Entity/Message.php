@@ -167,9 +167,9 @@ class Message
      * @return string
      * @Groups("read")
      */
-    public function getSenderId()
+    public function getSenderUuid()
     {
-        return $this->sender->getId();
+        return $this->sender->getUuid();
     }
 
     /**

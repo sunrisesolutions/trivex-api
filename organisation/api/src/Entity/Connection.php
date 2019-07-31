@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -14,6 +16,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
  * @ORM\Entity(repositoryClass="App\Repository\ConnectionRepository")
  * @ORM\Table(name="organisation__connection")
  * @ORM\HasLifecycleCallbacks()
@@ -70,6 +73,30 @@ class Connection
      */
     private $createdAt;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $fulltextString;
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function updateFulltextString()
+    {
+        $fromPerson = $this->fromMember->getFulltextString();
+        $toPerson = $this->toMember->getFulltextString();
+        if (empty($fromPerson) && empty($toPerson)) $this->fulltextString = '';
+        else $this->fulltextString = ' createdAt: ' . (string)$this->createdAt->format("Y-m-d H:i:s");
+
+        if (!empty($fromPerson)) {
+            $this->fulltextString .= ' from: ' . $fromPerson;
+        }
+        if (!empty($toPerson)) {
+            $this->fulltextString .= ' to: ' . $toPerson;
+        }
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -119,6 +146,18 @@ class Connection
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getFulltextString(): ?string
+    {
+        return $this->fulltextString;
+    }
+
+    public function setFulltextString(?string $fulltextString): self
+    {
+        $this->fulltextString = $fulltextString;
 
         return $this;
     }

@@ -132,7 +132,7 @@ class IndividualMember
             $this->fulltextString = '';
         } else {
             $fulltextString = '';
-            $fulltextString .= 'name: ' . $person->getGivenName() . ' email: ' . $person->getEmail() . ' employer: ' . $person->getEmployerName();
+            $fulltextString .= 'name: ' . $person->getGivenName() . ' email: ' . $person->getEmail() . ' employer: ' . $person->getEmployerName() . ' job: ' . $person->getJobTitle();
             $this->fulltextString = $fulltextString;
         }
     }
