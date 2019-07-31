@@ -87,7 +87,7 @@ class Connection
         $fromPerson = $this->fromMember->getFulltextString();
         $toPerson = $this->toMember->getFulltextString();
         if (empty($fromPerson) && empty($toPerson)) $this->fulltextString = '';
-        else $this->fulltextString = ' createdAt: ' . (string)$this->createdAt->format("Y-m-d H:i:s");
+        else $this->fulltextString = 'uuid: ' .$this->uuid. ' createdAt: ' . (string)$this->createdAt->format("Y-m-d H:i:s");
 
         if (!empty($fromPerson)) {
             $this->fulltextString .= ' from: ' . $fromPerson;
