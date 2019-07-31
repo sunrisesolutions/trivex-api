@@ -46,12 +46,10 @@ class ConnectionSubscriber implements EventSubscriberInterface
         }
 
         /** @var JWTUser $user */
-//        $user = $this->security->getUser();
-//        if (empty($user) or empty($imUuid = $user->getImUuid())) {
-//            $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
-//        }
-
-        $imUuid = 'ORG_IM-2';
+        $user = $this->security->getUser();
+        if (empty($user) or empty($imUuid = $user->getImUuid())) {
+            $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
+        }
 
         $imRepo = $this->registry->getRepository(IndividualMember::class);
         $im = $imRepo->findOneBy(['uuid' => $imUuid,
