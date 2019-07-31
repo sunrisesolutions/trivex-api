@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -188,6 +189,7 @@ class IndividualMember
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="toMember")
+     * @Groups("read_member")
      */
     private $toConnections;
 
