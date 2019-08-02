@@ -35,12 +35,13 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
         /** @var JWTUser $user */
         $user = $this->security->getUser();
         $supported = $this->supportClass($resourceClass);
-        if ($supported && empty($user)) {
-            throw new UnauthorizedHttpException('Please login');
+
+        if (!$supported || $this->security->isGranted('ROLE_ADMIN')) {
+            return;
         }
 
-        if (!$supported || $this->security->isGranted('ROLE_ADMIN') || null === $objectUuid = $user->getOrgUuid()) {
-            return;
+        if ($supported && empty($user) || null === $objectUuid = $user->getOrgUuid()) {
+            throw new UnauthorizedHttpException('Please login');
         }
 
 
