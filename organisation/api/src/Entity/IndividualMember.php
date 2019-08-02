@@ -189,7 +189,7 @@ class IndividualMember
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="toMember")
-     * @Groups("read_member")
+     * @ApiSubresource()
      */
     private $toConnections;
 
