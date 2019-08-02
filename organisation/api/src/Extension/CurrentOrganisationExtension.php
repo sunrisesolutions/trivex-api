@@ -6,6 +6,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\IndividualMember;
+use App\Entity\Organisation;
 use App\Security\JWTUser;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -44,12 +45,15 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
             throw new UnauthorizedHttpException('Please login');
         }
 
-
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->join($rootAlias.'.organisation', 'organisation');
-        $queryBuilder->andWhere('organisation.uuid like :current_object');
-        $queryBuilder->setParameter('current_object', $objectUuid);
-
+        if ($resourceClass === Organisation::class) {
+            $queryBuilder->andWhere($rootAlias.'.uuid like :current_object');
+            $queryBuilder->setParameter('current_object', $objectUuid);
+        } else {
+            $queryBuilder->join($rootAlias.'.organisation', 'organisation');
+            $queryBuilder->andWhere('organisation.uuid like :current_object');
+            $queryBuilder->setParameter('current_object', $objectUuid);
+        }
 //        echo $queryBuilder->getQuery()->getSQL();
     }
 
