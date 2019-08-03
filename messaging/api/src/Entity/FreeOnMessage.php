@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
@@ -53,56 +54,67 @@ class FreeOnMessage
 
     /**
      * @ORM\Column(type="string", length=191)
+     * @Groups("read")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups(["read","write"])
      */
     private $text;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups(["read","write"])
      */
     private $fromHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups(["read","write"])
      */
     private $toHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups(["read","write"])
      */
     private $fromMinute;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups(["read","write"])
      */
     private $toMinute;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups(["read","write"])
      */
     private $fromDay;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups(["read","write"])
      */
     private $toDay;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups(["read","write"])
      */
     private $effectiveFrom;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups(["read","write"])
      */
     private $expireOn;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("read")
      */
     private $timezone = 'Asia/Singapore';
 
