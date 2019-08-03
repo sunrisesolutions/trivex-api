@@ -121,22 +121,22 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
         }
 
+        $orgUuid = $member->getOrganisationUuid();
+        $personUuid = $member->getPersonUuid();
 
-//        $imRepo = $this->registry->getRepository(IndividualMember::class);
-//        $im = $imRepo->findOneBy(['uuid' => $imUuid,]);
+        if (empty($orgUuid) or empty($personUuid)) {
+            return;
+        }
 
-//        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
-
-        if (!empty($orgUuid = $member->getOrganisationUuid())) {
+        if (!empty($orgUuid)) {
             $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
-            if (empty($org)) {
-                throw new InvalidArgumentException('Invalid Organisation');
-            }
+        }
 
-            if (empty($personUuid = $member->getPersonUuid())) {
-                throw new InvalidArgumentException('Invalid Person');
-            }
+        if (empty($org)) {
+            throw new InvalidArgumentException('Invalid Organisation');
+        }
 
+        if (!empty($personUuid)) {
             $person = $this->registry->getRepository(Person::class)->findOneBy(['uuid' => $personUuid]);
             if (empty($person)) {
                 $person = new Person();
@@ -168,49 +168,44 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 } catch (\Exception $exception) {}
                 $this->manager->persist($person);
             }
-
-            if ($method === Request::METHOD_POST && !empty($person->getId())) {
-                $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
-                if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
-            }
-
-            $person->setEmployerName($org->getName());
-            $person->addIndividualMember($member);
-            $member->setPerson($person);
-            $org->addIndividualMember($member);
-            $member->setOrganisation($org);
-            $this->makeAdmin($member, $this->manager);
-            $this->addMessageRole($member, $this->manager);
-
-            //publishMessage
-            if ($method === Request::METHOD_PUT) {
-                $ar = [
-                    'data' => [
-                        'individualMember' => [
-                            'uuid' => $member->getUuid(),
-                            'accessToken' => $member->getAccessToken(),
-                            'personUuid' => $member->getPersonUuid(),
-                            'organisationUuid' => $member->getOrganisationUuid(),
-                            '_SYSTEM_OPERATION' => Message::OPERATION_PUT,
-                        ]
-                    ],
-                    'version' => AppUtil::MESSAGE_VERSION,
-                ];
-
-                $names = [];
-                foreach($member->getRoles() as $role) $names[] = $role->getName();
-                $ar['data']['individualMember']['roleString'] = json_encode($names);
-                $this->awsSnsUtil->publishMessage(json_encode($ar), $method);
-            }
         }
 
+        if (empty($person)) {
+            throw new InvalidArgumentException('Invalid Person');
+        }
 
-//        $event->setControllerResult($member);
+        if ($method === Request::METHOD_POST && !empty($person->getId())) {
+            $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['organisation' => $org->getId(), 'person' => $person->getId()]);
+            if (!empty($im)) $event->setResponse(new JsonResponse(['Member already exist'], 400));
+        }
 
-//        throw new InvalidArgumentException('hello');
+        $person->setEmployerName($org->getName());
+        $person->addIndividualMember($member);
+        $member->setPerson($person);
+        $org->addIndividualMember($member);
+        $member->setOrganisation($org);
+        $this->makeAdmin($member, $this->manager);
+        $this->addMessageRole($member, $this->manager);
 
-//        $event->setResponse(new JsonResponse(['attendee'=>$attendee->getRegistration()->getFamilyName(), 'user' => [
-//            'im' => $user->getImUuid(),
-//            'username' => $user->getUsername(), 'org' => $user->getOrgUuid()]], 200));
+        //publishMessage
+        if ($method === Request::METHOD_PUT) {
+            $ar = [
+                'data' => [
+                    'individualMember' => [
+                        'uuid' => $member->getUuid(),
+                        'accessToken' => $member->getAccessToken(),
+                        'personUuid' => $member->getPersonUuid(),
+                        'organisationUuid' => $member->getOrganisationUuid(),
+                        '_SYSTEM_OPERATION' => Message::OPERATION_PUT,
+                    ]
+                ],
+                'version' => AppUtil::MESSAGE_VERSION,
+            ];
+
+            $names = [];
+            foreach($member->getRoles() as $role) $names[] = $role->getName();
+            $ar['data']['individualMember']['roleString'] = json_encode($names);
+            $this->awsSnsUtil->publishMessage(json_encode($ar), $method);
+        }
     }
 }
