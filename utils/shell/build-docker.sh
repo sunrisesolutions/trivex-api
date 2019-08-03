@@ -5,10 +5,8 @@ cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/works
 cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/configuration/api/utils/
 
 echo 'copy to user'
-mkdir -p ~/workspace/magenta/trivex/api/user/api/utils
-rm -R -f ~/workspace/magenta/trivex/api/user/api/utils/*
-cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/user/api/utils/
-cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/user/api/utils/
+sh ~/workspace/magenta/trivex/api/utils/shell/build-user.sh
+cd ~/workspace/magenta/trivex/api
 
 
 echo 'copy to authorisation'
@@ -40,6 +38,9 @@ mkdir -p ~/workspace/magenta/trivex/api/organisation/api/utils
 rm -R -f ~/workspace/magenta/trivex/api/organisation/api/utils/*
 cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/organisation/api/utils/
 cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/organisation/api/utils/
+
+echo 'copy to admin'
+
 
 echo 'done'
 

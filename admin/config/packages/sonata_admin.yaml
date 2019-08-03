@@ -1,5 +1,25 @@
 sonata_admin:
-    title: 'Sonata Admin'
+    title: 'SQAN'
+    options:
+        title_mode: 'single_text'
+
+    templates:
+        layout: 'standard_layout.html.twig'
+        user_block: 'Core/user_block.html.twig'
+        list: 'CRUD/list.html.twig'
+        delete: 'CRUD/delete.html.twig'
+
+    security:
+        handler: sonata.admin.security.handler.role
+#        role_admin: ROLE_ORG_ADMIN
+#        role_super_admin: ROLE_ADMIN
+
+    assets:
+        extra_stylesheets:
+            - bundles/sonataadmin/vendor/admin-lte/dist/css/skins/skin-purple-light.min.css
+            - bundles/magentacbookadmin/admin.css
+        remove_stylesheets:
+            - bundles/sonataadmin/vendor/admin-lte/dist/css/skins/skin-black.min.css
     dashboard:
         blocks:
             - { type: sonata.admin.block.admin_list, position: left }

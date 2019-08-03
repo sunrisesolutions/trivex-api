@@ -19,10 +19,11 @@ echo 'copy Security from user'
 cp -p ~/workspace/magenta/trivex/api/user/api/src/Security/* ~/workspace/magenta/trivex/api/admin/src/Security
 
 echo 'copy Subscriber from user'
+rm -R -f ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber/*
 cp -p ~/workspace/magenta/trivex/api/user/api/src/Doctrine/Subscriber/* ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 sed -i -- 's/App\\Util;/App\\Util\\User;/g' *
-sed -i -- 's/App\\Entity/App\\Entity\\User/g'
+sed -i -- 's/App\\Entity/App\\Entity\\User/g' *
 
 echo 'copy Message from user'
 rm -R -f ~/workspace/magenta/trivex/api/admin/src/Message/Entity/User/*
@@ -43,6 +44,7 @@ cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src/Util/* 
 cp ~/workspace/magenta/trivex/api/user/api/src/Util/AppUtil.php ~/workspace/magenta/trivex/api/admin/src/Util/User
 cd ~/workspace/magenta/trivex/api/admin/src/Util/User
 sed -i -- 's/App\\Util;/App\\Util\\User;/g' *
+sed -i -- 's/App\\Entity/App\\Entity\\User/g' *
 
 echo 'copy Command from user'
 cp -R -p ~/workspace/magenta/trivex/api/user/api/src/Command/* ~/workspace/magenta/trivex/api/admin/src/Command/User;

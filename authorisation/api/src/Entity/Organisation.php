@@ -41,6 +41,21 @@ class Organisation
             $acrole->setName('ROLE_ORG_ADMIN');
             $this->addRole($acrole);
             $acrole = new ACRole();
+            $acrole->setName('ROLE_EVENT_ADMIN');
+            $this->addRole($acrole);
+            $acrole = new ACRole();
+            $acrole->setName('ROLE_MSG_ADMIN');
+            $this->addRole($acrole);
+
+
+            $acrole = new ACRole();
+            $acrole->setName('ROLE_EVENT_ADMIN');
+            $this->addRole($acrole);
+            $acrole = new ACRole();
+            $acrole->setName('ROLE_MSG_USER');
+            $this->addRole($acrole);
+
+            $acrole = new ACRole();
             $acrole->setName('ROLE_USER');
             $this->addRole($acrole);
         }

@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Message;
 
-use App\Message\Entity\OrganisationSupportedType;
-use App\Util\AppUtil;
+use App\Util\BaseUtil;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -59,7 +58,7 @@ abstract class Message
 
 //                echo '$obj->givenName is '.$obj->givenName;
 
-                $nonScalarProps = AppUtil::copyObjectScalarProperties($obj, $entity);
+                $nonScalarProps = BaseUtil::copyObjectScalarProperties($obj, $entity);
 //echo 'entity->givename is '.$entity->getGivenName();
                 foreach ($nonScalarProps as $_prop => $_obj) {
                     if (defined("$supportedType::$_prop")) {

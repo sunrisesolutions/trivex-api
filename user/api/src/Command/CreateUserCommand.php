@@ -2,6 +2,8 @@
 
 namespace App\Command;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,6 +14,15 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 class CreateUserCommand extends Command
 {
     protected static $defaultName = 'app:create-user';
+
+    /** @var EntityManagerInterface $manager */
+    private $manager;
+
+    public function __construct(string $name = null, EntityManagerInterface $manager)
+    {
+        parent::__construct($name);
+        $this->manager = $manager;
+    }
 
     protected function configure()
     {
@@ -35,7 +46,13 @@ class CreateUserCommand extends Command
             // ...
         }
 
-
+        $user = new User();
+        $user->setEmail('binh@sunrise.vn');
+        $user->setPlainPassword('p@ssword');
+        $user->setUsername('peterbean');
+//        $user->setRoles(['ROLE_SUPER_ADMIN']);
+        $this->manager->persist($user);
+        $this->manager->flush();
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
     }

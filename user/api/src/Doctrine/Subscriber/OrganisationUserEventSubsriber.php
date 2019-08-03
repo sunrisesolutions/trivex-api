@@ -13,7 +13,6 @@ namespace App\Doctrine\Subscriber;
 use App\Entity\OrganisationUser;
 use App\Entity\Organisation;
 use App\Entity\User;
-use App\Security\JWTUser;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
