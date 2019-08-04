@@ -32,6 +32,8 @@ use ApiPlatform\Core\Annotation\ApiResource;
  */
 class User implements UserInterface
 {
+    const TTL = 1800;
+
     /**
      * @var int|null The User Id
      * @ORM\Id()
@@ -47,14 +49,27 @@ class User implements UserInterface
         $this->organisationUsers = new ArrayCollection();
     }
 
+///////    Proxy method /////
+    public function getPerson()
+    {
+        $key = 'person_of_user'.$this->id;
+        if (apcu_exists($key)) {
+            return apcu_fetch($key);
+        } else {
+            getenv('PERSON_SERVICE_HOST');
+        }
+    }
+//\\\\\    Proxy method \\\\\
+
     /**
      * @return array
      * @Groups("read")
      */
-    public function getIndividualMemberData(){
+    public function getIndividualMemberData()
+    {
         $data = [];
         /** @var OrganisationUser $im */
-        foreach($this->organisationUsers as $im){
+        foreach ($this->organisationUsers as $im) {
             $member['accessToken'] = $im->getAccessToken();
             $member['id'] = $im->getId();
             $member['uuid'] = $im->getUuid();
@@ -86,9 +101,10 @@ class User implements UserInterface
     }
 
     /** @return OrganisationUser */
-    public function findOrgUserByUuid($uuid){
+    public function findOrgUserByUuid($uuid)
+    {
         $criteria = Criteria::create()
-            ->where(Criteria::expr()->eq('uuid',$uuid))
+            ->where(Criteria::expr()->eq('uuid', $uuid))
 //            ->orderBy(array('username' => Criteria::ASC))
             ->setFirstResult(0)
             ->setMaxResults(1);
@@ -130,7 +146,7 @@ class User implements UserInterface
     public function getProfilePictureWriteForm()
     {
         $path = $this->buildProfilePicturePath();
-        return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'. $path], AwsS3Util::getInstance()->getObjectWriteForm($path));
+        return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'.$path], AwsS3Util::getInstance()->getObjectWriteForm($path));
     }
 
     /**
@@ -174,7 +190,7 @@ class User implements UserInterface
 
         foreach ($this->organisationUsers as $im) {
             if (!empty($im->getRoles())) {
-                foreach($im->getRoles() as $r) {
+                foreach ($im->getRoles() as $r) {
                     if ($r != null && !in_array($r, $roles)) $roles[] = $r;
                 }
             }
