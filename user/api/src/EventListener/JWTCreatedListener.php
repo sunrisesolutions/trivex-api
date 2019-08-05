@@ -34,28 +34,28 @@ class JWTCreatedListener
 
         if (!empty($request)) {
             $payload['ip'] = $request->getClientIp();
+
+
+            $payload['org'] = $request->attributes->get('orgUid');
+            $payload['im'] = $request->attributes->get('imUid');
+
+            if (empty($payload['org'])) {
+                $imUuid = $request->request->get('im-uuid');
+                if (empty($imUuid)) {
+                    /** @var OrganisationUser $im */
+                    $im = $user->getOrganisationUsers()->first();
+                    $imUuid = $im->getUuid();
+                    $orgUuid = $im->getOrganisation()->getUuid();
+                } else {
+                    $im = $user->findOrgUserByUuid($imUuid);
+                    $orgUuid = $im->getOrganisation()->getUuid();
+                }
+                $payload['org'] = $orgUuid;
+                $payload['im'] = $imUuid;
+            }
         } else {
             $payload['ip'] = null;
         }
-
-        $payload['org'] = $request->attributes->get('orgUid');
-        $payload['im'] = $request->attributes->get('imUid');
-
-        if (empty($payload['org'])) {
-            $imUuid = $request->request->get('im-uuid');
-            if (empty($imUuid)) {
-                /** @var OrganisationUser $im */
-                $im = $user->getOrganisationUsers()->first();
-                $imUuid = $im->getUuid();
-                $orgUuid = $im->getOrganisation()->getUuid();
-            } else {
-                $im = $user->findOrgUserByUuid($imUuid);
-                $orgUuid = $im->getOrganisation()->getUuid();
-            }
-            $payload['org'] = $orgUuid;
-            $payload['im'] = $imUuid;
-        }
-
 //        $payload['uuid'] = $user->getUuid();
 
         $event->setData($payload);
