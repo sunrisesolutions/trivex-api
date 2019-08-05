@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Security\JWTUser;
 use GuzzleHttp\Client;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class ApiResourceUtil
@@ -33,7 +34,7 @@ class ApiResourceUtil
 
     private static $instance;
 
-    public function __construct(JWTManager $jwtManager, Sdk $sdk, iterable $config, iterable $credentials, string $env, iterable $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
+    public function __construct(JWTTokenManagerInterface $jwtManager, Sdk $sdk, iterable $config, iterable $credentials, string $env, iterable $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
     {
         $this->client = $sdk->createSns($config + $credentials);
         $this->jwtManager = $jwtManager;
