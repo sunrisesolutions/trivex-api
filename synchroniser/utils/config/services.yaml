@@ -1,0 +1,98 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    noreply_email: no-reply-trivex@magentapulse.com
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+
+    Aws\Sdk: ~
+
+    App\Util\:
+        resource: '../libraries/component/utils/src/Util/*'
+
+    App\Message\:
+        resource: '../libraries/component/utils/src/Message/*'
+
+    app_util_aws_sqs_util:
+        alias: App\Util\AwsSqsUtil
+        public: true
+
+    App\Util\AwsSqsUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.default%'
+            $env: '%kernel.environment%'
+    #        calls:
+    #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
+
+
+    App\Util\ApiResourceUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.sns%'
+            $env: '%kernel.environment%'
+            $snsConfig: '%aws_sdk.config.sns%'
+
+    app_util_aws_sns_util:
+        alias: App\Util\AwsSnsUtil
+        public: true
+
+    App\Util\AwsSnsUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.sns%'
+            $env: '%kernel.environment%'
+            $snsConfig: '%aws_sdk.config.sns%'
+    #        calls:
+    #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
+
+#    App\Command\AwsSqsWorkerCommand:
+#        tags:
+#            -  { name: console.command }
+
+    app_util_aws_message_consumer:
+        alias: App\Message\Consumer
+        public: true
+
+    App\Message\Consumer:
+        arguments: [!tagged consumer_strategy]
+
+    #    App\Message\ConsumerStrategy\ImageStrategy:
+    #        tags:
+    #            - { name: consumer_strategy }
+
+    #    App\Message\ConsumerStrategy\FileStrategy:
+    #        tags:
+    #            - { name: consumer_strategy }
+
+    App\Message\ConsumerStrategy\ProcessNDeleteStrategy:
+        tags:
+            - { name: consumer_strategy }
+
+    app.event.jwt_created_listener:
+        class: App\EventListener\JWTCreatedListener
+        arguments: [ '@request_stack' ]
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_jwt_created, method: onJWTCreated }

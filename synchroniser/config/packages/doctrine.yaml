@@ -1,0 +1,107 @@
+doctrine:
+    dbal:
+        default_connection: default
+        connections:
+            default:
+                # configure these for your database server
+                url: '%env(DATABASE_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            user:
+                url: '%env(DATABASE_USER_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            organisation:
+                url: '%env(DATABASE_ORGANISATION_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            person:
+                url: '%env(DATABASE_PERSON_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            authorisation:
+                url: '%env(DATABASE_AUTHORISATION_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            messaging:
+                url: '%env(DATABASE_MESSAGING_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+            event:
+                url: '%env(DATABASE_EVENT_URL)%'
+                driver: 'pdo_mysql'
+                server_version: '5.7'
+                charset: utf8mb4
+
+    orm:
+        default_entity_manager: default
+        entity_managers:
+            default:
+                connection: default
+                mappings:
+                    Main:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/User'
+                        prefix: 'App\Entity\User\User'
+                        alias: Main
+            user:
+                connection: user
+                mappings:
+                    User:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/User'
+                        prefix: 'App\Entity\User\User'
+                        alias: User
+            organisation:
+                connection: organisation
+                mappings:
+                    Organisation:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Organisation'
+                        prefix: 'App\Entity\Organisation\Organisation'
+                        alias: Organisation
+            person:
+                connection: person
+                mappings:
+                    Person:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Person'
+                        prefix: 'App\Entity\Person\Person'
+                        alias: Person
+            authorisation:
+                connection: authorisation
+                mappings:
+                    Authorisation:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Authorisation'
+                        prefix: 'App\Entity\Authorisation\Authorisation'
+                        alias: Authorisation
+            messaging:
+                connection: organisation
+                mappings:
+                    Messaging:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Messaging'
+                        prefix: 'App\Entity\Messaging\Messaging'
+                        alias: Messaging
+            event:
+                connection: organisation
+                mappings:
+                    Event:
+                        is_bundle: false
+                        type: annotation
+                        dir: '%kernel.project_dir%/src/Entity/Event'
+                        prefix: 'App\Entity\Event\Event'
+                        alias: Event
