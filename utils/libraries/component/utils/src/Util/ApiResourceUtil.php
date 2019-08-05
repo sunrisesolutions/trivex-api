@@ -97,6 +97,8 @@ class ApiResourceUtil
 //                if (isset($data['hydra:totalItems']) && $data['hydra:totalItems'] > 0) {
 //
 //                }
+            } else {
+                return $res->getBody()->getContents();
             }
         } catch (\Exception $exception) {
             throw $exception;
