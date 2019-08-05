@@ -94,7 +94,7 @@ class ApiResourceUtil
         ]);
 
         try {
-            $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
+            $res = $client->request('GET', $url, ['headers' => ['Authorization' => 'Bearer '.$token]]);
             if ($res->getStatusCode() === 200) {
                 $data = json_decode($res->getBody()->getContents(), true);
                 return $data;
