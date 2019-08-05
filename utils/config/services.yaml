@@ -47,6 +47,14 @@ services:
     #        calls:
     #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
 
+
+    App\Util\ApiResourceUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.sns%'
+            $env: '%kernel.environment%'
+            $snsConfig: '%aws_sdk.config.sns%'
+
     app_util_aws_sns_util:
         alias: App\Util\AwsSnsUtil
         public: true
