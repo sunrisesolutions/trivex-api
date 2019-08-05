@@ -55,13 +55,19 @@ class ApiResourceUtil
         return self::$instance;
     }
 
+    public function generateRootAdminToken()
+    {
+        $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN',
+        ], null, null, null);
+
+        return $token = $this->jwtManager->create($sadmin);
+    }
+
     public function fetchResource($resource, $queryParams = [])
     {
         $plurals = ['person' => 'people',
         ];
-
-        $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN',
-        ], null, null, null);
+        $token = $this->generateRootAdminToken();
 
         $queryString = '';
         if (!empty($queryParams)) {
@@ -75,8 +81,6 @@ class ApiResourceUtil
                 $queryString .= $key.'='.$val;
             }
         }
-
-        $token = $this->jwtManager->create($sadmin);
 
         $url = 'https://'.$_ENV[sprintf('%s_SERVICE_HOST', strtoupper($resource))].'/'.$plurals[$resource].$queryString;
         $client = new Client([

@@ -50,6 +50,7 @@ class TestCommand extends Command
         $data = $fetcher->fetchResource('person', ['userUuid' => 'USER-5d41ceaa61d4b-012301082019',
         ]);
         var_dump($data);
+        var_dump($token = $fetcher->generateRootAdminToken());
         $filelist = array();
         $io->note(AppUtil::APP_NAME);
 //        if ($handle = opendir("/srv/api/libraries/component/utils/src/Util")) {
