@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Util;
+namespace App\Util\Person;
 
 use Aws\Exception\AwsException;
 use Aws\Result;

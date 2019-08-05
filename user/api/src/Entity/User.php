@@ -56,7 +56,9 @@ class User implements UserInterface
         if (apcu_exists($key)) {
             return apcu_fetch($key);
         } else {
-            getenv('PERSON_SERVICE_HOST');
+            $person = new Person();
+            $person->setGivenName('Peter');
+            return $person;
         }
     }
 //\\\\\    Proxy method \\\\\
@@ -220,6 +222,11 @@ class User implements UserInterface
         $this->organisationUsers->removeElement($orgUser);
         $orgUser->setUser(null);
     }
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Person", mappedBy="user", cascade={"persist","merge"})
+     */
+    private $person;
 
     /**
      * @Groups({"read", "write"})
@@ -453,5 +460,18 @@ class User implements UserInterface
     public function setPlainPassword(?string $plainPassword): void
     {
         $this->plainPassword = $plainPassword;
+    }
+
+    public function setPerson(?Person $person): self
+    {
+        $this->person = $person;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newUser = null === $person ? null : $this;
+        if ($newUser !== $person->getUser()) {
+            $person->setUser($newUser);
+        }
+
+        return $this;
     }
 }

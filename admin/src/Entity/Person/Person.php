@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Person;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Util\AppUtil;
+use App\Util\Person\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}*
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact","userUuid": "exact"})
- * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact"})
+ * @ORM\Entity(repositoryClass="App\Repository\Person\PersonRepository")
  * @ORM\Table(name="person__person")
  * @ORM\HasLifecycleCallbacks()
  */
@@ -52,7 +52,7 @@ class Person
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person", cascade={"persist","merge"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Person\Nationality", mappedBy="person", cascade={"persist","merge"})
      * @Groups({"read","write"})
      */
     private $nationalities;

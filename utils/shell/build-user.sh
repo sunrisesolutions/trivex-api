@@ -19,7 +19,6 @@ echo 'copy Security from user'
 cp -p ~/workspace/magenta/trivex/api/user/api/src/Security/* ~/workspace/magenta/trivex/api/admin/src/Security
 
 echo 'copy Subscriber from user'
-rm -R -f ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber/*
 cp -p ~/workspace/magenta/trivex/api/user/api/src/Doctrine/Subscriber/* ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 sed -i -- 's/App\\Util;/App\\Util\\User;/g' *

@@ -1,25 +1,20 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\User;
 
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Util\AppUtil;
+use App\Util\User\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
- *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}*
- * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact","userUuid": "exact"})
- * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
- * @ORM\Table(name="person__person")
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact"})
+ * @ORM\Entity(repositoryClass="App\Repository\User\PersonRepository")
+ * @ORM\Table(name="user__person")
  * @ORM\HasLifecycleCallbacks()
  */
 class Person
@@ -35,14 +30,15 @@ class Person
      */
     private $id;
 
-    /**
-     * @ORM\PrePersist
-     */
-    public function initiateUuid()
+
+    public function __construct()
     {
-        if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
-        }
+        $this->nationalities = new ArrayCollection();
+    }
+
+    public function getName()
+    {
+        return $this->givenName.' '.$this->familyName;
     }
 
     /** @return  Nationality|bool */
@@ -52,10 +48,17 @@ class Person
     }
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person", cascade={"persist","merge"})
+     * @ORM\OneToMany(targetEntity="App\Entity\User\Nationality", mappedBy="person", cascade={"persist","merge"})
      * @Groups({"read","write"})
      */
     private $nationalities;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\User\User", inversedBy="person")
+     * @ORM\JoinColumn(name="id_user", referencedColumnName="id", onDelete="CASCADE")
+     * @Groups("read_user")
+     */
+    private $user;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -116,11 +119,6 @@ class Person
      * @Groups({"read","write"})
      */
     private $userUuid;
-
-    public function __construct()
-    {
-        $this->nationalities = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -277,4 +275,17 @@ class Person
 
         return $this;
     }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
 }

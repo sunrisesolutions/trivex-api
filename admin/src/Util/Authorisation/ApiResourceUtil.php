@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Util;
+namespace App\Util\Authorisation;
 
 use Aws\Exception\AwsException;
 use Aws\Result;
