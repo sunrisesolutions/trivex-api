@@ -60,7 +60,7 @@ class ApiResourceUtil
         $plurals = ['person' => 'people',
         ];
 
-        $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN',
+        $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN', null, null, null
         ]);
 
         $queryString = '';
