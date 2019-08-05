@@ -130,7 +130,9 @@ class UserEventSubsriber implements EventSubscriber
     {
         $object = $args->getObject();
         if ($object instanceof User) {
-        
+            if (empty($person = $object->getPerson())) {
+
+            }
         }
     }
 }

@@ -49,20 +49,6 @@ class User implements UserInterface
         $this->organisationUsers = new ArrayCollection();
     }
 
-///////    Proxy method /////
-    public function getPerson()
-    {
-        $key = 'person_of_user'.$this->id;
-        if (apcu_exists($key)) {
-            return apcu_fetch($key);
-        } else {
-            $person = new Person();
-            $person->setGivenName('Peter');
-            return $person;
-        }
-    }
-//\\\\\    Proxy method \\\\\
-
     /**
      * @return array
      * @Groups("read")
@@ -473,5 +459,10 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 }
