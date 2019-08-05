@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\User;
+use App\Util\ApiResourceUtil;
 use App\Util\AppUtil;
 use App\Util\BaseUtil;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,15 +40,18 @@ class TestCommand extends Command
             // ...
         }
 
-
+        $fetcher = ApiResourceUtil::getInstance();
+        $data = $fetcher->fetchResource('person', ['userUuid' => 'USER-5d41ceaa61d4b-012301082019',
+        ]);
+        var_dump($data);
         $filelist = array();
         $io->note(AppUtil::APP_NAME);
-        if ($handle = opendir("/srv/api/libraries/component/utils/src/Util")) {
-            while ($entry = readdir($handle)) {
-                $io->note($entry);
-            }
-            closedir($handle);
-        }
+//        if ($handle = opendir("/srv/api/libraries/component/utils/src/Util")) {
+//            while ($entry = readdir($handle)) {
+//                $io->note($entry);
+//            }
+//            closedir($handle);
+//        }
 
         $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
     }
