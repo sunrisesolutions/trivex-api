@@ -58,7 +58,7 @@ class ApiResourceUtil
     public function generateRootAdminToken()
     {
         $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN',
-        ], null, null, null);
+        ], null, null, 'ROOT_ADMIN_UUID');
 
         return $token = $this->jwtManager->create($sadmin);
     }
