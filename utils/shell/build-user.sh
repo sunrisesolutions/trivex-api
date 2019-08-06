@@ -2,6 +2,8 @@ mkdir -p ~/workspace/magenta/trivex/api/user/api/utils
 rm -R -f ~/workspace/magenta/trivex/api/user/api/utils/*
 cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/user/api/utils/
 cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/user/api/utils/
+cp -p ~/workspace/magenta/trivex/api/user/api/src/Security/DecisionMakingInterface.php ~/workspace/magenta/trivex/api/user/api/src/Security
+
 echo 'copy Entity from user'
 cp -R -p ~/workspace/magenta/trivex/api/user/api/src/Entity/* ~/workspace/magenta/trivex/api/admin/src/Entity/User
 cd ~/workspace/magenta/trivex/api/admin/src/Entity/User
@@ -49,6 +51,6 @@ echo 'copy Command from user'
 cp -R -p ~/workspace/magenta/trivex/api/user/api/src/Command/* ~/workspace/magenta/trivex/api/admin/src/Command/User;
 rm -f ~/workspace/magenta/trivex/api/admin/src/Command/User/AwsSqsWorkerCommand.php;
 cd ~/workspace/magenta/trivex/api/admin/src/Command/User;
-sed -i -- 's/App\\Util;/App\\Util\\User;/g' *
+sed -i -- 's/App\\Util/App\\Util\\User/g' *
 sed -i -- 's/App\\Command;/App\\Command\\User;/g' *
 sed -i -- 's/App\\Entity/App\\Entity\\User/g' *

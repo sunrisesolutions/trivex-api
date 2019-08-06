@@ -49,6 +49,6 @@ echo 'copy Command from person'
 cp -R -p ~/workspace/magenta/trivex/api/person/api/src/Command/* ~/workspace/magenta/trivex/api/admin/src/Command/Person;
 rm -f ~/workspace/magenta/trivex/api/admin/src/Command/Person/AwsSqsWorkerCommand.php;
 cd ~/workspace/magenta/trivex/api/admin/src/Command/Person;
-sed -i -- 's/App\\Util;/App\\Util\\Person;/g' *
+sed -i -- 's/App\\Util/App\\Util\\Person/g' *
 sed -i -- 's/App\\Command;/App\\Command\\Person;/g' *
 sed -i -- 's/App\\Entity/App\\Entity\\Person/g' *

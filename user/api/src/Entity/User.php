@@ -10,6 +10,8 @@ use App\Util\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\OrganisationUser;
+use App\Entity\Organisation;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,6 +35,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 class User implements UserInterface
 {
     const TTL = 1800;
+    const ROLE_ORG_ADMIN = 'ROLE_ORG_ADMIN';
 
     /**
      * @var int|null The User Id
@@ -47,6 +50,26 @@ class User implements UserInterface
     {
         $this->createdAt = new \DateTime();
         $this->organisationUsers = new ArrayCollection();
+    }
+
+    public function isGranted($permission = 'ALL', $object = null, $class = null, OrganisationUser $member = null, Organisation $org = null)
+    {
+
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAdminOrganisations()
+    {
+        $orgs = new ArrayCollection();
+        /** @var OrganisationUser $organisationUser */
+        foreach ($this->organisationUsers as $organisationUser) {
+            if (in_array(self::ROLE_ORG_ADMIN, $this->getRoles())) {
+                $orgs->add($organisationUser->getOrganisation());
+            }
+        }
+        return $orgs;
     }
 
     /**
