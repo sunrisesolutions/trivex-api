@@ -27,7 +27,7 @@ class PersonAdminController extends BaseCRUDAdminController
             $orgSlug = "1";
             $accessCode = "1";
             $employeeCode = "1";
-            $parameters['base_person_template'] = '@MagentaCPersonAdmin/standard_layout.html.twig';
+            $parameters['base_person_template'] = 'standard_layout.html.twig';
             $parameters['person'] = $person;
             $parameters['mainContentItem'] = $person;
             $parameters['subContentItems'] = $person->getRootChapters();
@@ -96,13 +96,13 @@ class PersonAdminController extends BaseCRUDAdminController
 
     public function showAction($id = null)
     {
-        $this->admin->setTemplate('show', '@MagentaCPersonAdmin/Admin/Person/Person/CRUD/show.html.twig');
+        $this->admin->setTemplate('show', 'Admin/Person/Person/CRUD/show.html.twig');
         return parent::showAction($id);
     }
 
     public function listAction()
     {
-        $this->admin->setTemplate('list', '@MagentaCPersonAdmin/Admin/Person/Person/CRUD/list.html.twig');
+        $this->admin->setTemplate('list', 'Admin/Person/Person/CRUD/list.html.twig');
 
         return parent::listAction();
     }

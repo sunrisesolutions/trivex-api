@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}*
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "nationalities.nricNumber": "exact","userUuid": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\Person\PersonRepository")
  * @ORM\Table(name="person__person")
  * @ORM\HasLifecycleCallbacks()

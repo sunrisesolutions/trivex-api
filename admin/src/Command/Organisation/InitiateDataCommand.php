@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Command;
+namespace App\Command\Organisation;
 
-use App\Entity\User\User;
-use App\Util\AppUtil;
-use App\Util\BaseUtil;
+use App\Entity\Organisation\IndividualMember;
+use App\Entity\Organisation\Organisation;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,9 +13,17 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
-class TestCommand extends Command
+class InitiateDataCommand extends Command
 {
-    protected static $defaultName = 'app:sync';
+    protected static $defaultName = 'app:initiate-data';
+
+    private $manager;
+
+    public function __construct(string $name = null, EntityManagerInterface $manager)
+    {
+        parent::__construct($name);
+        $this->manager = $manager;
+    }
 
     protected function configure()
     {
@@ -38,6 +46,19 @@ class TestCommand extends Command
         if ($input->getOption('option1')) {
             // ...
         }
+
+        $orgs = $this->manager->getRepository(Organisation::class)->findAll();
+        /** @var Organisation $org */
+        foreach ($orgs as $org) {
+            $ims = $org->getIndividualMembers();
+            /** @var IndividualMember $im */
+            foreach ($ims as $im) {
+                $im->updateFulltextString();
+                $this->manager->persist($im);
+            }
+            $this->manager->flush();
+        }
+
+        $io->success('You have a new command! Now make it your own! Pass --help to see your options.');
     }
 }
-

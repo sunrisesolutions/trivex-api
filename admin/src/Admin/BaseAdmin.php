@@ -2,6 +2,8 @@
 
 namespace App\Admin;
 
+use App\Service\Organisation\OrganisationService;
+use App\Service\User\UserService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 
 class BaseAdmin extends AbstractAdmin
@@ -14,6 +16,19 @@ class BaseAdmin extends AbstractAdmin
     const TEMPLATES = null;
 
     protected $translationDomain = 'AdminBundle'; // default is 'messages'
+
+    /** @var UserService $userService */
+    protected $userService;
+
+    /** @var OrganisationService $organisationService */
+    protected $organisationService;
+
+    public function __construct($code, $class, $baseControllerName, UserService $userService, OrganisationService $organisationService)
+    {
+        parent::__construct($code, $class, $baseControllerName);
+        $this->userService = $userService;
+        $this->organisationService = $organisationService;
+    }
 
     use BaseAdminTrait;
 }

@@ -23,6 +23,21 @@ sonata_admin:
     dashboard:
         blocks:
             - { type: sonata.admin.block.admin_list, position: left }
+        groups:
+            #            knowledge_base:
+            #                keep_open: true
+            #                label: dashboard.knowledge_base
+            #                icon: '<i class="fa fa-book"></i>'
+            #                items:
+            #                    - sonata.classification.admin.category
+            #                    - sonata.media.admin.media
+
+            system:
+                keep_open: true
+                label: dashboard.system
+                icon: '<i class="fa fa-users"></i>'
+                items:
+                    - App\Admin\Person\PersonAdmin
 
 sonata_block:
     blocks:

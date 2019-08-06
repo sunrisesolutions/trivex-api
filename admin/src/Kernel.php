@@ -2,8 +2,10 @@
 
 namespace App;
 
-use Magenta\Bundle\CBookAdminBundle\Admin\BaseAdmin;
-use Magenta\Bundle\CBookAdminBundle\Admin\BaseCRUDAdminController;
+use App\Admin\BaseAdmin;
+use App\Admin\BaseCRUDAdminController;
+use App\Service\Organisation\OrganisationService;
+use App\Service\User\UserService;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -86,7 +88,9 @@ class Kernel extends BaseKernel
                     }
                 }
 
-                $def->setArguments([$code, $entity, $controller]);
+                $userService = $container->getDefinition(UserService::class);
+                $organisationService = $container->getDefinition(OrganisationService::class);
+                $def->setArguments([$code, $entity, $controller, $userService, $organisationService]);
 
                 $definitions[$code] = $def;
             }

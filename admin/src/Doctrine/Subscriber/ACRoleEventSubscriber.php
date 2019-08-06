@@ -2,7 +2,7 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\User\Person\Authorisation\ACRole;
+use App\Entity\Organisation\Person\Authorisation\ACRole;
 use App\Message\Message;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;

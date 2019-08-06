@@ -12,10 +12,7 @@ use App\Service\ServiceContext;
 use App\Entity\Organisation\IndividualGroup;
 use App\Entity\Organisation\Organisation;
 use App\Entity\Organisation\IndividualMember;
-use App\Entity\System\DecisionMakingInterface;
-use App\Entity\System\FullTextSearchInterface;
-use App\Entity\System\SystemModule;
-use Bean\Component\Thing;
+use App\Security\DecisionMakingInterface;
 
 use App\Entity\User\User;
 use App\Service\Organisation\OrganisationService;
@@ -58,11 +55,11 @@ trait BaseAdminTrait
     }
 
     /**
-     * @deprecated since 3.34, will be dropped in 4.0. Use TemplateRegistry services instead
-     *
      * @param string $name
      *
      * @return null|string
+     * @deprecated since 3.34, will be dropped in 4.0. Use TemplateRegistry services instead
+     *
      */
     public function getTemplate($name)
     {
@@ -98,7 +95,7 @@ trait BaseAdminTrait
     protected function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('decide', $this->getRouterIdParameter() . '/decide/{action}');
+        $collection->add('decide', $this->getRouterIdParameter().'/decide/{action}');
     }
 
     protected function buildShow()
@@ -194,7 +191,7 @@ trait BaseAdminTrait
 
     protected function getCurrentOrganisationFromAncestors(BaseAdmin $parent = null)
     {
-        return $this->getConfigurationPool()->getContainer()->get(OrganisationService::class)->getCurrentOrganisationFromAncestors($parent);
+        return $this->organisationService->getCurrentOrganisationFromAncestors($parent);
     }
 
     protected function getCurrentIndividualMember($required = false)
@@ -223,7 +220,9 @@ trait BaseAdminTrait
         $context->setType(ServiceContext::TYPE_ADMIN_CLASS);
         $context->setAttribute('parent', $this->getParent());
 
-        return $this->getConfigurationPool()->getContainer()->get(OrganisationService::class)->getCurrentOrganisation($context, $required);
+        /** @var OrganisationService $orgService */
+        $orgService = $this->organisationService;
+        return $orgService->getCurrentOrganisation($context, $required);
     }
 
 
@@ -231,7 +230,7 @@ trait BaseAdminTrait
     function getLoggedInUser()
     {
         if ($this->user === null) {
-            $this->user = $this->getConfigurationPool()->getContainer()->get(UserService::class)->getUser();
+            $this->user = $this->userService->getUser();
         }
 
         return $this->user;
@@ -333,9 +332,9 @@ trait BaseAdminTrait
         return array_merge(parent::getAccess(), [
             'decide' => 'DECIDE',
             'decide_everything' => 'DECIDE_ALL',
-            'approve' => 'DECISION_' . DecisionMakingInterface::DECISION_APPROVE,
-            'reject' => 'DECISION_' . DecisionMakingInterface::DECISION_REJECT,
-            'reset' => 'DECISION_' . DecisionMakingInterface::DECISION_RESET
+            'approve' => 'DECISION_'.DecisionMakingInterface::DECISION_APPROVE,
+            'reject' => 'DECISION_'.DecisionMakingInterface::DECISION_REJECT,
+            'reset' => 'DECISION_'.DecisionMakingInterface::DECISION_RESET
         ]);
     }
 
@@ -346,7 +345,9 @@ trait BaseAdminTrait
     {
         /** @var ContainerInterface $container */
         $container = $this->getConfigurationPool()->getContainer();
-        $user = $container->get(UserService::class)->getUser();
+        /** @var UserService $userService */
+        $userService = $this->userService;
+        $user = $userService->getUser();
         $isAdmin = $container->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
 
 //        $pos = $container->get(UserService::class)->getPosition();
@@ -399,7 +400,7 @@ trait BaseAdminTrait
         /** @var Expr $expr */
         $expr = $brandQuery->expr();
         $orgFieldName = $this->getOrganisationFieldName($class);
-        $brandQuery->andWhere($expr->eq('o.' . $orgFieldName, $this->getCurrentOrganisation()->getId()));
+        $brandQuery->andWhere($expr->eq('o.'.$orgFieldName, $this->getCurrentOrganisation()->getId()));
 
         return $brandQuery;
     }
@@ -459,7 +460,7 @@ trait BaseAdminTrait
         $expr = $query->getQueryBuilder()->expr();
         $orgFieldName = $this->getOrganisationFieldName($this->getClass());
 
-        return $query->andWhere($expr->eq('o.' . $orgFieldName, $organisation->getId()));
+        return $query->andWhere($expr->eq('o.'.$orgFieldName, $organisation->getId()));
     }
 
     /**
@@ -528,7 +529,7 @@ trait BaseAdminTrait
         $rootAlias = $query->getRootAliases()[0];
         if ($isDirectParentAccess) {
             if ($this->verifyDirectParent($parentAdmin->getSubject())) {
-                $query->andWhere($expr->eq($rootAlias . '.' . $this->getParentAssociationMapping(), $parentAdmin->getSubject()->getId()));
+                $query->andWhere($expr->eq($rootAlias.'.'.$this->getParentAssociationMapping(), $parentAdmin->getSubject()->getId()));
 
                 return $query;
             };
@@ -543,12 +544,12 @@ trait BaseAdminTrait
                     $childAdmin = $pool->getAdminByAdminCode($code);
                     $child = $this->getModelManager()->find($childAdmin->getClass(), $objectId);
                     $indirectParentAssociationMapping = $childAdmin->getParentAssociationMapping();
-                    $parentGetter = 'get' . ucfirst($indirectParentAssociationMapping);
+                    $parentGetter = 'get'.ucfirst($indirectParentAssociationMapping);
                     $indirectParent = $child->{$parentGetter}();
 //                    definitely null =>
 //                    $indirectParentAdmin = $childAdmin->getParent();
                     if (get_class($indirectParent) === $parentClass) {
-                        $query->andWhere($expr->eq($rootAlias . '.' . $childAdmin->getParentAssociationMapping(), $indirectParent->getId()));
+                        $query->andWhere($expr->eq($rootAlias.'.'.$childAdmin->getParentAssociationMapping(), $indirectParent->getId()));
 
                         return $query;
                     }
@@ -557,7 +558,7 @@ trait BaseAdminTrait
             } else {
                 // Indirect Parent but with direct access NOT Ajax call
                 $childAdmin = $pool->getAdminByAdminCode($request->attributes->get('_sonata_admin'));
-                $query->andWhere($expr->eq($rootAlias . '.' . $childAdmin->getParentAssociationMapping(), $request->attributes->get('id')));
+                $query->andWhere($expr->eq($rootAlias.'.'.$childAdmin->getParentAssociationMapping(), $request->attributes->get('id')));
 
                 return $query;
             }

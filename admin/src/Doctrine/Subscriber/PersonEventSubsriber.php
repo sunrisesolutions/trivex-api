@@ -2,7 +2,7 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\User\Person\Person;
+use App\Entity\Organisation\Person\Person;
 use App\Message\Message;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;

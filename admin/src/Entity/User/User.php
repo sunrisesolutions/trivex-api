@@ -10,6 +10,8 @@ use App\Util\User\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User\OrganisationUser;
+use App\Entity\User\Organisation;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -33,6 +35,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 class User implements UserInterface
 {
     const TTL = 1800;
+    const ROLE_ORG_ADMIN = 'ROLE_ORG_ADMIN';
 
     /**
      * @var int|null The User Id
@@ -49,20 +52,25 @@ class User implements UserInterface
         $this->organisationUsers = new ArrayCollection();
     }
 
-///////    Proxy method /////
-    public function getPerson()
+    public function isGranted($permission = 'ALL', $object = null, $class = null, OrganisationUser $member = null, Organisation $org = null)
     {
-        $key = 'person_of_user'.$this->id;
-        if (apcu_exists($key)) {
-            return apcu_fetch($key);
-        } else {
-            getenv('PERSON_SERVICE_HOST');
-            $person = new Person();
-            $person->setGivenName('Peter');
-            return $person;
-        }
+
     }
-//\\\\\    Proxy method \\\\\
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAdminOrganisations()
+    {
+        $orgs = new ArrayCollection();
+        /** @var OrganisationUser $organisationUser */
+        foreach ($this->organisationUsers as $organisationUser) {
+            if (in_array(self::ROLE_ORG_ADMIN, $this->getRoles())) {
+                $orgs->add($organisationUser->getOrganisation());
+            }
+        }
+        return $orgs;
+    }
 
     /**
      * @return array
@@ -474,5 +482,10 @@ class User implements UserInterface
         }
 
         return $this;
+    }
+
+    public function getPerson(): ?Person
+    {
+        return $this->person;
     }
 }

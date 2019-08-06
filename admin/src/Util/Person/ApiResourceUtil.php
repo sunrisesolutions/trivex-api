@@ -13,6 +13,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Security\JWTUser;
 use GuzzleHttp\Client;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class ApiResourceUtil
@@ -33,7 +34,7 @@ class ApiResourceUtil
 
     private static $instance;
 
-    public function __construct(JWTManager $jwtManager, Sdk $sdk, iterable $config, iterable $credentials, string $env, iterable $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
+    public function __construct(JWTTokenManagerInterface $jwtManager, Sdk $sdk, iterable $config, iterable $credentials, string $env, iterable $snsConfig, ObjectNormalizer $normalizer, EntityManagerInterface $manager)
     {
         $this->client = $sdk->createSns($config + $credentials);
         $this->jwtManager = $jwtManager;
@@ -54,13 +55,19 @@ class ApiResourceUtil
         return self::$instance;
     }
 
+    public function generateRootAdminToken()
+    {
+        $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN',
+        ], null, null, 'ROOT_ADMIN_UUID');
+
+        return $token = $this->jwtManager->create($sadmin);
+    }
+
     public function fetchResource($resource, $queryParams = [])
     {
         $plurals = ['person' => 'people',
         ];
-
-        $sadmin = new JWTUser('rootadmin', ['ROLE_SUPER_ADMIN',
-        ]);
+        $token = $this->generateRootAdminToken();
 
         $queryString = '';
         if (!empty($queryParams)) {
@@ -75,8 +82,6 @@ class ApiResourceUtil
             }
         }
 
-        $token = $this->jwtManager->create($sadmin);
-
         $url = 'https://'.$_ENV[sprintf('%s_SERVICE_HOST', strtoupper($resource))].'/'.$plurals[$resource].$queryString;
         $client = new Client([
             'http_errors' => false,
@@ -89,13 +94,15 @@ class ApiResourceUtil
         ]);
 
         try {
-            $res = $client->request('GET', $url, ['headers' => ['Authorization' => $token]]);
+            $res = $client->request('GET', $url, ['headers' => ['Authorization' => 'Bearer '.$token]]);
             if ($res->getStatusCode() === 200) {
                 $data = json_decode($res->getBody()->getContents(), true);
                 return $data;
 //                if (isset($data['hydra:totalItems']) && $data['hydra:totalItems'] > 0) {
 //
 //                }
+            } else {
+                return $res->getBody()->getContents();
             }
         } catch (\Exception $exception) {
             throw $exception;

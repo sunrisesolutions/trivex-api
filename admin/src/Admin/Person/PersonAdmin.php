@@ -106,7 +106,6 @@ class PersonAdmin extends BaseAdmin
                 'label' => 'form.label_action',
                 'actions' => array(
 //					'impersonate' => array( 'template' => 'admin/user/list__action__impersonate.html.twig' ),
-                    'chapters' => array('template' => '@MagentaCPersonAdmin/Admin/Person/Person/Action/list_chapters.html.twig'),
                     'edit' => array(),
                     'delete' => array(),
 
@@ -118,7 +117,8 @@ class PersonAdmin extends BaseAdmin
             ]
         );
         $listMapper
-            ->addIdentifier('name', null, ['label' => 'form.label_name'])
+            ->addIdentifier('givenName', null, ['label' => 'form.label_given_name'])
+            ->addIdentifier('familyName', null, ['label' => 'form.label_family_name'])
             ->add('bookEdition', null, ['label' => 'form.label_edition'])
             ->add('status', null, ['label' => 'form.label_status']);
 
@@ -147,25 +147,10 @@ class PersonAdmin extends BaseAdmin
         $formMapper
             ->with('General')
 //                ->add('username')
-            ->add('name', null, ['label' => 'form.label_name'])
-            ->add('bookEdition', null, ['label' => 'form.label_edition']);
+            ->add('givenName', null, ['label' => 'form.label_given_name'])
+            ->add('familyName', null, ['label' => 'form.label_family_name'])
 //                ->add('admin')
-        $formMapper->add('bookCategoryItems', CollectionType::class,
-            array(
-                'required' => false,
-                'constraints' => new Valid(),
-                'label' => 'form.label_category',
-//					'btn_catalogue' => 'InterviewQuestionSetAdmin'
-                'help' => 'Add this book to another Category.'
-            ), array(
-                'edit' => 'inline',
-                'inline' => 'table',
-//				'sortable'        => 'position',
-                'link_parameters' => $this->getPersistentParameters(),
-                'admin_code' => PersonCategoryItemAdmin::class,
-                'delete' => null,
-            )
-        );
+        ;
         $formMapper->end();
 
 //		$formMapper->with('Description');
@@ -235,7 +220,8 @@ class PersonAdmin extends BaseAdmin
     {
         $filterMapper
             ->add('id')
-            ->add('name')//			->add('locked')
+            ->add('givenName')
+            ->add('familyName')
         ;
 //			->add('groups')
 //		;

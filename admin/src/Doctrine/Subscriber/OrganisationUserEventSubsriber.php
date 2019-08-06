@@ -10,9 +10,9 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\User\OrganisationUser;
-use App\Entity\User\Organisation;
-use App\Entity\User\User;
+use App\Entity\Organisation\Person\Authorisation\User\OrganisationUser;
+use App\Entity\Organisation\Person\Authorisation\User\Organisation;
+use App\Entity\Organisation\Person\Authorisation\User\User;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
