@@ -1,5 +1,6 @@
 
 person: System Users
+organisation: Organisations
 individualgroup: Groups
 individualmember: Members
 profile_edit: Profile
@@ -21,6 +22,7 @@ breadcrumb:
     link_message_create: New Message
 
     link_person_list: Users
+    link_organisation_create: New Organisation
     link_individual_group_list: Groups
     link_org_chapter_list: Sections
     link_org_chapter_create: New
@@ -227,3 +229,9 @@ form:
     label_default_warranty_period: Default Warranty Period
     label_dealer: Dealer
     label_role: Role
+
+    label_registration_number: Registration Number
+    label_logo_name: Logo Name
+    label_subdomain: Subdomain
+    label_founded_on: Founded On
+    label_uuid: Uuid

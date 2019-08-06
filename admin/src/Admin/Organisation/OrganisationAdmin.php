@@ -102,39 +102,16 @@ class OrganisationAdmin extends BaseAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
-        $listMapper->add('_action', 'actions', [
-                'label' => 'form.label_action',
-                'actions' => array(
-//					'impersonate' => array( 'template' => 'admin/user/list__action__impersonate.html.twig' ),
-                    'chapters' => array('template' => '@MagentaCOrganisationAdmin/Admin/Organisation/Organisation/Action/list_chapters.html.twig'),
-                    'edit' => array(),
-                    'delete' => array(),
-
-//                ,
-//                    'view_description' => array('template' => '::admin/product/description.html.twig')
-//                ,
-//                    'view_tos' => array('template' => '::admin/product/tos.html.twig')
-                )
-            ]
-        );
         $listMapper
+            ->addIdentifier('foundedOn', null, ['label' => 'form.label_founded_on'])
+            ->addIdentifier('type', null, ['label' => 'form.label_type'])
+            ->addIdentifier('address', null, ['label' => 'form.label_address'])
             ->addIdentifier('name', null, ['label' => 'form.label_name'])
-            ->add('bookEdition', null, ['label' => 'form.label_edition'])
-            ->add('status', null, ['label' => 'form.label_status']);
-
-        $listMapper->add('bookCategoryItems', null, ['label' => 'form.label_category',
-            'associated_property' => 'categoryName'
-        ]);
-        $listMapper->add('createdAt', null, ['label' => 'form.label_created_at']);
-
-        if ($this->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
-            $listMapper
-                ->add('impersonating', 'string', ['template' => 'SonataUserBundle:Admin:Field/impersonating.html.twig']);
-        }
-
-        $listMapper->remove('impersonating');
-        $listMapper->remove('groups');
-//		$listMapper->add('positions', null, [ 'template' => '::admin/user/list__field_positions.html.twig' ]);
+            ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
+            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
+            ->addIdentifier('code', null, ['label' => 'form.label_code'])
+            ->addIdentifier('subdomain', null, ['label' => 'form.label_subdomain'])
+            ;
     }
 
     protected function configureFormFields(FormMapper $formMapper)
@@ -146,26 +123,15 @@ class OrganisationAdmin extends BaseAdmin
 
         $formMapper
             ->with('General')
-//                ->add('username')
-            ->add('name', null, ['label' => 'form.label_name'])
-
-;
-        $formMapper->end();
-
-//		$formMapper->with('Description');
-//		$formMapper->add('text', CKEditorType::class, [ 'required' => false, 'label' => false ]);
-//		$formMapper->end();
-
-//		$formMapper->with('Content');
-//		$formMapper->add('text', CKEditorType::class, [
-//		]);
-//		$formMapper->add('text', SimpleFormatterType::class, [
-//			'format' => 'richhtml',
-//			'ckeditor_context' => 'default',
-//			'ckeditor_image_format' => 'big',
-//		]);
-//		$formMapper->end();
-
+            ->add('foundedOn')
+            ->add('type')
+            ->add('address')
+            ->add('name')
+            ->add('registrationNumber')
+            ->add('logoName')
+            ->add('code')
+            ->add('subdomain')
+            ;
         $formMapper->end();
     }
 
@@ -185,9 +151,9 @@ class OrganisationAdmin extends BaseAdmin
     public function prePersist($object)
     {
         parent::prePersist($object);
-        if (!$object->isEnabled()) {
-            $object->setEnabled(true);
-        }
+//        if (!$object->isEnabled()) {
+//            $object->setEnabled(true);
+//        }
     }
 
     /**
@@ -196,9 +162,9 @@ class OrganisationAdmin extends BaseAdmin
     public function preUpdate($object)
     {
         parent::preUpdate($object);
-        if (!$object->isEnabled()) {
-            $object->setEnabled(true);
-        }
+//        if (!$object->isEnabled()) {
+//            $object->setEnabled(true);
+//        }
     }
 
     ///////////////////////////////////
@@ -219,10 +185,16 @@ class OrganisationAdmin extends BaseAdmin
     {
         $filterMapper
             ->add('id')
-            ->add('name')//			->add('locked')
-        ;
-//			->add('groups')
-//		;
+            ->add('uuid', null, ['label' => 'form.label_uuid'])
+            ->add('name', null, ['label' => 'form.label_name'])
+            ->add('foundedOn', null, ['label' => 'form.label_uuid'])
+            ->add('type', null, ['label' => 'form.label_type'])
+            ->add('address', null, ['label' => 'form.label_address'])
+            ->add('registrationNumber', null, ['label' => 'form.label_registration_number'])
+            ->add('logoName', null, ['label' => 'form.label_logo_name'])
+            ->add('code', null, ['label' => 'form.label_code'])
+            ->add('subdomain', null, ['label' => 'form.label_subdomain'])
+            ;
     }
 
 
