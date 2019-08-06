@@ -172,11 +172,11 @@ class OrganisationAdmin extends BaseAdmin
     protected function configureTabMenu(MenuItemInterface $menu, $action, AdminInterface $childAdmin = null)
     {
         parent::configureTabMenu($menu, $action, $childAdmin);
-        if (!empty($this->subject) && !empty($this->subject->getId())) {
-            $menu->addChild('Manage Content', [
-                'uri' => $this->getConfigurationPool()->getContainer()->get('router')->generate('admin_magenta_cbookmodel_book_book_show', ['id' => $this->getSubject()->getId()])
-            ]);
-        }
+//        if (!empty($this->subject) && !empty($this->subject->getId())) {
+//            $menu->addChild('Manage Content', [
+//                'uri' => $this->getConfigurationPool()->getContainer()->get('router')->generate('admin_magenta_cbookmodel_book_book_show', ['id' => $this->getSubject()->getId()])
+//            ]);
+//        }
     }
 
     /**
