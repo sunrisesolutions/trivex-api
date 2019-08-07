@@ -235,3 +235,6 @@ form:
     label_subdomain: Subdomain
     label_founded_on: Founded On
     label_uuid: Uuid
+    label_access_token: Access Token
+    label_is_message_deliverable: Is Message Deliverable
+    label_is_admin: Is Admin

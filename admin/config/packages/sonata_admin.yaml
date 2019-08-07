@@ -39,6 +39,7 @@ sonata_admin:
                 items:
                     - App\Admin\Person\PersonAdmin
                     - App\Admin\Organisation\OrganisationAdmin
+                    - App\Admin\Organisation\IndividualMemberAdmin
 
 sonata_block:
     blocks:
