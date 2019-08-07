@@ -184,6 +184,7 @@ class IndividualMember
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Connection", mappedBy="fromMember")
+     * @ApiSubresource()
      */
     private $fromConnections;
 
