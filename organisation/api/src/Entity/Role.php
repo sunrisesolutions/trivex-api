@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Util\AppUtil;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -34,12 +36,6 @@ class Role
     private $uuid;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="roles")
-     * @ORM\JoinColumn(name="id_individual_member", referencedColumnName="id", onDelete="SET NULL")
-     */
-    private $individualMember;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
@@ -49,6 +45,16 @@ class Role
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="SET NULL")
      */
     private $organisation;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\IndividualMember", mappedBy="roles")
+     */
+    private $individualMembers;
+
+    public function __construct()
+    {
+        $this->individualMembers = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -63,18 +69,6 @@ class Role
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getIndividualMember(): ?IndividualMember
-    {
-        return $this->individualMember;
-    }
-
-    public function setIndividualMember(?IndividualMember $individualMember): self
-    {
-        $this->individualMember = $individualMember;
 
         return $this;
     }
@@ -99,6 +93,34 @@ class Role
     public function setOrganisation(?Organisation $organisation): self
     {
         $this->organisation = $organisation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|IndividualMember[]
+     */
+    public function getIndividualMembers(): Collection
+    {
+        return $this->individualMembers;
+    }
+
+    public function addIndividualMember(IndividualMember $individualMember): self
+    {
+        if (!$this->individualMembers->contains($individualMember)) {
+            $this->individualMembers[] = $individualMember;
+            $individualMember->addRole($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIndividualMember(IndividualMember $individualMember): self
+    {
+        if ($this->individualMembers->contains($individualMember)) {
+            $this->individualMembers->removeElement($individualMember);
+            $individualMember->removeRole($this);
+        }
 
         return $this;
     }

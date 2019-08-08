@@ -2,10 +2,6 @@
 
 namespace App\Admin\Organisation;
 
-use App\Entity\Organisation\IndividualMember;
-use App\Entity\Organisation\Person;
-use App\Entity\Organisation\Role;
-use App\Util\Organisation\AppUtil;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -19,26 +15,23 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\AdminBundle\Datagrid\ListMapper;
-use Sonata\AdminBundle\Form\ChoiceList\ModelChoiceLoader;
 use Sonata\AdminBundle\Form\FormMapper;
 
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
+use Sonata\CoreBundle\Form\Type\CollectionType;
+use Sonata\CoreBundle\Form\Type\DatePickerType;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
-use Sonata\Form\Type\DatePickerType;
-use Sonata\Form\Type\DateTimePickerType;
 use Sonata\FormatterBundle\Form\Type\FormatterType;
 use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\OptionsResolver\Options;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class IndividualMemberAdmin extends BaseAdmin
+class RoleAdmin extends BaseAdmin
 {
 
     const CHILDREN = [];
@@ -54,7 +47,7 @@ class IndividualMemberAdmin extends BaseAdmin
         '_sort_by' => 'updatedAt',
     );
 
-    public function getIndividualMember()
+    public function getOrganisation()
     {
         return $this->subject;
     }
@@ -66,20 +59,17 @@ class IndividualMemberAdmin extends BaseAdmin
 
     public function getNewInstance()
     {
-        /** @var IndividualMember $object */
+        /** @var User $object */
         $object = parent::getNewInstance();
-        if (empty($person = $object->getPerson())) {
-            $object->setPerson($person = new Person());
-        }
 
         return $object;
     }
 
     public function toString($object)
     {
-        return $object instanceof IndividualMember
-            ? $object->getPerson()->getName()
-            : 'Members'; // shown in the breadcrumb on the create view
+        return $object instanceof Organisation
+            ? $object->getName()
+            : 'Organisation'; // shown in the breadcrumb on the create view
     }
 
     public function createQuery($context = 'list')
@@ -98,8 +88,8 @@ class IndividualMemberAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('contentEdit', $this->getRouterIdParameter().'/edit-content');
-        $collection->add('publish', $this->getRouterIdParameter().'/publish');
+        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
+        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -113,7 +103,15 @@ class IndividualMemberAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('createdAt', null, ['label' => 'form.label_created_at']);
+            ->addIdentifier('foundedOn', null, ['label' => 'form.label_founded_on'])
+            ->addIdentifier('type', null, ['label' => 'form.label_type'])
+            ->addIdentifier('address', null, ['label' => 'form.label_address'])
+            ->addIdentifier('name', null, ['label' => 'form.label_name'])
+            ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
+            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
+            ->addIdentifier('code', null, ['label' => 'form.label_code'])
+            ->addIdentifier('subdomain', null, ['label' => 'form.label_subdomain'])
+            ;
     }
 
     protected function configureFormFields(FormMapper $formMapper)
@@ -122,28 +120,18 @@ class IndividualMemberAdmin extends BaseAdmin
             ->with('General', ['class' => 'col-md-7'])->end()
             ->with('Description', ['class' => 'col-md-7'])->end();
 
-        $this->getFilterByOrganisationQueryForModel(Role::class);
-//        $propertyAccessor = $this->getConfigurationPool()->getContainer()->get('access');
+
         $formMapper
             ->with('General')
-            ->add('person.givenName', null, ['label' => 'list.label_given_name'])
-            ->add('person.middleName', null, ['label' => 'list.label_middleName'])
-            ->add('person.familyName', null, ['label' => 'list.label_family_name'])
-            ->add('person.email', null, ['label' => 'list.label_email'])
-            ->add('person.phoneNumber', null, ['label' => 'list.label_phone_number'])
-            ->add('person.gender', null, ['label' => 'list.label_gender'])
-            ->add('person.birthDate', DatePickerType::class, ['label' => 'list.label_birth_day'])
-            ->add('roles', ModelType::class, [
-                'multiple' => true,
-                'property' => 'name',
-                'btn_add' => false,
-            ])
-
-//            ->add('person')
-//            ->add('createdAt', DateTimePickerType::class, ['label' => 'form.label_created_at'])
-
-        ;
-
+            ->add('foundedOn')
+            ->add('type')
+            ->add('address')
+            ->add('name')
+            ->add('registrationNumber')
+            ->add('logoName')
+            ->add('code')
+            ->add('subdomain')
+            ;
         $formMapper->end();
     }
 
@@ -158,33 +146,11 @@ class IndividualMemberAdmin extends BaseAdmin
     }
 
     /**
-     * @param IndividualMember $object
+     * @param User $object
      */
     public function prePersist($object)
     {
         parent::prePersist($object);
-        $person = $object->getPerson();
-        $email = $person->getEmail();
-        $phone = $person->getPhoneNumber();
-        $manager = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.default_entity_manager');
-        $pRepo = $manager->getRepository(\App\Entity\Person\Person::class);
-        /** @var \App\Entity\Person\Person $fPerson */
-        $fPerson = $pRepo->findOneBy(['email' => $email,
-        ]);
-        if (empty($fPerson)) {
-            $fPerson = $pRepo->findOneBy(['phoneNumber' => $phone,
-            ]);
-        }
-        if (!empty($fPerson)) {
-            AppUtil::copyObjectScalarProperties($fPerson, $person);
-        } else {
-            $fPerson = new \App\Entity\Person\Person();
-            AppUtil::copyObjectScalarProperties($person, $fPerson);
-            $manager->persist($fPerson);
-            $manager->flush($fPerson);
-            AppUtil::copyObjectScalarProperties($fPerson, $person);
-        }
-
 //        if (!$object->isEnabled()) {
 //            $object->setEnabled(true);
 //        }
@@ -203,13 +169,14 @@ class IndividualMemberAdmin extends BaseAdmin
 
     ///////////////////////////////////
     ///
-
+    ///
     ///
     ///////////////////////////////////
     /**
      * @var UserManagerInterface
      */
     protected $userManager;
+
 
     /**
      * {@inheritdoc}
@@ -219,10 +186,16 @@ class IndividualMemberAdmin extends BaseAdmin
         $filterMapper
             ->add('id')
             ->add('uuid', null, ['label' => 'form.label_uuid'])
-            ->add('accessToken', null, ['label' => 'form.label_access_token'])
-            ->add('createdAt', null, ['label' => 'form.label_created_at']);
+            ->add('name', null, ['label' => 'form.label_name'])
+            ->add('foundedOn', null, ['label' => 'form.label_uuid'])
+            ->add('type', null, ['label' => 'form.label_type'])
+            ->add('address', null, ['label' => 'form.label_address'])
+            ->add('registrationNumber', null, ['label' => 'form.label_registration_number'])
+            ->add('logoName', null, ['label' => 'form.label_logo_name'])
+            ->add('code', null, ['label' => 'form.label_code'])
+            ->add('subdomain', null, ['label' => 'form.label_subdomain'])
+            ;
     }
 
 
 }
-

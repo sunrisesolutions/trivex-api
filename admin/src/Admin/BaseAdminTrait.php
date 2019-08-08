@@ -407,9 +407,9 @@ trait BaseAdminTrait
 
     protected function getOrganisationFieldName($class)
     {
-        if (in_array($class, [IndividualMember::class, IndividualGroup::class])) {
-            return 'organization';
-        }
+//        if (in_array($class, [IndividualMember::class, IndividualGroup::class])) {
+//            return 'organization';
+//        }
 
         return 'organisation';
     }

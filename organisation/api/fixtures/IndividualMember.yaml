@@ -1,4 +1,4 @@
-#App\Entity\IndividualMember:
-#  individualmember{1..5}:
-#    person: '@person*'
-#    organisation: '@organisation*'
+App\Entity\IndividualMember:
+  individualmember{1..5}:
+    person: '@person*'
+    organisation: '@organisation*'

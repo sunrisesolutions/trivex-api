@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PersonRepository")
  * @ORM\Table(name="organisation__person")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Person
 {
@@ -19,6 +20,15 @@ class Person
      * @ORM\Column(type="integer")
      */
     private $id;
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function combineData()
+    {
+        $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
+    }
 
     /**
      * @ORM\Column(type="string", length=191)
@@ -69,6 +79,21 @@ class Person
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $givenName;
+
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $middleName;
+
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $familyName;
+
+    /**
+     * @ORM\Column(type="string", length=16, nullable=true)
+     */
+    private $gender;
 
     public function __construct()
     {
@@ -241,6 +266,42 @@ class Person
     public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getMiddleName(): ?string
+    {
+        return $this->middleName;
+    }
+
+    public function setMiddleName(?string $middleName): self
+    {
+        $this->middleName = $middleName;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
 
         return $this;
     }
