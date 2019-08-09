@@ -184,8 +184,11 @@ form:
     label_field_requirements: Required fields
     label_tos: TOS
     label_data_policy: Data Protection Policy
+    label_birth_date: Date of Birth
     label_name: Name
+    label_gender: Gender
     label_family_name: Last Name
+    label_middle_name: Middle Name
     label_given_name: First Name
     label_telephone: Contact Number
     label_dialing_code: Country Dialing Code

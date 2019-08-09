@@ -39,10 +39,12 @@ echo 'copy to organisation'
 sh ~/workspace/magenta/trivex/api/utils/shell/build-organisation.sh
 cd ~/workspace/magenta/trivex/api
 
+echo 'fix Subscriber'
+cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
+sed -i -- 's/App\\XXXUtil/App\\Util/g' *
+sed -i -- 's/App\\XXXEntity/App\\Entity/g' *
+cd ~/workspace/magenta/trivex/api
 
 echo 'copy to admin'
 
-
 echo 'done'
-
-

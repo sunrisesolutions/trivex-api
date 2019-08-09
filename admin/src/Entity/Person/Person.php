@@ -45,6 +45,15 @@ class Person
         }
     }
 
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function combineData()
+    {
+        $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
+    }
+
     /** @return  Nationality|bool */
     public function getNationality()
     {
@@ -62,6 +71,12 @@ class Person
      * @Groups({"read","write"})
      */
     private $birthDate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -162,6 +177,19 @@ class Person
 
         return $this;
     }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
 
     public function getGender(): ?string
     {

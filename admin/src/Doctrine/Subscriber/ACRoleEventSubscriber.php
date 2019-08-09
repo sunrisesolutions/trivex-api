@@ -2,11 +2,11 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\Organisation\Person\Authorisation\ACRole;
+use App\Entity\Authorisation\ACRole;
 use App\Message\Message;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use App\Util\AwsSnsUtil;
+use App\Util\Authorisation\AwsSnsUtil;
 use Doctrine\ORM\Events;
 
 class ACRoleEventSubscriber implements EventSubscriber {

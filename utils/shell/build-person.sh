@@ -23,7 +23,8 @@ echo 'copy Subscriber from person'
 cp -p ~/workspace/magenta/trivex/api/person/api/src/Doctrine/Subscriber/* ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 sed -i -- 's/App\\Util;/App\\Util\\Person;/g' *
-sed -i -- 's/App\\Entity/App\\Entity\\Person/g' *
+sed -i -- 's/App\\Util\\/App\\XXXUtil\\Person\\/g' *
+sed -i -- 's/App\\Entity/App\\XXXEntity\\Person/g' *
 
 echo 'copy Message from person'
 rm -R -f ~/workspace/magenta/trivex/api/admin/src/Message/Entity/Person/*

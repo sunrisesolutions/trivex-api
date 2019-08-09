@@ -31,6 +31,7 @@ use Sonata\Form\Type\DatePickerType;
 use Sonata\Form\Type\DateTimePickerType;
 use Sonata\FormatterBundle\Form\Type\FormatterType;
 use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -113,7 +114,13 @@ class IndividualMemberAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('createdAt', null, ['label' => 'form.label_created_at']);
+            ->addIdentifier('person.name', null, ['label' => 'form.label_name'])
+            ->add('person.email', null, ['label' => 'form.label_email'])
+            ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
+            ->add('roles', null, [
+                'label' => 'form.label_roles',
+                'associated_property' => 'name'])
+            ->add('createdAt', null, ['label' => 'form.label_created_at']);
     }
 
     protected function configureFormFields(FormMapper $formMapper)
@@ -126,13 +133,27 @@ class IndividualMemberAdmin extends BaseAdmin
 //        $propertyAccessor = $this->getConfigurationPool()->getContainer()->get('access');
         $formMapper
             ->with('General')
-            ->add('person.givenName', null, ['label' => 'list.label_given_name'])
-            ->add('person.middleName', null, ['label' => 'list.label_middleName'])
-            ->add('person.familyName', null, ['label' => 'list.label_family_name'])
-            ->add('person.email', null, ['label' => 'list.label_email'])
-            ->add('person.phoneNumber', null, ['label' => 'list.label_phone_number'])
-            ->add('person.gender', null, ['label' => 'list.label_gender'])
-            ->add('person.birthDate', DatePickerType::class, ['label' => 'list.label_birth_day'])
+            ->add('person.givenName', null, ['label' => 'form.label_given_name'])
+            ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
+            ->add('person.familyName', null, ['label' => 'form.label_family_name'])
+            ->add('person.email', null, ['label' => 'form.label_email'])
+            ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
+            ->add('person.gender', ChoiceType::class, [
+                'label' => 'form.label_gender',
+                'multiple' => false,
+                'placeholder' => 'Select Gender',
+                'choices' => [
+                    'MALE' => 'MALE',
+                    'FEMALE' => 'FEMALE'
+                ],
+                'translation_domain' => $this->translationDomain,
+            ])
+            ->add('person.birthDate', DatePickerType::class, [
+                'label' => 'form.label_birth_date',
+                'format' => 'dd-MM-yyyy',
+                'placeholder' => 'dd-mm-yyyy',
+                'datepicker_use_button' => false,
+            ])
             ->add('roles', ModelType::class, [
                 'multiple' => true,
                 'property' => 'name',
@@ -160,31 +181,34 @@ class IndividualMemberAdmin extends BaseAdmin
     /**
      * @param IndividualMember $object
      */
+    public function preValidate($object)
+    {
+        $person = $object->getPerson();
+        if (empty($person->getId())) {
+            $container = $this->getContainer();
+            $manager = $container->get('doctrine.orm.default_entity_manager');
+            $fopRepo = $manager->getRepository(Person::class);
+            /** @var Person $foPerson */
+            $foPerson = $fopRepo->findOneBy(['email' => $person->getEmail(),
+            ]);
+            if (empty($foPerson)) {
+                $foPerson = $fopRepo->findOneBy(['phoneNumber' => $person->getPhoneNumber(),
+                ]);
+            }
+            if (!empty($foPerson)){
+                $person->removeIndividualMember($object);
+                $foPerson->addIndividualMember($object);
+            }
+        }
+
+    }
+
+    /**
+     * @param IndividualMember $object
+     */
     public function prePersist($object)
     {
         parent::prePersist($object);
-        $person = $object->getPerson();
-        $email = $person->getEmail();
-        $phone = $person->getPhoneNumber();
-        $manager = $this->getConfigurationPool()->getContainer()->get('doctrine.orm.default_entity_manager');
-        $pRepo = $manager->getRepository(\App\Entity\Person\Person::class);
-        /** @var \App\Entity\Person\Person $fPerson */
-        $fPerson = $pRepo->findOneBy(['email' => $email,
-        ]);
-        if (empty($fPerson)) {
-            $fPerson = $pRepo->findOneBy(['phoneNumber' => $phone,
-            ]);
-        }
-        if (!empty($fPerson)) {
-            AppUtil::copyObjectScalarProperties($fPerson, $person);
-        } else {
-            $fPerson = new \App\Entity\Person\Person();
-            AppUtil::copyObjectScalarProperties($person, $fPerson);
-            $manager->persist($fPerson);
-            $manager->flush($fPerson);
-            AppUtil::copyObjectScalarProperties($fPerson, $person);
-        }
-
 //        if (!$object->isEnabled()) {
 //            $object->setEnabled(true);
 //        }

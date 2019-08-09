@@ -22,8 +22,9 @@ cp -p ~/workspace/magenta/trivex/api/authorisation/api/src/Security/* ~/workspac
 echo 'copy Subscriber from authorisation'
 cp -p ~/workspace/magenta/trivex/api/authorisation/api/src/Doctrine/Subscriber/* ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
-sed -i -- 's/App\\Util;/App\\Util\\Authorisation;/g' *
-sed -i -- 's/App\\Entity/App\\Entity\\Authorisation/g' *
+sed -i -- 's/App\\Util;/App\\XXXUtil\\Authorisation;/g' *
+sed -i -- 's/App\\Util\\/App\\XXXUtil\\Authorisation\\/g' *
+sed -i -- 's/App\\Entity/App\\XXXEntity\\Authorisation/g' *
 
 echo 'copy Message from authorisation'
 rm -R -f ~/workspace/magenta/trivex/api/admin/src/Message/Entity/Authorisation/*

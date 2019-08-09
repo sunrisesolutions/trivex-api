@@ -23,7 +23,8 @@ echo 'copy Subscriber from organisation'
 cp -p ~/workspace/magenta/trivex/api/organisation/api/src/Doctrine/Subscriber/* ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
 sed -i -- 's/App\\Util;/App\\Util\\Organisation;/g' *
-sed -i -- 's/App\\Entity/App\\Entity\\Organisation/g' *
+sed -i -- 's/App\\Util\\/App\\XXXUtil\\Organisation\\/g' *
+sed -i -- 's/App\\Entity/App\\XXXEntity\\Organisation/g' *
 
 echo 'copy Message from organisation'
 rm -R -f ~/workspace/magenta/trivex/api/admin/src/Message/Entity/Organisation/*

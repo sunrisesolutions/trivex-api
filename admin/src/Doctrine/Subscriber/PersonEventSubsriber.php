@@ -2,12 +2,12 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\Organisation\Person\Person;
+use App\Entity\Person\Person;
 use App\Message\Message;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use App\Util\AwsSnsUtil;
+use App\Util\Person\AwsSnsUtil;
 
 class PersonEventSubsriber implements EventSubscriber {
 

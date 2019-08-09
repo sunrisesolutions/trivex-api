@@ -36,3 +36,19 @@ services:
             $env: '%kernel.environment%'
             $snsConfig: '%aws_sdk.config.sns%'
 
+    App\Util\Organisation\AwsSqsUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.default%'
+            $env: '%kernel.environment%'
+    #        calls:
+    #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]
+
+    App\Util\Organisation\AwsSnsUtil:
+        arguments:
+            $config: '%aws_sdk.config.default%'
+            $credentials: '%aws_sdk.credentials.sns%'
+            $env: '%kernel.environment%'
+            $snsConfig: '%aws_sdk.config.sns%'
+    #        calls:
+    #            - [createClient, ['%aws_sdk.config.default%', '%aws_sdk.credentials.default%']]

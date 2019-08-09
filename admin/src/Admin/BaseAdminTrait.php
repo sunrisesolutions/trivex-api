@@ -40,6 +40,12 @@ trait BaseAdminTrait
     protected
         $actionParams = [];
 
+    /** @return ContainerInterface */
+    protected function getContainer()
+    {
+        return $this->getConfigurationPool()->getContainer();
+    }
+
     protected function getTemplateType($name)
     {
         $_name = strtoupper($name);

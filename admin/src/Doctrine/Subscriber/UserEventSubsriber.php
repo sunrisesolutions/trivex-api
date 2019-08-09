@@ -10,7 +10,7 @@
 
 namespace App\Doctrine\Subscriber;
 
-use App\Entity\Organisation\Person\Authorisation\User\User;
+use App\Entity\User\User;
 use App\Util\User\CanonicalFieldsUpdater;
 use App\Util\User\PasswordUpdaterInterface;
 use Doctrine\Common\EventSubscriber;

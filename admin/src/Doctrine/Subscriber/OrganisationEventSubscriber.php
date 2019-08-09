@@ -4,7 +4,7 @@ namespace App\Doctrine\Subscriber;
 
 use App\Entity\Organisation\Organisation;
 use App\Message\Message;
-use App\Util\AwsSnsUtil;
+use App\Util\Organisation\AwsSnsUtil;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 

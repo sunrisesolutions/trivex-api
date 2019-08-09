@@ -4,6 +4,7 @@ namespace App;
 
 use App\Admin\BaseAdmin;
 use App\Admin\BaseCRUDAdminController;
+use App\Doctrine\Module\ORMEventSubscriber;
 use App\Service\Organisation\OrganisationService;
 use App\Service\User\UserService;
 use Sonata\AdminBundle\Controller\CRUDController;
@@ -38,6 +39,13 @@ class Kernel extends BaseKernel
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
+        ///////        <<< MY CUSTOM DOCTRINE EVENT SUBSCRIBERS ///////
+//        Not @stof, but no. The EventSubscriber interface is from Doctrine\Common and is valid for ORM, ODM and possibly a bunch of other object mappers. Adding the autoconfiguration you posted would also register event subscribers for other mappers in ORM which is not desirable.
+//    The only option you can do this is by introducing a ORM-specific interface.
+        $container->registerForAutoconfiguration(ORMEventSubscriber::class)
+            ->addTag('doctrine.event_subscriber');
+        //////         >>> MY CUSTOM DOCTRINE EVENT SUBSCRIBERS //////
+
         $container->addResource(new FileResource($this->getProjectDir().'/config/bundles.php'));
         $container->setParameter('container.dumper.inline_class_loader', true);
         $confDir = $this->getProjectDir().'/config';
@@ -46,6 +54,8 @@ class Kernel extends BaseKernel
         $loader->load($confDir.'/{packages}/'.$this->environment.'/**/*'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
+
+
 
         /////// <<<  MY CUSTOM ADMIN SERVICE AUTOCONFIG ///////
         $definitions = [];
@@ -76,7 +86,7 @@ class Kernel extends BaseKernel
                 }
 
                 if (empty($controller = $class::CONTROLLER)) {
-                    $controller = $class . 'Controller';
+                    $controller = $class.'Controller';
                     if (!class_exists($controller)) {
                         $controller = BaseCRUDAdminController::class;
                     }

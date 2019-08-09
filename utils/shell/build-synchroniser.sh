@@ -4,7 +4,6 @@ rm -R -f ~/workspace/magenta/trivex/api/synchroniser/utils/*
 cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/synchroniser/utils/
 cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/synchroniser/utils/
 
-
 #User
 echo 'copy Entity from user'
 mkdir ~/workspace/magenta/trivex/api/synchroniser/src/Entity/User
@@ -20,7 +19,6 @@ cp -R -p ~/workspace/magenta/trivex/api/user/api/src/Repository/* ~/workspace/ma
 cd ~/workspace/magenta/trivex/api/synchroniser/src/Repository/User
 sed -i -- 's/App\\Entity/App\\Entity\\User/g' *
 sed -i -- 's/App\\Repository/App\\Repository\\User/g' *
-
 
 #Organisation
 echo 'copy Entity from organisation'
@@ -72,7 +70,6 @@ cd ~/workspace/magenta/trivex/api/synchroniser/src/Repository/Authorisation
 sed -i -- 's/App\\Entity/App\\Entity\\Authorisation/g' *
 sed -i -- 's/App\\Repository/App\\Repository\\Authorisation/g' *
 
-
 #Messaging
 echo 'copy Entity from messaging'
 mkdir ~/workspace/magenta/trivex/api/synchroniser/src/Entity/Messaging
@@ -88,7 +85,6 @@ cp -R -p ~/workspace/magenta/trivex/api/messaging/api/src/Repository/* ~/workspa
 cd ~/workspace/magenta/trivex/api/synchroniser/src/Repository/Messaging
 sed -i -- 's/App\\Entity/App\\Entity\\Messaging/g' *
 sed -i -- 's/App\\Repository/App\\Repository\\Messaging/g' *
-
 
 #Event
 echo 'copy Entity from event'

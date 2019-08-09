@@ -123,14 +123,7 @@ class RoleAdmin extends BaseAdmin
 
         $formMapper
             ->with('General')
-            ->add('foundedOn')
-            ->add('type')
-            ->add('address')
             ->add('name')
-            ->add('registrationNumber')
-            ->add('logoName')
-            ->add('code')
-            ->add('subdomain')
             ;
         $formMapper->end();
     }
