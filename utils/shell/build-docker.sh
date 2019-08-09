@@ -25,19 +25,17 @@ cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/works
 cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/event/api/utils/
 
 echo 'copy to messaging'
-mkdir -p ~/workspace/magenta/trivex/api/messaging/api/utils
-rm -R -f ~/workspace/magenta/trivex/api/messaging/api/utils/*
-cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/messaging/api/utils/
-cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/messaging/api/utils/
+sh ~/workspace/magenta/trivex/api/utils/shell/build-messaging.sh
+cd ~/workspace/magenta/trivex/api
 
 echo 'copy to person'
-echo 'copy to user'
 sh ~/workspace/magenta/trivex/api/utils/shell/build-person.sh
 cd ~/workspace/magenta/trivex/api
 
 echo 'copy to organisation'
 sh ~/workspace/magenta/trivex/api/utils/shell/build-organisation.sh
 cd ~/workspace/magenta/trivex/api
+
 
 echo 'fix Subscriber'
 cd ~/workspace/magenta/trivex/api/admin/src/Doctrine/Subscriber
