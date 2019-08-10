@@ -2,18 +2,18 @@
 
 namespace App\Entity\Event;
 
-use ApiPlatform\Core\Annotation\ApiSubresource;
+//use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\Event\AppUtil;
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
@@ -141,7 +141,7 @@ class Event
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Event\Registration", mappedBy="event")
-     * @ApiSubresource()
+     * ApiSubresource()
      */
     private $registrations;
 

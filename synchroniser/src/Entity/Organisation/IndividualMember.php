@@ -2,11 +2,11 @@
 
 namespace App\Entity\Organisation;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+//use ApiPlatform\Core\Annotation\ApiFilter;
+//use ApiPlatform\Core\Annotation\ApiSubresource;
+//use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Organisation\AppUtil;
 use App\Util\Organisation\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,7 +17,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
  *         "get",
@@ -38,7 +38,7 @@ use App\Controller\SendEmailToIndividualMember;
  *     normalizationContext={"groups"={"read_member"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
+ * ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
  * @ORM\Entity(repositoryClass="App\Repository\Organisation\IndividualMemberRepository")
  * @ORM\Table(name="organisation__individual_member")
  * @ORM\HasLifecycleCallbacks()
@@ -83,7 +83,7 @@ class IndividualMember
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME . '_IM'));
+            $this->uuid = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IM'));
         }
     }
 
@@ -96,7 +96,8 @@ class IndividualMember
         return !empty($this->getMessageDeliverable());
     }
 
-    public function getMessageDeliverable() {
+    public function getMessageDeliverable()
+    {
         $c = Criteria::create();
         $expr = Criteria::expr();
         $c->andWhere($expr->eq('name', 'ROLE_MESSAGE'));
@@ -133,7 +134,7 @@ class IndividualMember
             $this->fulltextString = '';
         } else {
             $fulltextString = '';
-            $fulltextString .= 'name: ' . $person->getGivenName() . ' email: ' . $person->getEmail() . ' employer: ' . $person->getEmployerName() . ' job: ' . $person->getJobTitle();
+            $fulltextString .= 'name: '.$person->getGivenName().' email: '.$person->getEmail().' employer: '.$person->getEmployerName().' job: '.$person->getJobTitle();
             $this->fulltextString = $fulltextString;
         }
     }
@@ -144,7 +145,7 @@ class IndividualMember
     public function initiateAccessToken()
     {
         if (empty($this->accessToken)) {
-            $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME . '_IMT'));
+            $this->accessToken = AppUtil::generateUuid(sprintf(AppUtil::APP_NAME.'_IMT'));
         }
     }
 
@@ -184,12 +185,13 @@ class IndividualMember
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Organisation\Connection", mappedBy="fromMember")
+     * ApiSubresource()
      */
     private $fromConnections;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Organisation\Connection", mappedBy="toMember")
-     * @ApiSubresource()
+     * ApiSubresource()
      */
     private $toConnections;
 
@@ -228,11 +230,6 @@ class IndividualMember
     private $accessToken;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Organisation\Role", mappedBy="individualMember", cascade={"persist"})
-     */
-    private $roles;
-
-    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $fulltextString;
@@ -249,12 +246,21 @@ class IndividualMember
      */
     public $messageDeliverable = false;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Organisation\Role", inversedBy="individualMembers")
+     * @ORM\JoinTable(name="organisation__individuals_roles",
+     *      joinColumns={@ORM\JoinColumn(name="id_individual", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id_role", referencedColumnName="id")}
+     *      )
+     */
+    private $roles;
+
     public function __construct()
     {
-        $this->roles = new ArrayCollection();
         $this->fromConnections = new ArrayCollection();
         $this->toConnections = new ArrayCollection();
         $this->createdAt = new \DateTime();
+        $this->roles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -318,37 +324,6 @@ class IndividualMember
     public function setAccessToken(string $accessToken): self
     {
         $this->accessToken = $accessToken;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Role[]
-     */
-    public function getRoles(): Collection
-    {
-        return $this->roles;
-    }
-
-    public function addRole(Role $role): self
-    {
-        if (!$this->roles->contains($role)) {
-            $this->roles[] = $role;
-            $role->setIndividualMember($this);
-        }
-
-        return $this;
-    }
-
-    public function removeRole(Role $role): self
-    {
-        if ($this->roles->contains($role)) {
-            $this->roles->removeElement($role);
-            // set the owning side to null (unless already changed)
-            if ($role->getIndividualMember() === $this) {
-                $role->setIndividualMember(null);
-            }
-        }
 
         return $this;
     }
@@ -461,7 +436,8 @@ class IndividualMember
         return $this;
     }
 
-    public function setMessageDeliverable(?bool $messageDeliverable): self {
+    public function setMessageDeliverable(?bool $messageDeliverable): self
+    {
         $this->messageDeliverable = $messageDeliverable;
 
         return $this;
@@ -497,5 +473,31 @@ class IndividualMember
     public function setEmailSubject(?string $emailSubject): void
     {
         $this->emailSubject = $emailSubject;
+    }
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+        }
+
+        return $this;
     }
 }

@@ -2,14 +2,14 @@
 
 namespace App\Entity\Messaging;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use App\Util\Messaging\AppUtil;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     normalizationContext={"groups"={"read_option"}},
  *     denormalizationContext={"groups"={"write"}}

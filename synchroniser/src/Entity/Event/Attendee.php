@@ -2,14 +2,14 @@
 
 namespace App\Entity\Event;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Event\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     collectionOperations={
  *         "get"={"access_control"="is_granted('ROLE_USER')"},
  *         "post"

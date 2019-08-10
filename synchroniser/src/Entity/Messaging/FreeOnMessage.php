@@ -2,17 +2,17 @@
 
 namespace App\Entity\Messaging;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+//use ApiPlatform\Core\Annotation\ApiFilter;
+//use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+//use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Messaging\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={
  *     "access_control"="is_granted('ROLE_USER')",
  *     "order"={"id": "DESC"}
@@ -20,8 +20,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(DateFilter::class, properties={"readAt"})
- * @ApiFilter(ExistsFilter::class, properties={"readAt"})
+ * ApiFilter(DateFilter::class, properties={"readAt"})
+ * ApiFilter(ExistsFilter::class, properties={"readAt"})
 
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\FreeOnMessageRepository")
  * @ORM\Table(name="messaging__free_on")

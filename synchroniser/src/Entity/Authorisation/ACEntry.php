@@ -2,12 +2,12 @@
 
 namespace App\Entity\Authorisation;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Authorisation\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource(shortName="acentry")
+ * ApiResource(shortName="acentry")
  * @ORM\Entity(repositoryClass="App\Repository\Authorisation\ACEntryRepository")
  * @ORM\Table(name="authorisation__entry")
  * @ORM\HasLifecycleCallbacks()
@@ -57,7 +57,7 @@ class ACEntry
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_ENTRY');
         }
     }
 

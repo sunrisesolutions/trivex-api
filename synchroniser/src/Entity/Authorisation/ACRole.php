@@ -2,7 +2,7 @@
 
 namespace App\Entity\Authorisation;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Authorisation\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -10,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(shortName="acrole")
+ * ApiResource(shortName="acrole")
  * @ORM\Entity(repositoryClass="App\Repository\Authorisation\ACRoleRepository")
  * @ORM\Table(name="authorisation__role")
  * @ORM\HasLifecycleCallbacks()
@@ -39,7 +39,7 @@ class ACRole
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_ROLE');
         }
     }
 

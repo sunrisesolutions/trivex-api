@@ -2,13 +2,13 @@
 
 namespace App\Entity\Messaging;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={
  *       "access_control"="is_granted('ROLE_USER')",
  *       "filters"={"notif_subscription.search_filter"}

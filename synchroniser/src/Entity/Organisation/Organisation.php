@@ -2,11 +2,11 @@
 
 namespace App\Entity\Organisation;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+//use ApiPlatform\Core\Annotation\ApiFilter;
+//use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+//use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\Organisation\AppUtil;
 use App\Util\Organisation\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,7 +15,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
  *         "get"={},
@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "subdomain": "exact", "code": "exact"})
+ * ApiFilter(SearchFilter::class, properties={"uuid": "exact", "subdomain": "exact", "code": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\Organisation\OrganisationRepository")
  * @ORM\Table(name="organisation__organisation")
  * @ORM\HasLifecycleCallbacks()
@@ -153,7 +153,7 @@ class Organisation
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Organisation\IndividualMember", mappedBy="organisation")
-     * @ApiSubresource()
+     * ApiSubresource()
      */
     private $individualMembers;
 
@@ -173,6 +173,31 @@ class Organisation
      * @ORM\OneToMany(targetEntity="App\Entity\Organisation\Role", mappedBy="organisation")
      */
     private $roles;
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function updateTs() {
+        $this->updatedAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
+
+    public function getUpdatedAt(): ?\DateTimeInterface
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeInterface $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
 
     public function __construct()
     {

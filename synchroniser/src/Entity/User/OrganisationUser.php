@@ -2,7 +2,7 @@
 
 namespace App\Entity\User;
 
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 use App\Doctrine\Types\JsonType;
 use App\Util\User\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
