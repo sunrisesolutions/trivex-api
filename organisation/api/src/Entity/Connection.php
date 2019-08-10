@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial", "fromMember.id": "exact"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial", "fromMember.uuid": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\ConnectionRepository")
  * @ORM\Table(name="organisation__connection")
  * @ORM\HasLifecycleCallbacks()
