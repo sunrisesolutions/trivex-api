@@ -2,15 +2,15 @@
 
 namespace App\Entity\Event;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+//use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\Event\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
@@ -41,7 +41,7 @@ class Registration
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\Event\Attendee", inversedBy="registration", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="id_attendee", referencedColumnName="id")
-     * @ApiSubresource()
+     * ApiSubresource()
      */
     private $attendee;
 

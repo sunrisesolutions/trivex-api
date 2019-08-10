@@ -92,4 +92,5 @@ class Nationality
 
         return $this;
     }
+
 }

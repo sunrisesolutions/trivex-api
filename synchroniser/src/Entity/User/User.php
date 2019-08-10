@@ -2,21 +2,23 @@
 
 namespace App\Entity\User;
 
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+//use ApiPlatform\Core\Annotation\ApiFilter;
+//use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 use App\Util\User\AppUtil;
 use App\Util\User\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\User\OrganisationUser;
+use App\Entity\User\Organisation;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     collectionOperations={
  *         "get",
@@ -25,7 +27,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"email": "exact", "username": "exact", "uuid": "exact"})
+ * ApiFilter(SearchFilter::class, properties={"email": "exact", "username": "exact", "uuid": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\User\UserRepository")
  * @ORM\Table(name="user__user")
  * @ORM\HasLifecycleCallbacks()
@@ -33,6 +35,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 class User implements UserInterface
 {
     const TTL = 1800;
+    const ROLE_ORG_ADMIN = 'ROLE_ORG_ADMIN';
 
     /**
      * @var int|null The User Id
@@ -47,6 +50,26 @@ class User implements UserInterface
     {
         $this->createdAt = new \DateTime();
         $this->organisationUsers = new ArrayCollection();
+    }
+
+    public function isGranted($permission = 'ALL', $object = null, $class = null, OrganisationUser $member = null, Organisation $org = null)
+    {
+
+    }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getAdminOrganisations()
+    {
+        $orgs = new ArrayCollection();
+        /** @var OrganisationUser $organisationUser */
+        foreach ($this->organisationUsers as $organisationUser) {
+            if (in_array(self::ROLE_ORG_ADMIN, $this->getRoles())) {
+                $orgs->add($organisationUser->getOrganisation());
+            }
+        }
+        return $orgs;
     }
 
     /**

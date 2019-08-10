@@ -2,8 +2,8 @@
 
 namespace App\Entity\Messaging;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+//use ApiPlatform\Core\Annotation\ApiResource;
+//use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\Messaging\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Exception\UnsupportedException;
 use App\Controller\MessageApprovalController;
 
 /**
- * @ApiResource(
+ * ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}},

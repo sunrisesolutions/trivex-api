@@ -1,5 +1,7 @@
 doctrine:
     dbal:
+        types:
+            magenta_json: App\Doctrine\Types\JsonType
         default_connection: default
         connections:
             default:
@@ -44,64 +46,71 @@ doctrine:
         entity_managers:
             default:
                 connection: default
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     Main:
                         is_bundle: false
                         type: annotation
-                        dir: '%kernel.project_dir%/src/Entity/User'
-                        prefix: 'App\Entity\User\User'
+                        dir: '%kernel.project_dir%/src/Entity'
+                        prefix: 'App\Entity\SyncLog'
                         alias: Main
             user:
                 connection: user
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     User:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/src/Entity/User'
-                        prefix: 'App\Entity\User\User'
+                        prefix: 'App\Entity\User'
                         alias: User
             organisation:
                 connection: organisation
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     Organisation:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/src/Entity/Organisation'
-                        prefix: 'App\Entity\Organisation\Organisation'
+                        prefix: 'App\Entity\Organisation'
                         alias: Organisation
             person:
                 connection: person
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     Person:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/src/Entity/Person'
-                        prefix: 'App\Entity\Person\Person'
+                        prefix: 'App\Entity\Person'
                         alias: Person
             authorisation:
                 connection: authorisation
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     Authorisation:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/src/Entity/Authorisation'
-                        prefix: 'App\Entity\Authorisation\Authorisation'
+                        prefix: 'App\Entity\Authorisation'
                         alias: Authorisation
             messaging:
-                connection: organisation
+                connection: messaging
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     Messaging:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/src/Entity/Messaging'
-                        prefix: 'App\Entity\Messaging\Messaging'
+                        prefix: 'App\Entity\Messaging'
                         alias: Messaging
             event:
-                connection: organisation
+                connection: event
+                naming_strategy: doctrine.orm.naming_strategy.underscore
                 mappings:
                     Event:
                         is_bundle: false
                         type: annotation
                         dir: '%kernel.project_dir%/src/Entity/Event'
-                        prefix: 'App\Entity\Event\Event'
+                        prefix: 'App\Entity\Event'
                         alias: Event
