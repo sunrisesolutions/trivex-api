@@ -28,10 +28,15 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class MessageAdmin extends BaseAdmin
+class PendingApprovalMessageAdmin extends BaseAdmin
 {
+    const ENTITY = Message::class;
 
     const CHILDREN = [];
+
+    protected $baseRouteName = 'pending_approval_message';
+
+    protected $baseRoutePattern = 'messaging-message/pending-approval';
 
     protected $action;
 
@@ -80,8 +85,9 @@ class MessageAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
-        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
+        $collection->remove('create');
+//        $collection->add('contentEdit', $this->getRouterIdParameter() . '/approve');
+//        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -94,11 +100,16 @@ class MessageAdmin extends BaseAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
+        $listMapper
+            ->add('subject', null, ['label' => 'form.label_subject'])
+            ->add('body', null, ['label' => 'form.label_body'])
+            ->add('status', null, ['label' => 'form.label_status']);
+
         $listMapper->add('_action', 'actions', [
                 'label' => 'form.label_action',
                 'actions' => array(
 //					'impersonate' => array( 'template' => 'admin/user/list__action__impersonate.html.twig' ),
-                    'edit' => array(),
+//                    'edit' => array(),
                     'delete' => array(),
 
 //                ,
@@ -108,11 +119,7 @@ class MessageAdmin extends BaseAdmin
                 )
             ]
         );
-        $listMapper
-            ->addIdentifier('givenName', null, ['label' => 'form.label_given_name'])
-            ->addIdentifier('familyName', null, ['label' => 'form.label_family_name'])
-            ->add('bookEdition', null, ['label' => 'form.label_edition'])
-            ->add('status', null, ['label' => 'form.label_status']);
+
 
         $listMapper->add('bookCategoryItems', null, ['label' => 'form.label_category',
             'associated_property' => 'categoryName'
@@ -139,8 +146,7 @@ class MessageAdmin extends BaseAdmin
         $formMapper
             ->with('General')
 //                ->add('username')
-            ->add('givenName', null, ['label' => 'form.label_given_name'])
-            ->add('familyName', null, ['label' => 'form.label_family_name'])
+            ->add('subject', null, ['label' => 'form.label_family_name'])
 //                ->add('admin')
         ;
         $formMapper->end();
@@ -211,9 +217,9 @@ class MessageAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
         $filterMapper
-            ->add('id')
-            ->add('givenName')
-            ->add('familyName')
+            ->add('sender')
+            ->add('subject')
+            ->add('body')
         ;
 //			->add('groups')
 //		;

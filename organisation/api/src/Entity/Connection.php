@@ -103,9 +103,11 @@ class Connection
      */
     public function getPersonData()
     {
+        /** @var Person $fromPerson */
         $fromPerson = $this->fromMember->getPerson();
+        /** @var Person $fromPerson */
         $toPerson = $this->toMember->getPerson();
-        return ['from' => $fromPerson, 'to' => $toPerson,
+        return ['from' => ['name' => $fromPerson->getName()], 'to' => ['name' => $toPerson->getName()],
         ];
     }
 
