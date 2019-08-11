@@ -2,12 +2,15 @@
 
 namespace App\Admin;
 
+use App\Entity\Organisation\Organisation;
 use App\Service\Organisation\OrganisationService;
 use App\Service\User\UserService;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 
 class BaseAdmin extends AbstractAdmin
 {
+    const ORGANISATION_CLASS = Organisation::class;
+
     const AUTO_CONFIG = true;
     const ENTITY = null;
     const CONTROLLER = null;

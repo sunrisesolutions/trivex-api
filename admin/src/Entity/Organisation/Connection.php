@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial", "fromMember.uuid": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\Organisation\ConnectionRepository")
  * @ORM\Table(name="organisation__connection")
  * @ORM\HasLifecycleCallbacks()
@@ -87,14 +87,26 @@ class Connection
         $fromPerson = $this->fromMember->getFulltextString();
         $toPerson = $this->toMember->getFulltextString();
         if (empty($fromPerson) && empty($toPerson)) $this->fulltextString = '';
-        else $this->fulltextString = 'uuid: ' .$this->uuid. ' createdAt: ' . (string)$this->createdAt->format("Y-m-d H:i:s");
+        else $this->fulltextString = 'uuid: '.$this->uuid.' createdAt: '.(string) $this->createdAt->format("Y-m-d H:i:s");
 
         if (!empty($fromPerson)) {
-            $this->fulltextString .= ' from: ' . $fromPerson;
+            $this->fulltextString .= ' from: '.$fromPerson;
         }
         if (!empty($toPerson)) {
-            $this->fulltextString .= ' to: ' . $toPerson;
+            $this->fulltextString .= ' to: '.$toPerson;
         }
+    }
+
+    /**
+     * @Groups("read")
+     * @return array
+     */
+    public function getPersonData()
+    {
+        $fromPerson = $this->fromMember->getPersonData();
+        $toPerson = $this->toMember->getPersonData();
+        return ['from' => $fromPerson, 'to' => $toPerson,
+        ];
     }
 
     public function getId(): ?int

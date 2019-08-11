@@ -1,0 +1,6 @@
+App\Entity\Organisation:
+  organisation{1..5}:
+    foundedOn: '<dateTimeBetween("-2 days", "now")>'
+    address: '<address()>'
+    name: '<name()>'
+    uuid: 'NN-<numberBetween(1000, 9000)>'

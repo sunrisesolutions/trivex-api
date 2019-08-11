@@ -3,6 +3,7 @@
 namespace App\Admin\Messaging;
 
 use App\Entity\Messaging\Message;
+use App\Entity\Messaging\Organisation;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -30,6 +31,8 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 class PendingApprovalMessageAdmin extends BaseAdmin
 {
+    const ORGANISATION_CLASS = Organisation::class;
+
     const ENTITY = Message::class;
 
     const CHILDREN = [];
@@ -74,8 +77,14 @@ class PendingApprovalMessageAdmin extends BaseAdmin
         /** @var ProxyQueryInterface $query */
         $query = parent::createQuery($context);
         if (empty($this->getParentFieldDescription())) {
-//            $this->filterQueryByPosition($query, 'position', '', '');
+
         }
+
+        /** @var Expr $expr */
+        $expr = $query->getQueryBuilder()->expr();
+        $query->andWhere($expr->like('o.status', $expr->literal(Message::STATUS_PENDING_APPROVAL)));
+
+
 
 //        $query->andWhere()
 
@@ -86,6 +95,7 @@ class PendingApprovalMessageAdmin extends BaseAdmin
     {
         parent::configureRoutes($collection);
         $collection->remove('create');
+        $collection->remove('edit');
 //        $collection->add('contentEdit', $this->getRouterIdParameter() . '/approve');
 //        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
     }
@@ -100,16 +110,12 @@ class PendingApprovalMessageAdmin extends BaseAdmin
      */
     protected function configureListFields(ListMapper $listMapper)
     {
-        $listMapper
-            ->add('subject', null, ['label' => 'form.label_subject'])
-            ->add('body', null, ['label' => 'form.label_body'])
-            ->add('status', null, ['label' => 'form.label_status']);
-
         $listMapper->add('_action', 'actions', [
                 'label' => 'form.label_action',
                 'actions' => array(
 //					'impersonate' => array( 'template' => 'admin/user/list__action__impersonate.html.twig' ),
 //                    'edit' => array(),
+                    'approve' => array( 'template' => 'Admin/Messaging/PendingApprovalMessage/Action/list__action__approve.html.twig' ),
                     'delete' => array(),
 
 //                ,
@@ -119,20 +125,16 @@ class PendingApprovalMessageAdmin extends BaseAdmin
                 )
             ]
         );
+        $listMapper
+            ->add('subject', null, ['label' => 'form.label_subject'])
+            ->add('body', null, ['label' => 'form.label_body'])
+            ->add('status', null, ['label' => 'form.label_status']);
 
 
-        $listMapper->add('bookCategoryItems', null, ['label' => 'form.label_category',
-            'associated_property' => 'categoryName'
-        ]);
+
         $listMapper->add('createdAt', null, ['label' => 'form.label_created_at']);
 
-        if ($this->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
-            $listMapper
-                ->add('impersonating', 'string', ['template' => 'SonataUserBundle:Admin:Field/impersonating.html.twig']);
-        }
 
-        $listMapper->remove('impersonating');
-        $listMapper->remove('groups');
 //		$listMapper->add('positions', null, [ 'template' => '::admin/user/list__field_positions.html.twig' ]);
     }
 
@@ -184,9 +186,6 @@ class PendingApprovalMessageAdmin extends BaseAdmin
     public function prePersist($object)
     {
         parent::prePersist($object);
-        if (!$object->isEnabled()) {
-            $object->setEnabled(true);
-        }
     }
 
     /**
@@ -195,9 +194,7 @@ class PendingApprovalMessageAdmin extends BaseAdmin
     public function preUpdate($object)
     {
         parent::preUpdate($object);
-        if (!$object->isEnabled()) {
-            $object->setEnabled(true);
-        }
+
     }
 
     ///////////////////////////////////
@@ -217,7 +214,7 @@ class PendingApprovalMessageAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
         $filterMapper
-            ->add('sender')
+            ->add('sender.person.name')
             ->add('subject')
             ->add('body')
         ;

@@ -26,6 +26,13 @@ class Organisation
      */
     private $id;
 
+    public function __construct()
+    {
+        $this->individualMembers = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+        $this->optionSets = new ArrayCollection();
+    }
+
     /**
      * @ORM\Column(type="string", length=191)
      */
@@ -35,6 +42,11 @@ class Organisation
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $address;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Messaging\IndividualMember", mappedBy="organisation")
@@ -51,12 +63,10 @@ class Organisation
      */
     private $optionSets;
 
-    public function __construct()
-    {
-        $this->individualMembers = new ArrayCollection();
-        $this->messages = new ArrayCollection();
-        $this->optionSets = new ArrayCollection();
-    }
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $foundedOn;
 
     public function getIndividualMembersByPage($page = null, $limit = AppUtil::BATCH_SIZE)
     {
@@ -201,6 +211,31 @@ class Organisation
                 $optionSet->setOrganisation(null);
             }
         }
+
+        return $this;
+    }
+
+
+    public function getFoundedOn(): ?\DateTimeInterface
+    {
+        return $this->foundedOn;
+    }
+
+    public function setFoundedOn(?\DateTimeInterface $foundedOn): self
+    {
+        $this->foundedOn = $foundedOn;
+
+        return $this;
+    }
+
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
 
         return $this;
     }

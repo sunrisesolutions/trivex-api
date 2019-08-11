@@ -72,7 +72,15 @@ class MessageAdmin extends BaseAdmin
 //            $this->filterQueryByPosition($query, 'position', '', '');
         }
 
-//        $query->andWhere()
+        /** @var Expr $expr */
+        $expr = $query->getQueryBuilder()->expr();
+        $query->andWhere(
+            $expr->andX(
+                $expr->notLike('o.status', $expr->literal(Message::STATUS_DRAFT)),
+                $expr->notLike('o.status', $expr->literal(Message::STATUS_PENDING_APPROVAL))
+            )
+        );
+
 
         return $query;
     }
@@ -80,7 +88,6 @@ class MessageAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
         $collection->add('publish', $this->getRouterIdParameter() . '/publish');
     }
 
@@ -109,24 +116,13 @@ class MessageAdmin extends BaseAdmin
             ]
         );
         $listMapper
-            ->addIdentifier('givenName', null, ['label' => 'form.label_given_name'])
-            ->addIdentifier('familyName', null, ['label' => 'form.label_family_name'])
-            ->add('bookEdition', null, ['label' => 'form.label_edition'])
+            ->add('subject', null, ['label' => 'form.label_subject'])
+            ->add('body', null, ['label' => 'form.label_body'])
             ->add('status', null, ['label' => 'form.label_status']);
 
-        $listMapper->add('bookCategoryItems', null, ['label' => 'form.label_category',
-            'associated_property' => 'categoryName'
-        ]);
+
+
         $listMapper->add('createdAt', null, ['label' => 'form.label_created_at']);
-
-        if ($this->isGranted('ROLE_ALLOWED_TO_SWITCH')) {
-            $listMapper
-                ->add('impersonating', 'string', ['template' => 'SonataUserBundle:Admin:Field/impersonating.html.twig']);
-        }
-
-        $listMapper->remove('impersonating');
-        $listMapper->remove('groups');
-//		$listMapper->add('positions', null, [ 'template' => '::admin/user/list__field_positions.html.twig' ]);
     }
 
     protected function configureFormFields(FormMapper $formMapper)
@@ -211,11 +207,11 @@ class MessageAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
         $filterMapper
-            ->add('id')
-            ->add('givenName')
-            ->add('familyName')
+            ->add('sender.person.name')
+            ->add('subject')
+            ->add('body')
         ;
-//			->add('groups')
+        //			->add('groups')
 //		;
     }
 

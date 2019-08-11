@@ -33,10 +33,12 @@ RUN set -eux; \
 	\
 	docker-php-ext-configure zip --with-libzip; \
 	docker-php-ext-install -j$(nproc) \
+		mysqli \
+		pdo_mysql \
 		intl \
 		pdo_pgsql \
 		zip \
-		gmp \		
+		gmp \
 		pcntl \
 	; \
 	pecl install \
@@ -47,7 +49,7 @@ RUN set -eux; \
 		apcu \
 		opcache \
 		gmp \
-		pcntl \		
+		pcntl \
 	; \
 	\
 	runDeps="$( \

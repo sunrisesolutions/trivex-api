@@ -61,6 +61,12 @@ class Message
         $this->deliveries = new ArrayCollection();
     }
 
+    public function getDecisionStatus(): string
+    {
+        return $this->status;
+    }
+
+
     public function getRecipientsByPage(): ?Collection
     {
         if (empty($this->conversation)) {

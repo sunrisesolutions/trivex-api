@@ -77,7 +77,10 @@ class Kernel extends BaseKernel
                     'label' => strtolower(end($className)),
                     'label_translator_strategy' => 'sonata.admin.label.strategy.underscore'
                 ]);
-
+                $def->addMethodCall('setTemplate', [ 'decide', 'CRUD/decide.html.twig' ]);
+                if(empty($code = $class::ADMIN_CODE)) {
+                    $code = $class;
+                }
                 $code = $class;
                 if (empty($entity = $class::ENTITY)) {
                     $entity = str_replace('Admin\\', 'Entity\\', $code);

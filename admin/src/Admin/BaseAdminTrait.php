@@ -29,7 +29,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 trait BaseAdminTrait
 {
-
     private $isAdmin;
     /**
      * @var User
@@ -215,7 +214,7 @@ trait BaseAdminTrait
     }
 
     /**
-     * @return Organisation|null
+     * @return mixed|null
      */
     protected
     function getCurrentOrganisation(
@@ -228,7 +227,7 @@ trait BaseAdminTrait
 
         /** @var OrganisationService $orgService */
         $orgService = $this->organisationService;
-        return $orgService->getCurrentOrganisation($context, $required);
+        return $orgService->getCurrentOrganisation($context, $required, self::ORGANISATION_CLASS);
     }
 
 
@@ -384,16 +383,17 @@ trait BaseAdminTrait
         if (is_array($name)) {
             $isGranted = true;
             foreach ($name as $action) {
-                $_isGranted = $user->isGranted($action, $object, $this->getClass(), $member, $org);
-                $isGranted = $isGranted && $_isGranted;
+//                $_isGranted = $user->isGranted($action, $object, $this->getClass(), $member, $org);
+//                $isGranted = $isGranted && $_isGranted;
             }
 
-            return $isGranted;
+//            return $isGranted;
         }
 
-        return $user->isGranted($name, $object, $this->getClass(), $member, $org);
+//        return $user->isGranted($name, $object, $this->getClass(), $member, $org);
 
-//		return parent::isGranted($name, $object);
+
+		return parent::isGranted($name, $object);
     }
 
     protected
@@ -442,7 +442,10 @@ trait BaseAdminTrait
         $organisation = $this->getCurrentOrganisation();
 
         if (!empty($organisation)) { // && ! empty($organisation)
-            if (in_array(OrganizationAwareInterface::class, class_implements($this->getClass()))) {
+            $classname = $this->getClass();
+            $reflection = new \ReflectionObject(new $classname);
+            $orgProp = $reflection->getProperty('organisation');
+            if (!empty($orgProp)) {
                 $this->filterQueryByOrganisation($query, $organisation);
             }
         } else {
@@ -456,7 +459,7 @@ trait BaseAdminTrait
 
     protected
     function filterQueryByOrganisation(
-        ProxyQuery $query, Organisation $organisation
+        ProxyQuery $query, $organisation
     )
     {
         $pool = $this->getConfigurationPool();
@@ -465,8 +468,9 @@ trait BaseAdminTrait
         /** @var Expr $expr */
         $expr = $query->getQueryBuilder()->expr();
         $orgFieldName = $this->getOrganisationFieldName($this->getClass());
+        $orgAlias = $query->entityJoin([ [ 'fieldName' => $orgFieldName ] ]);
 
-        return $query->andWhere($expr->eq('o.'.$orgFieldName, $organisation->getId()));
+        return $query->andWhere($expr->eq($orgAlias.'.uuid', $expr->literal($organisation->getUuid())));
     }
 
     /**

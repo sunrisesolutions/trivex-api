@@ -16,16 +16,18 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 class OrganisationService extends BaseService
 {
     private $userService;
+
     public function __construct(ContainerInterface $container, UserService $userService)
     {
         parent::__construct($container);
         $this->userService = $userService;
     }
 
-    public function getCurrentOrganisation(ServiceContext $context, $required = true)
+    public function getCurrentOrganisation(ServiceContext $context, $required = true, $orgClass = Organisation::class)
     {
-        if (!empty($orgId = $this->getRequest()->query->getInt('organisation', 0))) {
-            $org = $this->container->get('doctrine')->getRepository(Organisation::class)->find($orgId);
+        $registry = $this->container->get('doctrine');
+        if (!empty($orgUuid = $this->getRequest()->query->getInt('organisation', 0))) {
+            $org = $registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
         } else {
             if ($context->getType() === ServiceContext::TYPE_ADMIN_CLASS) {
                 $org = $this->getCurrentOrganisationFromAncestors($context->getAttribute('parent'));
@@ -49,6 +51,10 @@ class OrganisationService extends BaseService
             if ($required) {
                 throw new UnauthorizedHttpException('Unauthorised access');
             }
+        }
+
+        if (get_class($org) !== $orgClass) {
+            $org = $registry->getRepository($orgClass)->findOneBy(['uuid' => $org->getUuid()]);
         }
 
         return $org;

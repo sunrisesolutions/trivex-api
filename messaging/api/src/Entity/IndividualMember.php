@@ -41,6 +41,7 @@ class IndividualMember
         $this->deliveries = new ArrayCollection();
         $this->conversations = new ArrayCollection();
         $this->notifSubscriptions = new ArrayCollection();
+        $this->roles = new ArrayCollection();
     }
 
     public function isMessageDelivered(Message $message)
@@ -79,6 +80,15 @@ class IndividualMember
      * @ORM\Column(type="string", length=191)
      */
     private $uuid;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Role", inversedBy="individualMembers")
+     * @ORM\JoinTable(name="messaging__individuals_roles",
+     *      joinColumns={@ORM\JoinColumn(name="id_individual", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="id_role", referencedColumnName="id")}
+     *      )
+     */
+    private $roles;
 
     /**
      * @var Organisation
@@ -272,6 +282,32 @@ class IndividualMember
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+        }
 
         return $this;
     }
