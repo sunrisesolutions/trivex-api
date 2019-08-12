@@ -37,6 +37,8 @@ sonata_admin:
                 label: dashboard.system
                 icon: '<i class="fa fa-users"></i>'
                 items:
+                    - route:        admin_app_organisation_organisation_editCurrentOrganisation
+                      label:        Organisation Account
                     - App\Admin\Person\PersonAdmin
                     - App\Admin\Organisation\OrganisationAdmin
                     - App\Admin\Messaging\PendingApprovalMessageAdmin

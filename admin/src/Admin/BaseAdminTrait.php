@@ -216,7 +216,7 @@ trait BaseAdminTrait
     /**
      * @return mixed|null
      */
-    protected
+    public
     function getCurrentOrganisation(
         $required = true
     )

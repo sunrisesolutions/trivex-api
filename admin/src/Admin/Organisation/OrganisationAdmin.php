@@ -88,8 +88,8 @@ class OrganisationAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
-        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
+//        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
+        $collection->add('editCurrentOrganisation',  'edit-current-organisation');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -108,7 +108,7 @@ class OrganisationAdmin extends BaseAdmin
             ->addIdentifier('address', null, ['label' => 'form.label_address'])
             ->addIdentifier('name', null, ['label' => 'form.label_name'])
             ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
-            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
+//            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
             ->addIdentifier('code', null, ['label' => 'form.label_code'])
             ->addIdentifier('subdomain', null, ['label' => 'form.label_subdomain'])
             ;
@@ -121,7 +121,6 @@ class OrganisationAdmin extends BaseAdmin
 //            ->with('Description', ['class' => 'col-md-7'])->end()
         ;
 
-
         $formMapper
             ->with('General')
             ->add('foundedOn')
@@ -129,7 +128,7 @@ class OrganisationAdmin extends BaseAdmin
             ->add('address')
             ->add('name')
             ->add('registrationNumber')
-            ->add('logoName')
+//            ->add('logoName')
             ->add('code')
             ->add('subdomain')
             ;
