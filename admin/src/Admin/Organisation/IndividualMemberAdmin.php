@@ -137,6 +137,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('person.gender', ChoiceType::class, [
+                'required' => false,
                 'label' => 'form.label_gender',
                 'multiple' => false,
                 'placeholder' => 'Select Gender',
@@ -159,13 +160,14 @@ class IndividualMemberAdmin extends BaseAdmin
         $formMapper->end();
         $formMapper
             ->with('General');
-        
+
         $formMapper
             ->add('person.email', null, ['label' => 'form.label_email'])
             ->add('person.password', null, ['label' => 'form.label_password']);
 
         $formMapper
             ->add('roles', ModelType::class, [
+                'required' => false,
                 'multiple' => true,
                 'property' => 'nameTrans',
                 'btn_add' => false,
