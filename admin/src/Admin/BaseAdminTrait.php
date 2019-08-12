@@ -594,10 +594,11 @@ trait BaseAdminTrait
         $object
     )
     {
-        if ($object instanceof OrganizationAwareInterface) {
-            $object->setOrganization($this->getCurrentOrganisation());
-        } elseif ($object instanceof ThingChildInterface) {
-            $object->getThing()->setOrganisation($this->getCurrentOrganisation());
+        $classname = $this->getClass();
+        $reflection = new \ReflectionObject(new $classname);
+        $orgProp = $reflection->getProperty('organisation');
+        if (!empty($orgProp)) {
+            $object->setOrganisation($this->getCurrentOrganisation());
         }
     }
 

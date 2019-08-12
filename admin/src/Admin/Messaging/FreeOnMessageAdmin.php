@@ -123,7 +123,8 @@ class FreeOnMessageAdmin extends BaseAdmin
     {
         $formMapper
             ->with('General', ['class' => 'col-md-7'])->end()
-            ->with('Description', ['class' => 'col-md-7'])->end();
+//            ->with('Description', ['class' => 'col-md-7'])->end()
+        ;
 
         $formMapper
             ->with('General')

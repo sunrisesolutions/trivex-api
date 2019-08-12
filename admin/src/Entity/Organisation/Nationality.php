@@ -3,6 +3,7 @@
 namespace App\Entity\Organisation;
 
 use Doctrine\ORM\Mapping as ORM;
+use App\Util\Organisation\AppUtil;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Organisation\NationalityRepository")
@@ -39,6 +40,21 @@ class Nationality
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
      */
     private $person;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $uuid;
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
 
     public function getId(): ?int
     {
@@ -89,6 +105,18 @@ class Nationality
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
+
+        return $this;
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
 
         return $this;
     }

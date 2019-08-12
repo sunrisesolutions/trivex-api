@@ -40,6 +40,23 @@ class Role
      */
     private $name;
 
+    public function getNameTrans()
+    {
+        if ($this->name === 'ROLE_ORG_ADMIN') {
+            return 'ADMIN';
+        }
+        if ($this->name === 'ROLE_MSG_ADMIN') {
+            return 'MESSAGE ADMIN';
+        }
+        if ($this->name === 'ROLE_EVENT_ADMIN') {
+            return 'EVENT ADMIN';
+        }
+        if ($this->name === 'ROLE_MSG_USER') {
+            return 'MESSAGE USER';
+        }
+        return $this->name;
+    }
+
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="roles")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="SET NULL")

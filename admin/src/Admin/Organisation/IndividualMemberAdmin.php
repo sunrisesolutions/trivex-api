@@ -119,7 +119,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('roles', null, [
                 'label' => 'form.label_roles',
-                'associated_property' => 'name'])
+                'associated_property' => 'nameTrans'])
             ->add('createdAt', null, ['label' => 'form.label_created_at']);
     }
 
@@ -127,8 +127,8 @@ class IndividualMemberAdmin extends BaseAdmin
     {
         $formMapper
             ->with('General', ['class' => 'col-md-7'])->end()
-            ->with('Description', ['class' => 'col-md-7'])->end();
-
+//            ->with('Description', ['class' => 'col-md-7'])->end()
+        ;
         $this->getFilterByOrganisationQueryForModel(Role::class);
 //        $propertyAccessor = $this->getConfigurationPool()->getContainer()->get('access');
         $formMapper
@@ -156,7 +156,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ])
             ->add('roles', ModelType::class, [
                 'multiple' => true,
-                'property' => 'name',
+                'property' => 'nameTrans',
                 'btn_add' => false,
             ])
 
@@ -183,6 +183,7 @@ class IndividualMemberAdmin extends BaseAdmin
      */
     public function preValidate($object)
     {
+        parent::preValidate($object);
         $person = $object->getPerson();
         if (empty($person->getId())) {
             $container = $this->getContainer();
