@@ -36,9 +36,33 @@ class FreeOnMessage
      */
     private $id;
 
+    const DAYS = [
+        'SATURDAY',
+        'SUNDAY',
+        'MONDAY',
+        'TUESDAY',
+        'WEDNESDAY',
+        'THURSDAY',
+        'FRIDAY',
+        'SATURDAY',
+        'SUNDAY',
+        'MONDAY',
+        'TUESDAY',
+        'WEDNESDAY',
+        'THURSDAY',
+        'FRIDAY',
+        'SATURDAY',
+        'SUNDAY',
+    ];
+
     public function __construct()
     {
         $this->createdAt = new \DateTime();
+    }
+
+    public function getSubject()
+    {
+        return $this->fromHour.':'.($this->fromMinute ?: '00').' - '.$this->toHour.':'.($this->toMinute ?: '00').'   '.self::DAYS[$this->fromDay].' - '.self::DAYS[$this->toDay];
     }
 
     /**
@@ -126,6 +150,18 @@ class FreeOnMessage
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Organisation", inversedBy="freeOnMessages")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
+     */
+    private $organisation;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\IndividualMember", inversedBy="freeOnMessages")
+     * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
+     */
+    private $sender;
 
     public function getId(): ?int
     {
@@ -272,6 +308,30 @@ class FreeOnMessage
     public function setCreatedAt(\DateTimeInterface $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getOrganisation(): ?Organisation
+    {
+        return $this->organisation;
+    }
+
+    public function setOrganisation(?Organisation $organisation): self
+    {
+        $this->organisation = $organisation;
+
+        return $this;
+    }
+
+    public function getSender(): ?IndividualMember
+    {
+        return $this->sender;
+    }
+
+    public function setSender(?IndividualMember $sender): self
+    {
+        $this->sender = $sender;
 
         return $this;
     }

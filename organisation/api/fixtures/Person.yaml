@@ -2,6 +2,9 @@ App\Entity\Person:
   person{1..5}:
     birthDate: '<dateTimeBetween("-10 year", "now")>'
     name: '<name()>'
+    givenName: '<name()>'
+    middleName: '<name()>'
+    familyName: '<name()>'
     email: '<email()>'
     phoneNumber: '<numberBetween(1000000000, 9000000000)>'
     jobTitle: '<jobTitle()>'

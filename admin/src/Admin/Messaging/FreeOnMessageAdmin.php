@@ -2,6 +2,7 @@
 
 namespace App\Admin\Messaging;
 
+use App\Entity\Messaging\FreeOnMessage;
 use App\Entity\Messaging\Message;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
@@ -33,6 +34,10 @@ class FreeOnMessageAdmin extends BaseAdmin
 
     const CHILDREN = [];
 
+    protected $baseRouteName = 'free_on_message';
+
+    protected $baseRoutePattern = 'messaging-message/free-on';
+
     protected $action;
 
     protected $datagridValues = array(
@@ -59,9 +64,9 @@ class FreeOnMessageAdmin extends BaseAdmin
 
     public function toString($object)
     {
-        return $object instanceof Message
+        return $object instanceof FreeOnMessage
             ? $object->getSubject()
-            : 'Message'; // shown in the breadcrumb on the create view
+            : 'Free-on Message'; // shown in the breadcrumb on the create view
     }
 
     public function createQuery($context = 'list')
@@ -74,12 +79,10 @@ class FreeOnMessageAdmin extends BaseAdmin
 
         /** @var Expr $expr */
         $expr = $query->getQueryBuilder()->expr();
-        $query->andWhere(
-            $expr->andX(
-                $expr->notLike('o.timezone', $expr->literal(Message::STATUS_DRAFT)),
-                $expr->notLike('o.timezone', $expr->literal(Message::STATUS_PENDING_APPROVAL))
-            )
-        );
+//        $query->andWhere(
+//            $expr->andX(
+//            )
+//        );
 
 
         return $query;
@@ -88,6 +91,7 @@ class FreeOnMessageAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
+        $collection->remove('create');
         $collection->remove('edit');
         $collection->remove('delete');
 
@@ -192,7 +196,6 @@ class FreeOnMessageAdmin extends BaseAdmin
     {
         $filterMapper
             ->add('sender.person.name')
-            ->add('subject')
             ->add('text')
         ;
         //			->add('groups')
