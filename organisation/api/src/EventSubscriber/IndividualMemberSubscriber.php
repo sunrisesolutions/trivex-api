@@ -115,7 +115,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 $role = new Role();
                 $role->initiateUuid();
                 $role->setName('ROLE_MSG_USER');
-                $role->setIndividualMember($member);
+                $role->addIndividualMember($member);
                 $role->setOrganisation($member->getOrganisation());
                 $manager->persist($role);
             }
