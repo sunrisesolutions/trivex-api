@@ -32,6 +32,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
             Events::postPersist,
             Events::postUpdate,
             Events::postRemove,
+            Events::postLoad,
         ];
     }
 
@@ -54,13 +55,14 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         ];
 
         $names = [];
-        foreach($object->getRoles() as $role) $names[] = $role->getName();
+        foreach ($object->getRoles() as $role) $names[] = $role->getName();
         $ar['data']['individualMember']['roleString'] = json_encode($names);
 
         return $this->awsSnsUtil->publishMessage(json_encode($ar), Message::OPERATION_POST);
     }
 
-    public function postUpdate(LifecycleEventArgs $args) {
+    public function postUpdate(LifecycleEventArgs $args)
+    {
         $object = $args->getObject();
         if (!$object instanceof IndividualMember) return;
 
@@ -78,7 +80,7 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         ];
 
         $names = [];
-        foreach($object->getRoles() as $role) $names[] = $role->getName();
+        foreach ($object->getRoles() as $role) $names[] = $role->getName();
         $ar['data']['individualMember']['roleString'] = json_encode($names);
 
         return $this->awsSnsUtil->publishMessage(json_encode($ar), Message::OPERATION_PUT);
@@ -93,5 +95,21 @@ class IndividualMemberEventSubscriber implements EventSubscriber
         $obj = new IndividualMember();
         $obj->setUuid($object->getUuid());
         return $this->awsSnsUtil->publishMessage($obj, Message::OPERATION_DELETE);
+    }
+
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        /** @var IndividualMember $object */
+        $object = $args->getObject();
+        if (!$object instanceof IndividualMember) {
+            return;
+        }
+        if (!empty($person = $object->getPerson())) {
+            if (empty($person->getName())) {
+                $person->combineData();
+            }
+        }
+
+        return;
     }
 }

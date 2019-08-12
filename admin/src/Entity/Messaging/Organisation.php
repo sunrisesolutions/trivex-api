@@ -31,6 +31,7 @@ class Organisation
         $this->individualMembers = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->optionSets = new ArrayCollection();
+        $this->freeOnMessages = new ArrayCollection();
     }
 
     /**
@@ -67,6 +68,11 @@ class Organisation
      * @ORM\Column(type="date", nullable=true)
      */
     private $foundedOn;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Messaging\FreeOnMessage", mappedBy="organisation")
+     */
+    private $freeOnMessages;
 
     public function getIndividualMembersByPage($page = null, $limit = AppUtil::BATCH_SIZE)
     {
@@ -236,6 +242,37 @@ class Organisation
     public function setAddress(?string $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FreeOnMessage[]
+     */
+    public function getFreeOnMessages(): Collection
+    {
+        return $this->freeOnMessages;
+    }
+
+    public function addFreeOnMessage(FreeOnMessage $freeOnMessage): self
+    {
+        if (!$this->freeOnMessages->contains($freeOnMessage)) {
+            $this->freeOnMessages[] = $freeOnMessage;
+            $freeOnMessage->setOrganisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFreeOnMessage(FreeOnMessage $freeOnMessage): self
+    {
+        if ($this->freeOnMessages->contains($freeOnMessage)) {
+            $this->freeOnMessages->removeElement($freeOnMessage);
+            // set the owning side to null (unless already changed)
+            if ($freeOnMessage->getOrganisation() === $this) {
+                $freeOnMessage->setOrganisation(null);
+            }
+        }
 
         return $this;
     }

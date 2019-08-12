@@ -42,6 +42,7 @@ class IndividualMember
         $this->conversations = new ArrayCollection();
         $this->notifSubscriptions = new ArrayCollection();
         $this->roles = new ArrayCollection();
+        $this->freeOnMessages = new ArrayCollection();
     }
 
     public function isMessageDelivered(Message $message)
@@ -123,6 +124,11 @@ class IndividualMember
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id")
      */
     private $person;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\FreeOnMessage", mappedBy="sender")
+     */
+    private $freeOnMessages;
 
     public function getId(): ?int
     {
@@ -307,6 +313,37 @@ class IndividualMember
     {
         if ($this->roles->contains($role)) {
             $this->roles->removeElement($role);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FreeOnMessage[]
+     */
+    public function getFreeOnMessages(): Collection
+    {
+        return $this->freeOnMessages;
+    }
+
+    public function addFreeOnMessage(FreeOnMessage $freeOnMessage): self
+    {
+        if (!$this->freeOnMessages->contains($freeOnMessage)) {
+            $this->freeOnMessages[] = $freeOnMessage;
+            $freeOnMessage->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFreeOnMessage(FreeOnMessage $freeOnMessage): self
+    {
+        if ($this->freeOnMessages->contains($freeOnMessage)) {
+            $this->freeOnMessages->removeElement($freeOnMessage);
+            // set the owning side to null (unless already changed)
+            if ($freeOnMessage->getSender() === $this) {
+                $freeOnMessage->setSender(null);
+            }
         }
 
         return $this;

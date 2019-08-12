@@ -36,6 +36,7 @@ class IndividualMemberEventSubscriber implements ORMEventSubscriber
             Events::postPersist,
             Events::postUpdate,
             Events::postRemove,
+            Events::postLoad
         ];
     }
 
@@ -75,5 +76,21 @@ class IndividualMemberEventSubscriber implements ORMEventSubscriber
         if (!$object instanceof IndividualMember) {
             return;
         }
+    }
+
+    public function postLoad(LifecycleEventArgs $args)
+    {
+        /** @var IndividualMember $object */
+        $object = $args->getObject();
+        if (!$object instanceof IndividualMember) {
+            return;
+        }
+        if (!empty($person = $object->getPerson())) {
+//            if (empty($person->getName())) {
+                $person->combineData();
+//            }
+        }
+
+        return;
     }
 }

@@ -2,7 +2,8 @@ person: System Users
 organisation: Organisations
 individualgroup: Groups
 individualmember: Members
-pendingapprovalmessage: Pending approval Messages
+pendingapprovalmessage: Pending Approval Messages
+freeonmessage: Free-on Messages
 profile_edit: Profile
 message: Alerts & Notices
 btn_publish: Publish
@@ -130,6 +131,7 @@ form_group:
     grouping: Grouping
 
 form:
+    label_timezone: Timezone
     label_username: Username
     label_auth_by_username_password: Authentication by Username/Password
     label_groups: Groups
