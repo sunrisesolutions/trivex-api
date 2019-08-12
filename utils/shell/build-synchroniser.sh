@@ -1,8 +1,8 @@
 #Util
-mkdir -p ~/workspace/magenta/trivex/api/synchroniser/utils
-rm -R -f ~/workspace/magenta/trivex/api/synchroniser/utils/*
-cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/synchroniser/utils/
-cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/synchroniser/utils/
+#mkdir -p ~/workspace/magenta/trivex/api/synchroniser/utils
+#rm -R -f ~/workspace/magenta/trivex/api/synchroniser/utils/*
+#cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/synchroniser/utils/
+#cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/synchroniser/utils/
 
 #User
 echo 'copy doctrine magenta_type'

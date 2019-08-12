@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Console\Question\ConfirmationQuestion;
 
 class SyncUserCommand extends ContainerAwareCommand
 {
@@ -93,11 +94,13 @@ class SyncUserCommand extends ContainerAwareCommand
                         $des = $desEm->getRepository($c['des']['entity']);
                         /** @var App\Entity\Person\Person $source */
                         foreach ($srcData as $source) {
-                            $output->writeln('Insert ' . $source->getUuid());
                             /** @var App\Entity\User\Person $desData */
                             $desData = $des->findOneBy(['uuid' => $source->getUuid()]);
                             if (empty($desData)) {
+                                $output->writeln('Insert ' . $source->getUuid());
                                 $desData = new $c['des']['entity']();
+                            } else {
+                                $output->writeln('Update ' . $source->getUuid());
                             }
 
 //                                $object = new \ReflectionObject($desData);
@@ -133,6 +136,7 @@ class SyncUserCommand extends ContainerAwareCommand
                                 $desData->setCreatedAt($source->getUpdatedAt());
                                 $us = $desEm->getRepository(\App\Entity\User\User::class)->findOneBy(['uuid' => $source->getUserUuid()]);
                                 if (!empty($us)) {
+                                    $output->writeln('Update ' . $source->getUserUuid());
                                     $desData->setUser($us);
                                 }
                                 $na = $source->getNationalities();
@@ -140,7 +144,10 @@ class SyncUserCommand extends ContainerAwareCommand
                                     foreach ($na as $n) {
                                         $related = $desEm->getRepository(\App\Entity\User\Nationality::class)->findOneBy(['uuid' => $n->getUuid()]);
                                         if (empty($related)) {
+                                            $output->writeln('Insert ' . $n->getUuid());
                                             $related = new \App\Entity\User\Nationality();
+                                        } else {
+                                            $output->writeln('Update ' . $n->getUuid());
                                         }
                                         $related->setCountry($n->getCountry());
                                         $related->setNricNumber($n->getNricNumber());
@@ -160,7 +167,10 @@ class SyncUserCommand extends ContainerAwareCommand
                                 if (!empty($pe)) {
                                     $related = $desEm->getRepository(\App\Entity\User\Person::class)->findOneBy(['uuid' => $pe->getUuid()]);
                                     if (empty($related)) {
+                                        $output->writeln('Insert ' . $pe->getUuid());
                                         $related = new \App\Entity\User\Person();
+                                    } else {
+                                        $output->writeln('Update ' . $pe->getUuid());
                                     }
                                     $related->setBirthDate($pe->getBirthDate());
                                     $related->setGivenName($pe->getGivenName());
@@ -176,13 +186,13 @@ class SyncUserCommand extends ContainerAwareCommand
                                     $related->addNationality($desData);
                                     $us = $desEm->getRepository(\App\Entity\User\User::class)->findOneBy(['uuid' => $pe->getUserUuid()]);
                                     if (!empty($us)) {
+                                        $output->writeln('Update ' . $pe->getUserUuid());
                                         $related->setUser($us);
                                     }
                                     $desEm->persist($related);
                                     $desData->setPerson($related);
                                 }
                             } elseif ($c['src']['entity'] === \App\Entity\Organisation\Organisation::class) {
-
                                 $desData->setUuid($source->getUuid());
                                 $desData->setCode($source->getCode());
                                 $members = $source->getIndividualMembers();
@@ -190,14 +200,16 @@ class SyncUserCommand extends ContainerAwareCommand
                                     foreach ($members as $member) {
                                         $related = $desEm->getRepository(\App\Entity\User\OrganisationUser::class)->findOneBy(['uuid' => $member->getUuid()]);
                                         if (empty($related)) {
+                                            $output->writeln('Insert ' . $member->getUuid());
                                             $related = new \App\Entity\User\OrganisationUser();
+                                        } else {
+                                            $output->writeln('Update ' . $member->getUuid());
                                         }
                                         $related->setUuid($member->getUuid());
                                         $related->setAccessToken($member->getAccessToken());
                                         $roles = $source->getRoles();
                                         $r = [];
                                         if (!empty($roles)) {
-
                                             foreach ($roles as $role) {
                                                 $r[] = $role->getName();
                                             }
@@ -209,6 +221,7 @@ class SyncUserCommand extends ContainerAwareCommand
                                             if (!empty($person)) {
                                                 $us = $desEm->getRepository(\App\Entity\User\User::class)->findOneBy(['uuid' => $person->getUserUuid()]);
                                                 if (!empty($us)) {
+                                                    $output->writeln('Update ' . $person->getUserUuid());
                                                     $related->setUser($us);
                                                 }
                                             }
@@ -220,8 +233,8 @@ class SyncUserCommand extends ContainerAwareCommand
                                 }
                             }
                             $desEm->persist($desData);
-                            $desEm->flush();
                         }
+                        $desEm->flush();
                     }
                 }
                 $defaultEm->flush();
@@ -229,6 +242,17 @@ class SyncUserCommand extends ContainerAwareCommand
                 $io->note('Module:' . $module . ' Status:' . $log->getStatus() . ' Updated: ' . gmdate("H:i:s", (time() - $log->getUpdatedAt()->getTimestamp())) . ' ago.');
             } else {
                 $io->warning('Undefined last sync log module: ' . $module);
+                if ($this->getHelper('question')->ask($input, $output, new ConfirmationQuestion('create new one ?', false)) === true) {
+                    $lastTs = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 month')));
+                    $last = new SyncLog();
+                    $last->setModule($module);
+                    $last->setStatus(SyncLog::STATUS_RUNNING);
+                    $last->setCreatedOn($lastTs);
+                    $last->setUpdatedAt($lastTs);
+                    $defaultEm->persist($last);
+                    $defaultEm->flush();
+                    $output->writeln('done');
+                }
             }
         } else {
             $io->success('Already up to date');
