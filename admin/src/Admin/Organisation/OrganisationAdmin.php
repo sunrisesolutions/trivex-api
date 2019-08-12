@@ -20,10 +20,9 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\CoreBundle\Form\Type\CollectionType;
-use Sonata\CoreBundle\Form\Type\DatePickerType;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\Form\Type\DatePickerType;
 use Sonata\FormatterBundle\Form\Type\FormatterType;
 use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -123,7 +122,11 @@ class OrganisationAdmin extends BaseAdmin
 
         $formMapper
             ->with('General')
-            ->add('foundedOn')
+            ->add('foundedOn', DatePickerType::class, [
+                'format' => 'dd-MM-yyyy',
+                'placeholder' => 'dd-mm-yyyy',
+                'datepicker_use_button' => false,
+            ])
             ->add('type')
             ->add('address')
             ->add('name')
