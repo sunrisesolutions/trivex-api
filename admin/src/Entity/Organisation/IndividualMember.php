@@ -123,7 +123,6 @@ class IndividualMember
         return $this->admin;
     }
 
-
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
@@ -474,6 +473,7 @@ class IndividualMember
     {
         $this->emailSubject = $emailSubject;
     }
+
 
     /**
      * @return Collection|Role[]

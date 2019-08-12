@@ -31,6 +31,12 @@ class Person
     }
 
     /**
+     * @var string|null
+     * @ORM\Column(type="string", length=191, nullable=true)
+     */
+    private $password;
+
+    /**
      * @ORM\Column(type="string", length=191)
      */
     private $uuid;
@@ -306,4 +312,20 @@ class Person
         return $this;
     }
 
+
+    /**
+     * @return string|null
+     */
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string|null $password
+     */
+    public function setPassword(?string $password): void
+    {
+        $this->password = $password;
+    }
 }

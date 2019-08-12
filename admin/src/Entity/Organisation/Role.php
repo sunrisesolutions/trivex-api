@@ -42,7 +42,7 @@ class Role
 
     public function getNameTrans()
     {
-        if($this->name === 'ROLE_ORG_ADMIN'){
+        if ($this->name === 'ROLE_ORG_ADMIN') {
             return 'ADMIN';
         }
         if ($this->name === 'ROLE_MSG_ADMIN') {
@@ -54,6 +54,7 @@ class Role
         if ($this->name === 'ROLE_MSG_USER') {
             return 'MESSAGE USER';
         }
+        return $this->name;
     }
 
     /**

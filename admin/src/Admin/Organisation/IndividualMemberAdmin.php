@@ -137,6 +137,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
             ->add('person.email', null, ['label' => 'form.label_email'])
+            ->add('person.password', null, ['label' => 'form.label_password'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('person.gender', ChoiceType::class, [
                 'label' => 'form.label_gender',
@@ -201,7 +202,6 @@ class IndividualMemberAdmin extends BaseAdmin
                 $foPerson->addIndividualMember($object);
             }
         }
-
     }
 
     /**
