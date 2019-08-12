@@ -28,7 +28,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class MessageAdmin extends BaseAdmin
+class FreeOnMessageAdmin extends BaseAdmin
 {
 
     const CHILDREN = [];
@@ -76,8 +76,8 @@ class MessageAdmin extends BaseAdmin
         $expr = $query->getQueryBuilder()->expr();
         $query->andWhere(
             $expr->andX(
-                $expr->notLike('o.status', $expr->literal(Message::STATUS_DRAFT)),
-                $expr->notLike('o.status', $expr->literal(Message::STATUS_PENDING_APPROVAL))
+                $expr->notLike('o.timezone', $expr->literal(Message::STATUS_DRAFT)),
+                $expr->notLike('o.timezone', $expr->literal(Message::STATUS_PENDING_APPROVAL))
             )
         );
 
@@ -106,8 +106,9 @@ class MessageAdmin extends BaseAdmin
     {
         $listMapper
             ->add('subject', null, ['label' => 'form.label_subject'])
-            ->add('body', null, ['label' => 'form.label_body'])
-            ->add('status', null, ['label' => 'form.label_status']);
+            ->add('text', null, ['label' => 'form.label_text'])
+            ->add('timezone', null, ['label' => 'form.label_timezone'])
+        ;
 
 
 
@@ -124,7 +125,7 @@ class MessageAdmin extends BaseAdmin
             ->with('General')
 //                ->add('username')
             ->add('subject', null, ['label' => 'form.label_subject'])
-            ->add('body', CKEditorType::class, ['label' => 'form.label_body'])
+            ->add('text', CKEditorType::class, ['label' => 'form.label_text'])
 //                ->add('admin')
         ;
         $formMapper->end();
@@ -192,7 +193,7 @@ class MessageAdmin extends BaseAdmin
         $filterMapper
             ->add('sender.person.name')
             ->add('subject')
-            ->add('body')
+            ->add('text')
         ;
         //			->add('groups')
 //		;

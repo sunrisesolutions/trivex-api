@@ -40,6 +40,7 @@ sonata_admin:
                     - App\Admin\Person\PersonAdmin
                     - App\Admin\Organisation\OrganisationAdmin
                     - App\Admin\Messaging\PendingApprovalMessageAdmin
+                    - App\Admin\Messaging\FreeOnMessageAdmin
                     - App\Admin\Messaging\MessageAdmin
                     - App\Admin\Organisation\IndividualMemberAdmin
 

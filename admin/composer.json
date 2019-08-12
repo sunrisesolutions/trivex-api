@@ -7,6 +7,7 @@
         "ext-iconv": "*",
         "api-platform/api-pack": "^1.2",
         "aws/aws-sdk-php": "^3.108",
+        "friendsofsymfony/ckeditor-bundle": "1.2",
         "gesdinet/jwt-refresh-token-bundle": "^0.7.1",
         "lexik/jwt-authentication-bundle": "^2.6",
         "sensio/framework-extra-bundle": "^5.1",
@@ -59,6 +60,7 @@
         }
     },
     "replace": {
+        "egeloen/ckeditor-bundle": "*",
         "paragonie/random_compat": "2.*",
         "symfony/polyfill-ctype": "*",
         "symfony/polyfill-iconv": "*",

@@ -49,7 +49,7 @@ class PendingApprovalMessageAdmin extends BaseAdmin
         // reverse order (default = 'ASC')
         '_sort_order' => 'DESC',
         // name of the ordered field (default = the model's id field, if any)
-        '_sort_by' => 'updatedAt',
+        '_sort_by' => 'createdAt',
     );
 
     public function getCurrentChapter()

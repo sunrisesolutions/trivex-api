@@ -22,7 +22,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
-
  * @ORM\Entity(repositoryClass="App\Repository\FreeOnMessageRepository")
  * @ORM\Table(name="messaging__free_on")
  * @ORM\HasLifecycleCallbacks()
@@ -63,6 +62,11 @@ class FreeOnMessage
      * @Groups({"read","write"})
      */
     private $text;
+
+    public function getSubject()
+    {
+        return $this->fromHour.' - '.$this->toHour;
+    }
 
     /**
      * @ORM\Column(type="integer", nullable=true)

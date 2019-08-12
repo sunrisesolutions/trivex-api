@@ -66,7 +66,6 @@ class Message
         return $this->status;
     }
 
-
     public function getRecipientsByPage(): ?Collection
     {
         if (empty($this->conversation)) {

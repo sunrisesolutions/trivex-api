@@ -67,7 +67,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
                 $role = new Role();
                 $role->initiateUuid();
                 $role->setName('ROLE_ORG_ADMIN');
-                $role->setIndividualMember($member);
+                $role->addIndividualMember($member);
                 $role->setOrganisation($member->getOrganisation());
                 $manager->persist($role);
             }
@@ -82,14 +82,39 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         }
     }
 
-    private function addMessageRole(IndividualMember $member, ObjectManager $manager) {
-        $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_MESSAGE'));
+    private function makeMessageAdmin(IndividualMember $member, ObjectManager $manager)
+    {
+        $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_MSG_ADMIN'));
+        if ($member->admin === true) {
+            $role = $member->getRoles()->matching($c)->first();
+            if (empty($role)) {
+                $role = new Role();
+                $role->initiateUuid();
+                $role->setName('ROLE_MSG_ADMIN');
+                $role->addIndividualMember($member);
+                $role->setOrganisation($member->getOrganisation());
+                $manager->persist($role);
+            }
+            $member->addRole($role);
+        } else {
+            $roles = $member->getRoles()->matching($c);
+            if ($roles->count() > 0) {
+                foreach ($roles as $role) {
+                    $member->removeRole($role);
+                }
+            }
+        }
+    }
+
+    private function makeMessageUser(IndividualMember $member, ObjectManager $manager)
+    {
+        $c = Criteria::create()->andWhere(Criteria::expr()->eq('name', 'ROLE_MSG_USER'));
         if ($member->messageDeliverable === true) {
             $role = $member->getRoles()->matching($c)->first();
             if (empty($role)) {
                 $role = new Role();
                 $role->initiateUuid();
-                $role->setName('ROLE_MESSAGE');
+                $role->setName('ROLE_MSG_USER');
                 $role->setIndividualMember($member);
                 $role->setOrganisation($member->getOrganisation());
                 $manager->persist($role);
@@ -185,7 +210,7 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         $org->addIndividualMember($member);
         $member->setOrganisation($org);
         $this->makeAdmin($member, $this->manager);
-        $this->addMessageRole($member, $this->manager);
+        $this->makeMessageUser($member, $this->manager);
 
         //publishMessage
         if ($method === Request::METHOD_PUT) {
