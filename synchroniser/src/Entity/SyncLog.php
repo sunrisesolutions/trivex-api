@@ -30,7 +30,9 @@ class SyncLog
      * @ORM\PreUpdate()
      */
     public function updateTs() {
-        $this->updatedAt = new \DateTime();
+        if ($this->updatedAt === null ) {
+            $this->updatedAt = new \DateTime();
+        }
     }
 
     /**

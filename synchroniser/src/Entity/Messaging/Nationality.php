@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Messaging;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Util\AppUtil;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\NationalityRepository")
- * @ORM\Table(name="organisation__nationality")
+ * @ORM\Entity(repositoryClass="App\Repository\Messaging\NationalityRepository")
+ * @ORM\Table(name="messaging__nationality")
  */
 class Nationality
 {
@@ -36,25 +35,10 @@ class Nationality
     private $passportNumber;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Person", inversedBy="nationalities")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Person", inversedBy="nationalities")
      * @ORM\JoinColumn(name="id_person", referencedColumnName="id", onDelete="CASCADE")
      */
     private $person;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $uuid;
-
-    /**
-     * @ORM\PrePersist
-     */
-    public function initiateUuid()
-    {
-        if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid();
-        }
-    }
 
     public function getId(): ?int
     {
@@ -105,18 +89,6 @@ class Nationality
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
-
-        return $this;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
 
         return $this;
     }
