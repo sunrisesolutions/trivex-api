@@ -159,6 +159,7 @@ class IndividualMemberAdmin extends BaseAdmin
                 'multiple' => true,
                 'property' => 'nameTrans',
                 'btn_add' => false,
+                'query' => $this->getFilterByOrganisationQueryForModel(Role::class)
             ])
 
 //            ->add('person')
