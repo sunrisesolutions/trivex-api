@@ -209,8 +209,10 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         $member->setPerson($person);
         $org->addIndividualMember($member);
         $member->setOrganisation($org);
-        $this->makeAdmin($member, $this->manager);
-        $this->makeMessageUser($member, $this->manager);
+//        $this->makeAdmin($member, $this->manager);
+//        $this->makeMessageUser($member, $this->manager);
+
+
 
         //publishMessage
         if ($method === Request::METHOD_PUT) {

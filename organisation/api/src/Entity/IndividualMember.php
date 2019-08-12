@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
 
@@ -499,5 +500,10 @@ class IndividualMember
         }
 
         return $this;
+    }
+
+    public function hasRole(string $roleName): bool {
+        $c = Criteria::create()->where(Criteria::expr()->eq('name', $roleName));
+        return $this->roles->matching($c)->count() > 0;
     }
 }

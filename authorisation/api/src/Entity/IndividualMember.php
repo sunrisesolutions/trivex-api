@@ -49,9 +49,14 @@ class IndividualMember
      */
     private $person;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ACRole", mappedBy="individualMembers")
+     */
+    private $aCRoles;
+
     public function __construct()
     {
-
+        $this->aCRoles = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -91,6 +96,34 @@ class IndividualMember
     public function setPerson(?Person $person): self
     {
         $this->person = $person;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ACRole[]
+     */
+    public function getACRoles(): Collection
+    {
+        return $this->aCRoles;
+    }
+
+    public function addACRole(ACRole $aCRole): self
+    {
+        if (!$this->aCRoles->contains($aCRole)) {
+            $this->aCRoles[] = $aCRole;
+            $aCRole->addIndividualMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeACRole(ACRole $aCRole): self
+    {
+        if ($this->aCRoles->contains($aCRole)) {
+            $this->aCRoles->removeElement($aCRole);
+            $aCRole->removeIndividualMember($this);
+        }
 
         return $this;
     }
