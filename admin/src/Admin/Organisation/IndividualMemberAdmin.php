@@ -159,7 +159,7 @@ class IndividualMemberAdmin extends BaseAdmin
         ;
         $formMapper->end();
         $formMapper
-            ->with('General');
+            ->with('Account');
 
         $formMapper
             ->add('person.email', null, ['label' => 'form.label_email'])
