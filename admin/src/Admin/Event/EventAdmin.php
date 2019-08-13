@@ -120,8 +120,6 @@ class EventAdmin extends BaseAdmin
             ->add('startedAt', null, ['label' => 'form.label_started_at'])
             ->add('endedAt', null, ['label' => 'form.label_ended_at']);
 
-
-
         $listMapper->add('createdAt', null, ['label' => 'form.label_created_at']);
     }
 
