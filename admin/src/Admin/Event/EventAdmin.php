@@ -131,12 +131,12 @@ class EventAdmin extends BaseAdmin
             ->add('startedAt', DateTimePickerType::class, ['label' => 'form.label_started_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
-                'format' => 'd M Y, H:m:s'
+                'format' => 'd M Y, H:mm:sm'
                 ])
             ->add('endedAt', DateTimePickerType::class, ['label' => 'form.label_ended_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
-                'format' => 'd M Y, H:m:s'
+                'format' => 'd M Y, H:mm:sm'
                 ])
             ->add('timezone', ChoiceType::class, array(
                 'required' => false,
