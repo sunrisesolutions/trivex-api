@@ -13,6 +13,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
 
@@ -100,7 +101,7 @@ class IndividualMember
     {
         $c = Criteria::create();
         $expr = Criteria::expr();
-        $c->andWhere($expr->eq('name', 'ROLE_MESSAGE'));
+        $c->andWhere($expr->eq('name', 'ROLE_MSG_USER'));
         $this->messageDeliverable = $this->roles->matching($c)->count() > 0;
         return $this->messageDeliverable;
     }
@@ -123,6 +124,23 @@ class IndividualMember
         return $this->admin;
     }
 
+    /**
+     * @return bool
+     * @Groups("read_member")
+     */
+    public function isMessageAdmin(): bool
+    {
+        return !empty($this->getMessageAdmin());
+    }
+
+    public function getMessageAdmin(): ?bool
+    {
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+        $c->andWhere($expr->eq('name', 'ROLE_MSG_ADMIN'));
+        $this->messageAdmin = $this->roles->matching($c)->count() > 0;
+        return $this->messageAdmin;
+    }
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
@@ -244,6 +262,12 @@ class IndividualMember
      * @Groups("write")
      */
     public $messageDeliverable = false;
+
+    /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    public $messageAdmin = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Organisation\Role", inversedBy="individualMembers")
@@ -499,5 +523,10 @@ class IndividualMember
         }
 
         return $this;
+    }
+
+    public function hasRole(string $roleName): bool {
+        $c = Criteria::create()->where(Criteria::expr()->eq('name', $roleName));
+        return $this->roles->matching($c)->count() > 0;
     }
 }

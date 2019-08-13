@@ -12,22 +12,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 
-class SyncOrganisationCommand extends ContainerAwareCommand
+class SyncEventCommand extends ContainerAwareCommand
 {
-    protected static $defaultName = 'app:sync:organisation';
+    protected static $defaultName = 'app:sync:event';
 
     protected function configure()
     {
-        $this
-            ->setDescription('Add a short description for your command')
-        ;
+        $this->setDescription('Add a short description for your command');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output);
 
-        $module = 'organisation';
+        $module = 'event';
         $clone = [
             [
                 'src' => [
@@ -35,20 +33,20 @@ class SyncOrganisationCommand extends ContainerAwareCommand
                     'entity' => \App\Entity\Person\Person::class,
                 ],
                 'des' => [
-                    'connection' => 'organisation',
-                    'entity' => \App\Entity\Organisation\Person::class,
+                    'connection' => 'event',
+                    'entity' => \App\Entity\Event\Person::class,
                 ]
             ],
-//            [
-//                'src' => [
-//                    'connection' => 'authorisation',
-//                    'entity' => \App\Entity\Authorisation\ACRole::class,
-//                ],
-//                'des' => [
-//                    'connection' => 'organisation',
-//                    'entity' => \App\Entity\Organisation\Role::class,
-//                ]
-//            ],
+            [
+                'src' => [
+                    'connection' => 'organisation',
+                    'entity' => \App\Entity\Organisation\Organisation::class,
+                ],
+                'des' => [
+                    'connection' => 'event',
+                    'entity' => \App\Entity\Event\Organisation::class,
+                ]
+            ],
         ];
 
         $doctrine = $this->getContainer()->get('doctrine');
@@ -92,48 +90,39 @@ class SyncOrganisationCommand extends ContainerAwareCommand
 
                             if ($c['src']['entity'] === \App\Entity\Person\Person::class) {
                                 $desData->setUuid($source->getUuid());
-                                $desData->setJobTitle($source->getJobTitle());
                                 $desData->setEmail($source->getEmail());
                                 $desData->setBirthDate($source->getBirthDate());
                                 $desData->setPhoneNumber($source->getPhoneNumber());
-                                $desData->setGivenName($source->getGivenName());
-                                $desData->setFamilyName($source->getFamilyName());
-                                $desData->setMiddleName($source->getMiddleName());
-                                $desData->setGender($source->getGender());
-                                $na = $source->getNationalities();
-                                if (!empty($na)) {
-                                    foreach ($na as $n) {
-                                        $related = $desEm->getRepository(\App\Entity\Organisation\Nationality::class)->findOneBy(['uuid' => $n->getUuid()]);
-                                        if (empty($related)) {
-                                            $output->writeln('Insert ' . $n->getUuid());
-                                            $related = new \App\Entity\Organisation\Nationality();
+                            } elseif ($c['src']['entity'] === \App\Entity\Organisation\Organisation::class) {
+                                $desData->setUuid($source->getUuid());
+                                $desData->setCode($source->getCode());
+                                $ims = $source->getIndividualMembers();
+                                if (!empty($ims)) {
+                                    foreach ($ims as $im) {
+                                        $relatedIm = $desEm->getRepository(\App\Entity\Event\IndividualMember::class)->findOneBy(['uuid' => $im->getUuid()]);
+                                        if (empty($relatedIm)) {
+                                            $output->writeln('Insert ' . $im->getUuid());
+                                            $relatedIm = new \App\Entity\Event\IndividualMember();
                                         } else {
-                                            $output->writeln('Update ' . $n->getUuid());
+                                            $output->writeln('Update ' . $im->getUuid());
                                         }
-                                        $related->setUuid($n->getUuid());
-                                        $related->setCountry($n->getCountry());
-                                        $related->setNricNumber($n->getNricNumber());
-                                        $related->setPassportNumber($n->getPassportNumber());
-                                        $related->setPerson($desData);
-                                        $desEm->persist($related);
-                                        $desData->addNationality($related);
+                                        $relatedIm->setUuid($im->getUuid());
+                                        $relatedIm->setOrganisation($desData);
+                                        $person = $im->getPerson();
+                                        if (!empty($person)) {
+                                            $relatedPe = $desEm->getRepository(\App\Entity\Event\Person::class)->findOneBy(['uuid' => $person->getUuid()]);
+                                            if (!empty($relatedPe)) {
+                                                $output->writeln('Update ' . $person->getUuid());
+                                                $relatedIm->setPerson($relatedPe);
+                                                $relatedPe->addIndividualMember($relatedIm);
+                                                $desEm->persist($relatedPe);
+                                            }
+                                        }
+                                        $desEm->persist($relatedIm);
+                                        $desData->addIndividualMember($relatedIm);
                                     }
                                 }
                             }
-//                            elseif ($c['src']['entity'] === \App\Entity\Authorisation\ACRole::class) {
-//                                $desData->setUuid($source->getUuid());
-//                                $desData->setName($source->getName());
-//                                $org = $source->getOrganisation();
-//                                if (!empty($org)) {
-//                                    $related = $desEm->getRepository(\App\Entity\Organisation\Organisation::class)->findOneBy(['uuid' => $org->getUuid()]);
-//                                    if (!empty($related)) {
-//                                        $output->writeln('Update ' . $org->getUuid());
-//                                        $related->addRole($desData);
-//                                        $desEm->persist($related);
-//                                        $desData->setOrganisation($related);
-//                                    }
-//                                }
-//                            }
                             $desEm->persist($desData);
                         }
                         $desEm->flush();

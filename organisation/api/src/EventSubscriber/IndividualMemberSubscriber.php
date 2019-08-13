@@ -210,7 +210,12 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
         $org->addIndividualMember($member);
         $member->setOrganisation($org);
         $this->makeAdmin($member, $this->manager);
+        $this->makeMessageAdmin($member, $this->manager);
         $this->makeMessageUser($member, $this->manager);
+
+//        if ($member->admin != $member->hasRole('ROLE_ORG_ADMIN')) $this->memberRole($member, 'ROLE_ORG_ADMIN');
+//        if ($member->messageAdmin != $member->hasRole('ROLE_MSG_ADMIN')) $this->memberRole($member, 'ROLE_MSG_ADMIN');
+//        if ($member->messageDeliverable != $member->hasRole('ROLE_MSG_USER')) $this->memberRole($member, 'ROLE_MSG_USER');
 
         //publishMessage
         if ($method === Request::METHOD_PUT) {
@@ -231,6 +236,22 @@ class IndividualMemberSubscriber implements EventSubscriberInterface
             foreach($member->getRoles() as $role) $names[] = $role->getName();
             $ar['data']['individualMember']['roleString'] = json_encode($names);
             $this->awsSnsUtil->publishMessage(json_encode($ar), $method);
+        }
+    }
+
+    private function memberRole(IndividualMember $member, string $roleName) {
+        if ($member->hasRole($roleName)) {
+            $c = Criteria::create()->where(Criteria::expr()->eq('name', $roleName));
+            $role = $member->getRoles()->matching($c)->first();
+            $member->removeRole($role);
+        } else {
+            $role = new Role();
+            $role->initiateUuid();
+            $role->setName($roleName);
+            $role->addIndividualMember($member);
+            $role->setOrganisation($member->getOrganisation());
+            $this->manager->persist($role);
+            $member->addRole($role);
         }
     }
 }

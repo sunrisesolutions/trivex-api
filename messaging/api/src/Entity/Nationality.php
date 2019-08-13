@@ -40,6 +40,33 @@ class Nationality
      */
     private $person;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $uuid;
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid();
+        }
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function setUuid(string $uuid): self
+    {
+        $this->uuid = $uuid;
+
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
