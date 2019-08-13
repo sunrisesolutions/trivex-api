@@ -35,8 +35,6 @@ class FreeOnMessageAdmin extends BaseAdmin
 
     const CHILDREN = [];
 
-    const ORGANISATION_CLASS = Organisation::class;
-
     protected $baseRouteName = 'free_on_message';
 
     protected $baseRoutePattern = 'messaging-message/free-on';
@@ -55,6 +53,11 @@ class FreeOnMessageAdmin extends BaseAdmin
     public function getCurrentChapter()
     {
         return null;
+    }
+
+    protected function getOrganisationClass()
+    {
+        return Organisation::class;
     }
 
     public function getNewInstance()

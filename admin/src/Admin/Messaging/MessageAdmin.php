@@ -34,8 +34,6 @@ class MessageAdmin extends BaseAdmin
 
     const CHILDREN = [];
 
-    const ORGANISATION_CLASS = Organisation::class;
-
     protected $action;
 
     protected $datagridValues = array(
@@ -50,6 +48,11 @@ class MessageAdmin extends BaseAdmin
     public function getCurrentChapter()
     {
         return null;
+    }
+
+    protected function getOrganisationClass()
+    {
+        return Organisation::class;
     }
 
     public function getNewInstance()

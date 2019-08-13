@@ -37,8 +37,6 @@ class EventAdmin extends BaseAdmin
 
     const CHILDREN = [];
 
-    const ORGANISATION_CLASS = Organisation::class;
-
     protected $action;
 
     protected $datagridValues = array(
@@ -49,6 +47,12 @@ class EventAdmin extends BaseAdmin
         // name of the ordered field (default = the model's id field, if any)
         '_sort_by' => 'createdAt',
     );
+
+    protected function getOrganisationClass()
+    {
+        return Organisation::class;
+    }
+
 
     public function getCurrentChapter()
     {

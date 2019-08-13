@@ -45,6 +45,10 @@ trait BaseAdminTrait
         return $this->getConfigurationPool()->getContainer();
     }
 
+    protected function getOrganisationClass(){
+        return Organisation::class;
+    }
+
     protected function getTemplateType($name)
     {
         $_name = strtoupper($name);
@@ -227,7 +231,7 @@ trait BaseAdminTrait
 
         /** @var OrganisationService $orgService */
         $orgService = $this->organisationService;
-        return $orgService->getCurrentOrganisation($context, $required, self::ORGANISATION_CLASS);
+        return $orgService->getCurrentOrganisation($context, $required, $this->getOrganisationClass());
     }
 
 
