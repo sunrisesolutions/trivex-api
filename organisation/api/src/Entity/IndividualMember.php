@@ -101,7 +101,7 @@ class IndividualMember
     {
         $c = Criteria::create();
         $expr = Criteria::expr();
-        $c->andWhere($expr->eq('name', 'ROLE_MESSAGE'));
+        $c->andWhere($expr->eq('name', 'ROLE_MSG_USER'));
         $this->messageDeliverable = $this->roles->matching($c)->count() > 0;
         return $this->messageDeliverable;
     }
@@ -124,6 +124,23 @@ class IndividualMember
         return $this->admin;
     }
 
+    /**
+     * @return bool
+     * @Groups("read_member")
+     */
+    public function isMessageAdmin(): bool
+    {
+        return !empty($this->getMessageAdmin());
+    }
+
+    public function getMessageAdmin(): ?bool
+    {
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+        $c->andWhere($expr->eq('name', 'ROLE_MSG_ADMIN'));
+        $this->messageAdmin = $this->roles->matching($c)->count() > 0;
+        return $this->messageAdmin;
+    }
 
     /**
      * @ORM\PrePersist
@@ -246,6 +263,12 @@ class IndividualMember
      * @Groups("write")
      */
     public $messageDeliverable = false;
+
+    /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    public $messageAdmin = false;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Role", inversedBy="individualMembers")

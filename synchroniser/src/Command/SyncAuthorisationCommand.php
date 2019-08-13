@@ -18,9 +18,7 @@ class SyncAuthorisationCommand extends ContainerAwareCommand
 
     protected function configure()
     {
-        $this
-            ->setDescription('Add a short description for your command')
-        ;
+        $this->setDescription('Add a short description for your command');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -101,33 +99,25 @@ class SyncAuthorisationCommand extends ContainerAwareCommand
                                 $ims = $source->getIndividualMembers();
                                 if (!empty($ims)) {
                                     foreach ($ims as $im) {
-                                        $related = $desEm->getRepository(\App\Entity\Authorisation\IndividualMember::class)->findOneBy(['uuid' => $im->getUuid()]);
-                                        if (empty($related)) {
-                                            $output->writeln('Insert ' . $im->getUuid());
-                                            $related = new \App\Entity\Authorisation\IndividualMember();
-                                        } else {
-                                            $output->writeln('Update ' . $im->getUuid());
+                                        $relatedIm = $desEm->getRepository(\App\Entity\Authorisation\IndividualMember::class)->findOneBy(['uuid' => $im->getUuid()]);
+                                        if (empty($relatedIm)) {
+                                            $relatedIm = new \App\Entity\Authorisation\IndividualMember();
                                         }
-                                        $related->setUuid($im->getUuid());
-                                        $person = $related->getPerson();
+                                        $relatedIm->setUuid($im->getUuid());
+                                        $relatedIm->setOrganisation($desData);
+                                        $person = $im->getPerson();
                                         if (!empty($person)) {
-                                            $related2 = $desEm->getRepository(\App\Entity\Authorisation\Person::class)->findOneBy(['uuid' => $person->getUuid()]);
-                                            if (empty($related2)) {
-                                                $related2 = \App\Entity\Authorisation\Person();
+                                            $relatedPe = $desEm->getRepository(\App\Entity\Authorisation\Person::class)->findOneBy(['uuid' => $person->getUuid()]);
+                                            if (!empty($relatedPe)) {
+                                                $relatedIm->setPerson($relatedPe);
                                             }
-                                            $related2->setUuid($person->getUuid());
-                                            $related2->setEmail($person->getEmail());
-                                            $related2->setBirthDate($person->getBirthDate());
-                                            $related2->setPhoneNumber($person->getPhoneNumber());
-                                            $related2->addIndividualMember($related);
-                                            $desEm->persist($related2);
-                                            $related->setPerson($related2);
                                         }
-                                        $related->setOrganisation($desData);
-                                        $desEm->persist($related);
-                                        $desData->addIndividualMember($related);
+                                        $desEm->persist($relatedIm);
+                                        $desData->addIndividualMember($relatedIm);
+//                                        addACRole
                                     }
                                 }
+                                //addRole
                             }
                             $desEm->persist($desData);
                         }

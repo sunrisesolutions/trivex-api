@@ -71,6 +71,11 @@ class ACRole
      */
     private $updatedAt;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Authorisation\IndividualMember", inversedBy="aCRoles")
+     */
+    private $individualMembers;
+
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
@@ -86,6 +91,7 @@ class ACRole
     public function __construct()
     {
         $this->entries = new ArrayCollection();
+        $this->individualMembers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -156,6 +162,32 @@ class ACRole
     public function setOrganisation(?Organisation $organisation): self
     {
         $this->organisation = $organisation;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|IndividualMember[]
+     */
+    public function getIndividualMembers(): Collection
+    {
+        return $this->individualMembers;
+    }
+
+    public function addIndividualMember(IndividualMember $individualMember): self
+    {
+        if (!$this->individualMembers->contains($individualMember)) {
+            $this->individualMembers[] = $individualMember;
+        }
+
+        return $this;
+    }
+
+    public function removeIndividualMember(IndividualMember $individualMember): self
+    {
+        if ($this->individualMembers->contains($individualMember)) {
+            $this->individualMembers->removeElement($individualMember);
+        }
 
         return $this;
     }

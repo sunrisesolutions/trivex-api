@@ -87,11 +87,6 @@ class FreeOnMessage
      */
     private $text;
 
-    public function getSubject()
-    {
-        return $this->fromHour.' - '.$this->toHour;
-    }
-
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
