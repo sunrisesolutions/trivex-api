@@ -101,7 +101,7 @@ class EventAdmin extends BaseAdmin
         $collection->remove('edit');
         $collection->remove('delete');
 
-        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
+        $collection->add('publish', $this->getRouterIdParameter().'/publish');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -119,15 +119,21 @@ class EventAdmin extends BaseAdmin
             ->add('title', null, ['label' => 'form.label_title'])
             ->add('startedAt', null, ['label' => 'form.label_started_at'])
             ->add('endedAt', null, ['label' => 'form.label_ended_at']);
-
+        $listMapper->add('_action', 'actions', [
+                'actions' => [
+                    'event_page' => ['template' => 'Admin/Event/Event/Action/list__action__event_page.html.twig'],
+                    'edit' => [],
+                    'delete' => [],
+                ],
+            ]
+        );
         $listMapper->add('createdAt', null, ['label' => 'form.label_created_at']);
     }
 
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('General', ['class' => 'col-md-7'])->end()
-//            ->with('Description', ['class' => 'col-md-7'])->end()
+            ->with('General', ['class' => 'col-md-7'])->end()//            ->with('Description', ['class' => 'col-md-7'])->end()
         ;
 
         $formMapper
@@ -139,12 +145,12 @@ class EventAdmin extends BaseAdmin
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
                 'format' => 'd M Y, H:mm:ss'
-                ])
+            ])
             ->add('endedAt', DateTimePickerType::class, ['label' => 'form.label_ended_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
                 'format' => 'd M Y, H:mm:ss'
-                ])
+            ])
             ->add('timezone', ChoiceType::class, array(
                 'required' => false,
                 'choices' => ['Singapore' => 'Asia/Singapore',
@@ -152,8 +158,7 @@ class EventAdmin extends BaseAdmin
                     'Vietnam' => 'Asia/Saigon'
                 ],
                 'translation_domain' => $this->translationDomain
-            ))
-//                ->add('admin')
+            ))//                ->add('admin')
         ;
 //      ['label' => 'list.label_date_time',
 //                'locale' => 'en_SG',
@@ -223,8 +228,7 @@ class EventAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
         $filterMapper
-            ->add('name')
-        ;
+            ->add('name');
         //			->add('groups')
 //		;
     }
