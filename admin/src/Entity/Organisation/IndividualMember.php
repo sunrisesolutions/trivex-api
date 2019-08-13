@@ -141,7 +141,6 @@ class IndividualMember
         $this->messageAdmin = $this->roles->matching($c)->count() > 0;
         return $this->messageAdmin;
     }
-
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
@@ -498,6 +497,7 @@ class IndividualMember
     {
         $this->emailSubject = $emailSubject;
     }
+
 
     /**
      * @return Collection|Role[]

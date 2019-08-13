@@ -7,6 +7,7 @@ use App\Entity\Organisation\IndividualMember;
 use App\Entity\Organisation\Organisation;
 use App\Entity\Organisation\Person;
 use App\Entity\Organisation\Role;
+use App\Entity\User\User;
 use App\Message\Message;
 use App\Util\Organisation\AppUtil;
 use App\Util\Organisation\AwsSnsUtil;
@@ -22,6 +23,7 @@ class IndividualMemberEventSubscriber implements ORMEventSubscriber
 
     private $awsSnsUtil;
     private $manager;
+
     function __construct(AwsSnsUtil $awsSnsUtil, EntityManagerInterface $manager)
     {
         $this->awsSnsUtil = $awsSnsUtil;
@@ -52,7 +54,8 @@ class IndividualMemberEventSubscriber implements ORMEventSubscriber
         $this->updateEntity($object);
     }
 
-    public function preUpdate(LifecycleEventArgs $args) {
+    public function preUpdate(LifecycleEventArgs $args)
+    {
         $object = $args->getObject();
         if (!$object instanceof IndividualMember) return;
         $this->updateEntity($object);
@@ -65,7 +68,8 @@ class IndividualMemberEventSubscriber implements ORMEventSubscriber
         if (!$object instanceof IndividualMember) return;
     }
 
-    public function postUpdate(LifecycleEventArgs $args) {
+    public function postUpdate(LifecycleEventArgs $args)
+    {
         $object = $args->getObject();
         if (!$object instanceof IndividualMember) return;
     }
@@ -87,7 +91,7 @@ class IndividualMemberEventSubscriber implements ORMEventSubscriber
         }
         if (!empty($person = $object->getPerson())) {
 //            if (empty($person->getName())) {
-                $person->combineData();
+            $person->combineData();
 //            }
         }
 

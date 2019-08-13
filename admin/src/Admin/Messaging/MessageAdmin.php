@@ -3,6 +3,7 @@
 namespace App\Admin\Messaging;
 
 use App\Entity\Messaging\Message;
+use App\Entity\Messaging\Organisation;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -47,6 +48,11 @@ class MessageAdmin extends BaseAdmin
     public function getCurrentChapter()
     {
         return null;
+    }
+
+    protected function getOrganisationClass()
+    {
+        return Organisation::class;
     }
 
     public function getNewInstance()
@@ -118,7 +124,8 @@ class MessageAdmin extends BaseAdmin
     {
         $formMapper
             ->with('General', ['class' => 'col-md-7'])->end()
-            ->with('Description', ['class' => 'col-md-7'])->end();
+//            ->with('Description', ['class' => 'col-md-7'])->end()
+        ;
 
         $formMapper
             ->with('General')

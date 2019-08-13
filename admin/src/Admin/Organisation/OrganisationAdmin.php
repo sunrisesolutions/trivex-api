@@ -20,10 +20,9 @@ use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Form\Type\ModelType;
 use Sonata\AdminBundle\Route\RouteCollection;
 use Sonata\AdminBundle\Show\ShowMapper;
-use Sonata\CoreBundle\Form\Type\CollectionType;
-use Sonata\CoreBundle\Form\Type\DatePickerType;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
+use Sonata\Form\Type\DatePickerType;
 use Sonata\FormatterBundle\Form\Type\FormatterType;
 use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -88,8 +87,8 @@ class OrganisationAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
-        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
+//        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
+        $collection->add('editCurrentOrganisation',  'edit-current-organisation');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -108,7 +107,7 @@ class OrganisationAdmin extends BaseAdmin
             ->addIdentifier('address', null, ['label' => 'form.label_address'])
             ->addIdentifier('name', null, ['label' => 'form.label_name'])
             ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
-            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
+//            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
             ->addIdentifier('code', null, ['label' => 'form.label_code'])
             ->addIdentifier('subdomain', null, ['label' => 'form.label_subdomain'])
             ;
@@ -118,17 +117,21 @@ class OrganisationAdmin extends BaseAdmin
     {
         $formMapper
             ->with('General', ['class' => 'col-md-7'])->end()
-            ->with('Description', ['class' => 'col-md-7'])->end();
-
+//            ->with('Description', ['class' => 'col-md-7'])->end()
+        ;
 
         $formMapper
             ->with('General')
-            ->add('foundedOn')
+            ->add('foundedOn', DatePickerType::class, [
+                'format' => 'dd-MM-yyyy',
+                'placeholder' => 'dd-mm-yyyy',
+                'datepicker_use_button' => false,
+            ])
             ->add('type')
             ->add('address')
             ->add('name')
             ->add('registrationNumber')
-            ->add('logoName')
+//            ->add('logoName')
             ->add('code')
             ->add('subdomain')
             ;

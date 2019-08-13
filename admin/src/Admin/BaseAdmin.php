@@ -9,8 +9,6 @@ use Sonata\AdminBundle\Admin\AbstractAdmin;
 
 class BaseAdmin extends AbstractAdmin
 {
-    const ORGANISATION_CLASS = Organisation::class;
-
     const AUTO_CONFIG = true;
     const ENTITY = null;
     const CONTROLLER = null;

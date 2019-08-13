@@ -45,6 +45,10 @@ trait BaseAdminTrait
         return $this->getConfigurationPool()->getContainer();
     }
 
+    protected function getOrganisationClass(){
+        return Organisation::class;
+    }
+
     protected function getTemplateType($name)
     {
         $_name = strtoupper($name);
@@ -216,7 +220,7 @@ trait BaseAdminTrait
     /**
      * @return mixed|null
      */
-    protected
+    public
     function getCurrentOrganisation(
         $required = true
     )
@@ -227,7 +231,7 @@ trait BaseAdminTrait
 
         /** @var OrganisationService $orgService */
         $orgService = $this->organisationService;
-        return $orgService->getCurrentOrganisation($context, $required, self::ORGANISATION_CLASS);
+        return $orgService->getCurrentOrganisation($context, $required, $this->getOrganisationClass());
     }
 
 
@@ -594,10 +598,11 @@ trait BaseAdminTrait
         $object
     )
     {
-        if ($object instanceof OrganizationAwareInterface) {
-            $object->setOrganization($this->getCurrentOrganisation());
-        } elseif ($object instanceof ThingChildInterface) {
-            $object->getThing()->setOrganisation($this->getCurrentOrganisation());
+        $classname = $this->getClass();
+        $reflection = new \ReflectionObject(new $classname);
+        $orgProp = $reflection->getProperty('organisation');
+        if (!empty($orgProp)) {
+            $object->setOrganisation($this->getCurrentOrganisation());
         }
     }
 

@@ -71,11 +71,14 @@ class ACRole
      */
     private $updatedAt;
 
+<<<<<<< HEAD
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Authorisation\IndividualMember", inversedBy="aCRoles")
      */
     private $individualMembers;
 
+=======
+>>>>>>> 5279d940f7e21bed5a68c85276d5cd3dcb416da8
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;

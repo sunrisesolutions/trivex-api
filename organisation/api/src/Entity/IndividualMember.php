@@ -499,6 +499,7 @@ class IndividualMember
         $this->emailSubject = $emailSubject;
     }
 
+
     /**
      * @return Collection|Role[]
      */

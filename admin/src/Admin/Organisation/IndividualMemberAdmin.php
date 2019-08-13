@@ -119,16 +119,15 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('roles', null, [
                 'label' => 'form.label_roles',
-                'associated_property' => 'name'])
+                'associated_property' => 'nameTrans'])
             ->add('createdAt', null, ['label' => 'form.label_created_at']);
     }
 
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('General', ['class' => 'col-md-7'])->end()
-            ->with('Description', ['class' => 'col-md-7'])->end();
-
+            ->with('General', ['class' => 'col-md-6'])->end()
+            ->with('Account', ['class' => 'col-md-6'])->end();
         $this->getFilterByOrganisationQueryForModel(Role::class);
 //        $propertyAccessor = $this->getConfigurationPool()->getContainer()->get('access');
         $formMapper
@@ -136,9 +135,9 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.givenName', null, ['label' => 'form.label_given_name'])
             ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
-            ->add('person.email', null, ['label' => 'form.label_email'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('person.gender', ChoiceType::class, [
+                'required' => false,
                 'label' => 'form.label_gender',
                 'multiple' => false,
                 'placeholder' => 'Select Gender',
@@ -154,16 +153,26 @@ class IndividualMemberAdmin extends BaseAdmin
                 'placeholder' => 'dd-mm-yyyy',
                 'datepicker_use_button' => false,
             ])
-            ->add('roles', ModelType::class, [
-                'multiple' => true,
-                'property' => 'name',
-                'btn_add' => false,
-            ])
-
 //            ->add('person')
 //            ->add('createdAt', DateTimePickerType::class, ['label' => 'form.label_created_at'])
 
         ;
+        $formMapper->end();
+        $formMapper
+            ->with('Account');
+
+        $formMapper
+            ->add('person.email', null, ['label' => 'form.label_email'])
+            ->add('person.password', null, ['label' => 'form.label_password']);
+
+        $formMapper
+            ->add('roles', ModelType::class, [
+                'required' => false,
+                'multiple' => true,
+                'property' => 'nameTrans',
+                'btn_add' => false,
+                'query' => $this->getFilterByOrganisationQueryForModel(Role::class)
+            ]);
 
         $formMapper->end();
     }
@@ -183,6 +192,7 @@ class IndividualMemberAdmin extends BaseAdmin
      */
     public function preValidate($object)
     {
+        parent::preValidate($object);
         $person = $object->getPerson();
         if (empty($person->getId())) {
             $container = $this->getContainer();
@@ -195,12 +205,11 @@ class IndividualMemberAdmin extends BaseAdmin
                 $foPerson = $fopRepo->findOneBy(['phoneNumber' => $person->getPhoneNumber(),
                 ]);
             }
-            if (!empty($foPerson)){
+            if (!empty($foPerson)) {
                 $person->removeIndividualMember($object);
                 $foPerson->addIndividualMember($object);
             }
         }
-
     }
 
     /**

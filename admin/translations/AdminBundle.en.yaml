@@ -1,3 +1,4 @@
+event: Events
 person: System Users
 organisation: Organisations
 individualgroup: Groups
@@ -131,6 +132,8 @@ form_group:
     grouping: Grouping
 
 form:
+    label_started_at: Started At
+    label_ended_at: Ended At
     label_timezone: Timezone
     label_username: Username
     label_auth_by_username_password: Authentication by Username/Password

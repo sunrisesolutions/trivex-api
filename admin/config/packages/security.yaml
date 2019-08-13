@@ -6,8 +6,14 @@ security:
             - ROLE_APP\ADMIN\MESSAGING\FREEONMESSAGEADMIN_ALL
             - ROLE_APP\ADMIN\MESSAGING\PENDINGAPPROVALMESSAGEADMIN_ALL
             - ROLE_APP\ADMIN\MESSAGING\MESSAGEADMIN_ALL
+        ROLE_EVENT_ADMIN:
+            - ROLE_SONATA_ADMIN
+            - ROLE_APP\ADMIN\EVENT\EVENTADMIN_ALL
+        ROLE_ORG_ADMIN:
+            - ROLE_MSG_ADMIN
+            - ROLE_EVENT_ADMIN
             - ROLE_APP\ADMIN\ORGANISATION\INDIVIDUALMEMBERADMIN_ALL
-        ROLE_ORG_ADMIN:   [ROLE_MSG_ADMIN]
+            - ROLE_APP\ADMIN\ORGANISATION\ORGANISATIONADMIN_EDIT
         ROLE_ADMIN:       ROLE_ORG_ADMIN
         ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
@@ -28,7 +34,6 @@ security:
                 property: username
         jwt:
             lexik_jwt: ~
-
 
     firewalls:
         dev:
