@@ -136,6 +136,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
+            ->add('person.nationality.nricNumber', TextType::class, ['label' => 'form.label_nric_number'])
             ->add('person.gender', ChoiceType::class, [
                 'required' => false,
                 'label' => 'form.label_gender',

@@ -37,6 +37,26 @@ class Person
         $this->createdAt = new \DateTime();
     }
 
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function combineData()
+    {
+        $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
+    }
+
+    public function createNationality($country = null, $nricNumber = null, $passportNumber = null, $uuid = null)
+    {
+        $nat = new Nationality();
+        $this->addNationality($nat);
+        $nat->setCountry($country);
+        $nat->setNricNumber($nricNumber);
+        $nat->setUuid($uuid);
+        $nat->setPassportNumber($passportNumber);
+        return $nat;
+    }
+
     public function getName()
     {
         return $this->givenName.' '.$this->familyName;

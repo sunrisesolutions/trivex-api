@@ -29,6 +29,17 @@ class Person
         $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
     }
 
+    public function createNationality($country = null, $nricNumber = null, $passportNumber = null, $uuid = null)
+    {
+        $nat = new Nationality();
+        $this->addNationality($nat);
+        $nat->setCountry($country);
+        $nat->setNricNumber($nricNumber);
+        $nat->setUuid($uuid);
+        $nat->setPassportNumber($passportNumber);
+        return $nat;
+    }
+
     /**
      * @ORM\Column(type="string", length=191, nullable=true)
      */

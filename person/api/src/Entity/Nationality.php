@@ -41,7 +41,7 @@ class Nationality
      * @ORM\Column(type="string", length=128, nullable=true)
      * @Groups({"read","write"})
      */
-    private $country;
+    private $country = 'Singapore';
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)

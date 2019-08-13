@@ -30,6 +30,17 @@ class Person
         $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
     }
 
+    public function createNationality($country = null, $nricNumber = null, $passportNumber = null, $uuid = null)
+    {
+        $nat = new Nationality();
+        $this->addNationality($nat);
+        $nat->setCountry($country);
+        $nat->setNricNumber($nricNumber);
+        $nat->setUuid($uuid);
+        $nat->setPassportNumber($passportNumber);
+        return $nat;
+    }
+
     /**
      * @var string|null
      * @ORM\Column(type="string", length=191, nullable=true)
@@ -47,7 +58,7 @@ class Person
     private $individualMembers;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", mappedBy="person")
+     * @ORM\OneToMany(targetEntity="App\Entity\Nationality", cascade={"persist", "merge"} , mappedBy="person")
      */
     private $nationalities;
 
@@ -110,7 +121,12 @@ class Person
     /** @return  Nationality|bool */
     public function getNationality()
     {
-        return $this->nationalities->first();
+        $nat = $this->nationalities->first();
+        if (empty($nat)) {
+            $nat = new Nationality();
+            $this->addNationality($nat);
+        }
+        return $nat;
     }
 
     public function getId(): ?int
