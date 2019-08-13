@@ -135,6 +135,7 @@ class EventAdmin extends BaseAdmin
             ->with('General')
 //                ->add('username')
             ->add('name', null, ['label' => 'form.label_name'])
+            ->add('title', null, ['label' => 'form.label_title'])
             ->add('startedAt', DateTimePickerType::class, ['label' => 'form.label_started_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
