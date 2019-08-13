@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Event;
 
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use App\Util\AppUtil;
+use App\Util\Event\AppUtil;
 use Aws\Credentials\Credentials;
 use Aws\S3\S3Client;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -14,11 +14,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource(
- *     attributes={},
+ *     attributes={"access_control"="is_granted('ROLE_USER')"},
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Event\EventRepository")
  * @ORM\Table(name="event__event")
  * @ORM\HasLifecycleCallbacks()
  */
@@ -69,7 +69,7 @@ class Event
     }
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="events")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Event\Organisation", inversedBy="events")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
      */
     private $organisation;
@@ -140,7 +140,7 @@ class Event
     private $deleted = false;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Registration", mappedBy="event")
+     * @ORM\OneToMany(targetEntity="App\Entity\Event\Registration", mappedBy="event")
      * @ApiSubresource()
      */
     private $registrations;

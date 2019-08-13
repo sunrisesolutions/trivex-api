@@ -19,10 +19,9 @@ sh ~/workspace/magenta/trivex/api/utils/shell/build-auth.sh
 cd ~/workspace/magenta/trivex/api
 
 echo 'copy to event'
-mkdir -p ~/workspace/magenta/trivex/api/event/api/utils
-rm -R -f ~/workspace/magenta/trivex/api/event/api/utils/*
-cp -R ~/workspace/magenta/trivex/api/utils/libraries/component/utils/src ~/workspace/magenta/trivex/api/event/api/utils/
-cp -R ~/workspace/magenta/trivex/api/utils/config ~/workspace/magenta/trivex/api/event/api/utils/
+sh ~/workspace/magenta/trivex/api/utils/shell/build-event.sh
+cd ~/workspace/magenta/trivex/api
+
 
 echo 'copy to messaging'
 sh ~/workspace/magenta/trivex/api/utils/shell/build-messaging.sh

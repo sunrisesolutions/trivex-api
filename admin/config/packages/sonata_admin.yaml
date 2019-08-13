@@ -39,6 +39,7 @@ sonata_admin:
                 items:
                     - route:        admin_app_organisation_organisation_editCurrentOrganisation
                       label:        Organisation Account
+                    - App\Admin\Event\EventAdmin
                     - App\Admin\Person\PersonAdmin
                     - App\Admin\Organisation\OrganisationAdmin
                     - App\Admin\Messaging\PendingApprovalMessageAdmin
