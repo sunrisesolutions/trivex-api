@@ -3,6 +3,7 @@
 namespace App\Admin\Event;
 
 use App\Entity\Event\Event;
+use App\Entity\Event\Organisation;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -35,6 +36,8 @@ class EventAdmin extends BaseAdmin
 {
 
     const CHILDREN = [];
+
+    const ORGANISATION_CLASS = Organisation::class;
 
     protected $action;
 
@@ -189,7 +192,6 @@ class EventAdmin extends BaseAdmin
     public function prePersist($object)
     {
         parent::prePersist($object);
-        $object->setStatus(Event::STATUS_NEW);
     }
 
     /**

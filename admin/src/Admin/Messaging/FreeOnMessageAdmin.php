@@ -4,6 +4,7 @@ namespace App\Admin\Messaging;
 
 use App\Entity\Messaging\FreeOnMessage;
 use App\Entity\Messaging\Message;
+use App\Entity\Messaging\Organisation;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -33,6 +34,8 @@ class FreeOnMessageAdmin extends BaseAdmin
 {
 
     const CHILDREN = [];
+
+    const ORGANISATION_CLASS = Organisation::class;
 
     protected $baseRouteName = 'free_on_message';
 
