@@ -120,6 +120,7 @@ class EventAdmin extends BaseAdmin
             ->add('startedAt', null, ['label' => 'form.label_started_at'])
             ->add('endedAt', null, ['label' => 'form.label_ended_at']);
         $listMapper->add('_action', 'actions', [
+                'label' => 'form.label_action',
                 'actions' => [
                     'event_page' => ['template' => 'Admin/Event/Event/Action/list__action__event_page.html.twig'],
                     'edit' => [],
