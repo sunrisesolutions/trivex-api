@@ -108,6 +108,7 @@ class Person
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
+        $this->nationalities = new ArrayCollection();
     }
 
     /** @return  Nationality|bool */

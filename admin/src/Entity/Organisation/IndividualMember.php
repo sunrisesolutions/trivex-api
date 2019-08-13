@@ -141,6 +141,7 @@ class IndividualMember
         $this->messageAdmin = $this->roles->matching($c)->count() > 0;
         return $this->messageAdmin;
     }
+
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate
