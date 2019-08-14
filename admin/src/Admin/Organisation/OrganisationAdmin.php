@@ -68,7 +68,7 @@ class OrganisationAdmin extends BaseAdmin
     {
         /** @var ContainerInterface $container */
         $container = $this->getConfigurationPool()->getContainer();
-        if ($container->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($container->get('security.authorization_checker')->isGranted('ROLE_ADMIN')) {
             return true;
         }
         return parent::isGranted($name, $object);
