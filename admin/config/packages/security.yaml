@@ -16,8 +16,8 @@ security:
             - ROLE_EVENT_ADMIN
             - ROLE_APP\ADMIN\ORGANISATION\INDIVIDUALMEMBERADMIN_ALL
             - ROLE_APP\ADMIN\ORGANISATION\ORGANISATIONADMIN_EDIT
-        ROLE_ADMIN:       ROLE_ORG_ADMIN
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_ADMIN:       [ROLE_ORG_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+        ROLE_SUPER_ADMIN: ROLE_ADMIN
 
     # set access_strategy to unanimous, else you may have unexpected behaviors
     access_decision_manager:

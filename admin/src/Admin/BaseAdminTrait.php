@@ -366,9 +366,8 @@ trait BaseAdminTrait
     {
         /** @var ContainerInterface $container */
         $container = $this->getConfigurationPool()->getContainer();
-        if ($container->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
-            return !empty($this->getCurrentOrganisation(false));
-        }
+//        if ($container->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+//        }
 
         /** @var UserService $userService */
         $userService = $this->userService;
@@ -377,7 +376,9 @@ trait BaseAdminTrait
 
 //        $pos = $container->get(UserService::class)->getPosition();
         if ($isAdmin) {
-            return in_array($this->getClass(), [Organisation::class, Person::class, Media::class]);
+            return !empty($this->getCurrentOrganisation(false));
+            
+//            return in_array($this->getClass(), [Organisation::class, Person::class, Media::class]);
 
             if (is_array($name)) {
                 foreach ($name as $action) {
