@@ -377,7 +377,7 @@ trait BaseAdminTrait
 //        $pos = $container->get(UserService::class)->getPosition();
         if ($isAdmin) {
             return !empty($this->getCurrentOrganisation(false));
-            
+
 //            return in_array($this->getClass(), [Organisation::class, Person::class, Media::class]);
 
             if (is_array($name)) {

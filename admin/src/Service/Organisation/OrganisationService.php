@@ -53,7 +53,7 @@ class OrganisationService extends BaseService
             }
         }
 
-        if (get_class($org) !== $orgClass) {
+        if (!empty($org) && get_class($org) !== $orgClass) {
             $org = $registry->getRepository($orgClass)->findOneBy(['uuid' => $org->getUuid()]);
         }
 
