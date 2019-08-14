@@ -58,6 +58,16 @@ class Nationality
         return $this->id;
     }
 
+    public function copyScalarProperties($dest)
+    {
+        if(!empty($this->uuid)){
+            $dest->setUuid($this->uuid);
+        }
+        $dest->setPassportNumber($this->passportNumber);
+        $dest->setNricNumber($this->nricNumber);
+        $dest->setCountry($this->country);
+    }
+
     public function getCountry(): ?string
     {
         return $this->country;

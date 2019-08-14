@@ -2,6 +2,7 @@
 
 namespace App\Admin;
 
+use App\Entity\User\OrganisationUser;
 use Bean\Component\Organization\IoC\OrganizationAwareInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\Query\Expr;
@@ -45,7 +46,8 @@ trait BaseAdminTrait
         return $this->getConfigurationPool()->getContainer();
     }
 
-    protected function getOrganisationClass(){
+    protected function getOrganisationClass()
+    {
         return Organisation::class;
     }
 
@@ -121,13 +123,13 @@ trait BaseAdminTrait
 //					break;
                 case ClassMetadata::ONE_TO_ONE:
                     $fieldDescription->setTemplate(
-                        '@MagentaCBookAdmin/CRUD/Association/show_one_to_one.html.twig'
+                        'CRUD/Association/show_one_to_one.html.twig'
                     );
 
                     break;
                 case ClassMetadata::ONE_TO_MANY:
                     $fieldDescription->setTemplate(
-                        '@MagentaCBookAdmin/CRUD/Association/show_one_to_many.html.twig'
+                        'CRUD/Association/show_one_to_many.html.twig'
                     );
                     break;
 //				case ClassMetadata::MANY_TO_MANY:
@@ -149,18 +151,18 @@ trait BaseAdminTrait
             switch ($fieldDescription->getMappingType()) {
                 case ClassMetadata::MANY_TO_ONE:
                     $fieldDescription->setTemplate(
-                        '@MagentaCBookAdmin/CRUD/Association/list_many_to_one.html.twig'
+                        'CRUD/Association/list_many_to_one.html.twig'
                     );
                     break;
                 case ClassMetadata::ONE_TO_ONE:
                     $fieldDescription->setTemplate(
-                        '@MagentaCBookAdmin/CRUD/Association/list_one_to_one.html.twig'
+                        'CRUD/Association/list_one_to_one.html.twig'
                     );
 
                     break;
                 case ClassMetadata::ONE_TO_MANY:
                     $fieldDescription->setTemplate(
-                        '@MagentaCBookAdmin/CRUD/Association/list_one_to_many.html.twig'
+                        'CRUD/Association/list_one_to_many.html.twig'
                     );
                     break;
 //				case ClassMetadata::MANY_TO_MANY:
@@ -206,15 +208,23 @@ trait BaseAdminTrait
     protected function getCurrentIndividualMember($required = false)
     {
         $user = $this->getLoggedInUser();
-        $person = $user->getPerson();
-        if (empty($person)) {
-            return null;
-        }
+
         if (empty($org = $this->getCurrentOrganisation($required))) {
             return null;
         }
-
-        return $person->getIndividualMemberOfOrganisation($org);
+        $ous = $user->getOrganisationUsers();
+        $imUuid = null;
+        /** @var OrganisationUser $ou */
+        foreach ($ous as $ou) {
+            if ($ou->getOrganisation()->getUuid() === $org->getUuid()) {
+                $imUuid = $ou->getUuid();
+            }
+        }
+        if (empty($imUuid)) {
+            return null;
+        }
+        return $this->getContainer()->get('doctrine.orm.default_entity_manager')->getRepository(IndividualMember::class)->findOneBy(['uuid' => $imUuid,
+        ]);
     }
 
     /**
@@ -234,7 +244,9 @@ trait BaseAdminTrait
         return $orgService->getCurrentOrganisation($context, $required, $this->getOrganisationClass());
     }
 
-
+    /**
+     * @return User
+     */
     protected
     function getLoggedInUser()
     {
@@ -354,6 +366,10 @@ trait BaseAdminTrait
     {
         /** @var ContainerInterface $container */
         $container = $this->getConfigurationPool()->getContainer();
+        if ($container->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            return !empty($this->getCurrentOrganisation(false));
+        }
+
         /** @var UserService $userService */
         $userService = $this->userService;
         $user = $userService->getUser();
@@ -397,7 +413,7 @@ trait BaseAdminTrait
 //        return $user->isGranted($name, $object, $this->getClass(), $member, $org);
 
 
-		return parent::isGranted($name, $object);
+        return parent::isGranted($name, $object);
     }
 
     protected
@@ -472,7 +488,7 @@ trait BaseAdminTrait
         /** @var Expr $expr */
         $expr = $query->getQueryBuilder()->expr();
         $orgFieldName = $this->getOrganisationFieldName($this->getClass());
-        $orgAlias = $query->entityJoin([ [ 'fieldName' => $orgFieldName ] ]);
+        $orgAlias = $query->entityJoin([['fieldName' => $orgFieldName]]);
 
         return $query->andWhere($expr->eq($orgAlias.'.uuid', $expr->literal($organisation->getUuid())));
     }

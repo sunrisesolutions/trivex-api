@@ -1,3 +1,4 @@
+optionset: Option Sets
 event: Events
 person: System Users
 organisation: Organisations
@@ -132,6 +133,8 @@ form_group:
     grouping: Grouping
 
 form:
+    label_option: Option
+    label_nric_number: NRIC Number
     label_started_at: Started At
     label_ended_at: Ended At
     label_timezone: Timezone

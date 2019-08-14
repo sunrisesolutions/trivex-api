@@ -5,6 +5,8 @@ namespace App\Admin\Organisation;
 use App\Entity\Organisation\IndividualMember;
 use App\Entity\Organisation\Person;
 use App\Entity\Organisation\Role;
+use App\Entity\Organisation\Organisation;
+use App\Entity\User\OrganisationUser;
 use App\Util\Organisation\AppUtil;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
@@ -194,23 +196,119 @@ class IndividualMemberAdmin extends BaseAdmin
     public function preValidate($object)
     {
         parent::preValidate($object);
-        $person = $object->getPerson();
-        if (empty($person->getId())) {
-            $container = $this->getContainer();
-            $manager = $container->get('doctrine.orm.default_entity_manager');
+        $oPerson = $object->getPerson();
+        $organisation = $object->getOrganisation();
+
+        $container = $this->getContainer();
+        $manager = $container->get('doctrine.orm.default_entity_manager');
+        if (empty($oPerson->getId())) {
             $fopRepo = $manager->getRepository(Person::class);
             /** @var Person $foPerson */
-            $foPerson = $fopRepo->findOneBy(['email' => $person->getEmail(),
+            $foPerson = $fopRepo->findOneBy(['email' => $oPerson->getEmail(),
             ]);
             if (empty($foPerson)) {
-                $foPerson = $fopRepo->findOneBy(['phoneNumber' => $person->getPhoneNumber(),
+                $foPerson = $fopRepo->findOneBy(['phoneNumber' => $oPerson->getPhoneNumber(),
                 ]);
             }
             if (!empty($foPerson)) {
-                $person->removeIndividualMember($object);
+                $oPerson->removeIndividualMember($object);
                 $foPerson->addIndividualMember($object);
             }
         }
+
+        // update Person
+        if (!empty($oPerson->getUuid())) {
+            return;
+        }
+        $email = $oPerson->getEmail();
+        $phone = $oPerson->getPhoneNumber();
+        $pRepo = $manager->getRepository(\App\Entity\Person\Person::class);
+        /** @var \App\Entity\Person\Person $fPerson */
+        $fPerson = $pRepo->findOneBy(['email' => $email,
+        ]);
+        if (empty($fPerson)) {
+            $fPerson = $pRepo->findOneBy(['phoneNumber' => $phone,
+            ]);
+        }
+        if (!empty($fPerson)) {
+            AppUtil::copyObjectScalarProperties($fPerson, $oPerson);
+        } else {
+            $fPerson = new \App\Entity\Person\Person();
+            AppUtil::copyObjectScalarProperties($oPerson, $fPerson);
+            $manager->persist($fPerson);
+            $manager->flush($fPerson);
+            AppUtil::copyObjectScalarProperties($fPerson, $oPerson);
+        }
+
+        $oPerson->setUuid($fPerson->getUuid());
+
+        $upRepo = $manager->getRepository(\App\Entity\User\Person::class);
+        /** @var \App\Entity\User\Person $fuPerson */
+        $fuPerson = $upRepo->findOneBy(['email' => $email,
+        ]);
+        if (empty($fuPerson)) {
+            $fuPerson = $upRepo->findOneBy(['phoneNumber' => $phone,
+            ]);
+        }
+        if (empty($fuPerson)) {
+            $fuPerson = new \App\Entity\User\Person();
+            AppUtil::copyObjectScalarProperties($oPerson, $fuPerson);
+            $fuPerson->setUuid($fPerson->getUuid());
+
+            $manager->persist($fuPerson);
+            $manager->flush($fuPerson);
+        }
+
+        // update User
+        if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
+            if (empty($user = $fuPerson->getUser())) {
+                $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
+//                $user = $fuPerson->getUser();
+                if (empty($user)) {
+                    $user = new  User();
+                    $user->setEmail($email);
+                    $user->setUsername($email);
+                }
+                $fuPerson->setUser($user);
+                $user->setPerson($fuPerson);
+                $user->setPlainPassword($plainPassword);
+                $manager->persist($fuPerson);
+                $manager->persist($user);
+                $manager->flush($user);
+
+                $fPerson->setUserUuid($user->getUuid());
+                $manager->persist($fPerson);
+                $manager->flush($fPerson);
+            }
+        }
+        $oPerson->setPassword(null);
+
+
+        // update NRIC
+        $oNationality = $oPerson->getNationality();
+        if (!empty($personUuid = $oPerson->getUuid())) {
+//            $fPerson = $manager->getRepository(\App\Entity\Person\Person::class)->findOneBy(['uuid' => $personUuid]);
+            if (empty($fPerson)) {
+                $fPerson = new \App\Entity\Person\Person();
+                AppUtil::copyObjectScalarProperties($oPerson, $fPerson);
+                $fPerson->setUuid('');
+                $manager->persist($fPerson);
+                $manager->flush($fPerson);
+                $oPerson->setUuid($fPerson->getUuid());
+            }
+            $fNationality = $fPerson->getNationality();
+            if (!empty($fNationality)) {
+                AppUtil::copyObjectScalarProperties($oNationality, $fNationality, false);
+                AppUtil::copyObjectScalarProperties($fNationality, $oNationality);
+            } else {
+                $fNationality = $fPerson->createNationality($oNationality->getCountry(), $oNationality->getNricNumber(), $oNationality->getPassportNumber());
+            }
+            $manager->persist($fNationality);
+            $manager->flush($fNationality);
+            $oNationality->setUuid($fNationality->getUuid());
+        }
+
+
     }
 
     /**
@@ -233,6 +331,65 @@ class IndividualMemberAdmin extends BaseAdmin
 //        if (!$object->isEnabled()) {
 //            $object->setEnabled(true);
 //        }
+    }
+
+    public function postPersist($object)
+    {
+        parent::postPersist($object); // TODO: Change the autogenerated stub
+        $this->postUpdateEntity($object);
+    }
+
+    public function postUpdate($object)
+    {
+        parent::postUpdate($object); // TODO: Change the autogenerated stub
+        $this->postUpdateEntity($object);
+    }
+
+    public function postUpdateEntity(IndividualMember $object)
+    {
+        $oPerson = $object->getPerson();
+        $manager = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+        /** @var \App\Entity\User\Person $uPerson */
+        $uPerson = $manager->getRepository(\App\Entity\User\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
+        $user = $uPerson->getUser();
+        $ous = $user->getOrganisationUsers();
+        $organisation = $object->getOrganisation();
+
+        /** @var OrganisationUser $uMember */
+        $uMember = null;
+        /** @var OrganisationUser $ou */
+        foreach ($ous as $ou) {
+            if ($ou->getOrganisation()->getUuid() === $organisation->getUuid()) {
+                $uMember = $ou;
+                break;
+            }
+        }
+
+        if (empty($uMember)) {
+            /** @var \App\Entity\User\Organisation $uOrganisation */
+            $uOrganisation = $manager->getRepository(\App\Entity\User\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
+            if (empty($uOrganisation)) {
+                $uOrganisation = new \App\Entity\User\Organisation();
+                AppUtil::copyObjectScalarProperties($organisation, $uOrganisation);
+            }
+            $uMember = new OrganisationUser();
+            $uMember->setOrganisation($uOrganisation);
+            $manager->persist($uOrganisation);
+            $manager->flush($uOrganisation);
+        }
+
+        $uMember->setUser($user);
+        $uMember->setUuid($object->getUuid());
+        $roles = $object->getRoles();
+        $roleArrays = [];
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleArrays[] = $role->getName();
+        }
+        $uMember->setRoles($roleArrays);
+
+        $manager->persist($uMember);
+        $manager->flush($uMember);
     }
 
     ///////////////////////////////////

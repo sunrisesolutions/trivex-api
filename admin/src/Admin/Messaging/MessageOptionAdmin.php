@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Admin\Organisation;
+namespace App\Admin\Messaging;
 
+use App\Entity\Messaging\OptionSet;
+use App\Entity\Messaging\Organisation;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -9,8 +11,6 @@ use App\Entity\User\User;
 use App\Service\User\UserService;
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
-use App\Service\User\UserManager;
-use App\Service\User\UserManagerInterface;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
@@ -29,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class RoleAdmin extends BaseAdmin
+class MessageOptionAdmin extends BaseAdmin
 {
 
     const CHILDREN = [];
@@ -42,22 +42,22 @@ class RoleAdmin extends BaseAdmin
         // reverse order (default = 'ASC')
         '_sort_order' => 'DESC',
         // name of the ordered field (default = the model's id field, if any)
-        '_sort_by' => 'updatedAt',
+        '_sort_by' => 'createdAt',
     );
-
-    public function getOrganisation()
-    {
-        return $this->subject;
-    }
 
     public function getCurrentChapter()
     {
         return null;
     }
 
+    protected function getOrganisationClass()
+    {
+        return Organisation::class;
+    }
+
     public function getNewInstance()
     {
-        /** @var User $object */
+        /** @var OptionSet $object */
         $object = parent::getNewInstance();
 
         return $object;
@@ -65,9 +65,9 @@ class RoleAdmin extends BaseAdmin
 
     public function toString($object)
     {
-        return $object instanceof Organisation
+        return $object instanceof OptionSet
             ? $object->getName()
-            : 'Organisation'; // shown in the breadcrumb on the create view
+            : 'OptionSet'; // shown in the breadcrumb on the create view
     }
 
     public function createQuery($context = 'list')
@@ -78,7 +78,15 @@ class RoleAdmin extends BaseAdmin
 //            $this->filterQueryByPosition($query, 'position', '', '');
         }
 
-//        $query->andWhere()
+        /** @var Expr $expr */
+        $expr = $query->getQueryBuilder()->expr();
+//        $query->andWhere(
+//            $expr->andX(
+//                $expr->notLike('o.status', $expr->literal(OptionSet::STATUS_DRAFT)),
+//                $expr->notLike('o.status', $expr->literal(OptionSet::STATUS_PENDING_APPROVAL))
+//            )
+//        );
+
 
         return $query;
     }
@@ -86,8 +94,10 @@ class RoleAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
-        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
+        $collection->remove('edit');
+        $collection->remove('delete');
+
+//        $collection->add('publish', $this->getRouterIdParameter() . '/publish');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -101,29 +111,39 @@ class RoleAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('foundedOn', null, ['label' => 'form.label_founded_on'])
-            ->addIdentifier('type', null, ['label' => 'form.label_type'])
-            ->addIdentifier('address', null, ['label' => 'form.label_address'])
-            ->addIdentifier('name', null, ['label' => 'form.label_name'])
-            ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
-            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
-            ->addIdentifier('code', null, ['label' => 'form.label_code'])
-            ->addIdentifier('subdomain', null, ['label' => 'form.label_subdomain'])
-            ;
+            ->add('name', null, ['label' => 'form.label_name']);
+
+
+        $listMapper->add('createdAt', null, ['label' => 'form.label_created_at']);
     }
 
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('General', ['class' => 'col-md-7'])->end()
-//            ->with('Description', ['class' => 'col-md-7'])->end()
+            ->with('General', ['class' => 'col-md-7'])->end()//            ->with('Description', ['class' => 'col-md-7'])->end()
         ;
-
 
         $formMapper
             ->with('General')
-            ->add('name')
-            ;
+//                ->add('username')
+            ->add('name', null, ['label' => 'form.label_name'])//                ->add('admin')
+        ;
+        $formMapper->end();
+
+//		$formMapper->with('Description');
+//		$formMapper->add('text', CKEditorType::class, [ 'required' => false, 'label' => false ]);
+//		$formMapper->end();
+
+//		$formMapper->with('Content');
+//		$formMapper->add('text', CKEditorType::class, [
+//		]);
+//		$formMapper->add('text', SimpleFormatterType::class, [
+//			'format' => 'richhtml',
+//			'ckeditor_context' => 'default',
+//			'ckeditor_image_format' => 'big',
+//		]);
+//		$formMapper->end();
+
         $formMapper->end();
     }
 
@@ -138,25 +158,20 @@ class RoleAdmin extends BaseAdmin
     }
 
     /**
-     * @param User $object
+     * @param OptionSet $object
      */
     public function prePersist($object)
     {
         parent::prePersist($object);
-//        if (!$object->isEnabled()) {
-//            $object->setEnabled(true);
-//        }
+//        $object->setStatus(OptionSet::STATUS_NEW);
     }
 
     /**
-     * @param User $object
+     * @param OptionSet $object
      */
     public function preUpdate($object)
     {
         parent::preUpdate($object);
-//        if (!$object->isEnabled()) {
-//            $object->setEnabled(true);
-//        }
     }
 
     ///////////////////////////////////
@@ -176,17 +191,9 @@ class RoleAdmin extends BaseAdmin
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
         $filterMapper
-            ->add('id')
-            ->add('uuid', null, ['label' => 'form.label_uuid'])
-            ->add('name', null, ['label' => 'form.label_name'])
-            ->add('foundedOn', null, ['label' => 'form.label_uuid'])
-            ->add('type', null, ['label' => 'form.label_type'])
-            ->add('address', null, ['label' => 'form.label_address'])
-            ->add('registrationNumber', null, ['label' => 'form.label_registration_number'])
-            ->add('logoName', null, ['label' => 'form.label_logo_name'])
-            ->add('code', null, ['label' => 'form.label_code'])
-            ->add('subdomain', null, ['label' => 'form.label_subdomain'])
-            ;
+            ->add('name');
+        //			->add('groups')
+//		;
     }
 
 

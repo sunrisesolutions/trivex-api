@@ -11,6 +11,7 @@ use App\Util\Organisation\AppUtil;
 use App\Util\Organisation\AwsS3Util;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -71,6 +72,20 @@ class Organisation
         }
     }
 
+    public function copyScalarProperties($org)
+    {
+        $org->setName($this->name);
+        $org->setAddress($this->address);
+        if (!empty($this->uuid)) {
+            $org->setUuid($this->uuid);
+        }
+//        $org->setFoundedOn($this->foundedOn);
+//        $org->setLogoName($this->logoName);
+//        $org->setRegistrationNumber($this->registrationNumber);
+        $org->setSubdomain($this->subdomain);
+        $org->setCode($this->code);
+        $org->setType($this->type);
+    }
 
     /**
      * @ORM\PrePersist
@@ -78,28 +93,28 @@ class Organisation
     public function initiateRoles()
     {
         if ($this->roles->count() === 0) {
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_ADMIN');
             $this->addRole($acrole);
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_ORG_ADMIN');
             $this->addRole($acrole);
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_EVENT_ADMIN');
             $this->addRole($acrole);
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_MSG_ADMIN');
             $this->addRole($acrole);
 
 
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_EVENT_ADMIN');
             $this->addRole($acrole);
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_MSG_USER');
             $this->addRole($acrole);
 
-            $acrole = new ACRole();
+            $acrole = new Role();
             $acrole->setName('ROLE_USER');
             $this->addRole($acrole);
         }
@@ -450,5 +465,4 @@ class Organisation
 
         return $this;
     }
-
 }

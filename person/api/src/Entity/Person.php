@@ -53,14 +53,27 @@ class Person
     {
         $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
     }
+    public function copyScalarProperties($person)
+    {
+        $person->setEmail($this->email);
+        $person->setFamilyName($this->familyName);
+        $person->setGivenName($this->givenName);
+        $person->setBirthDate($this->birthDate);
+        $person->setEmployerName($this->employerName);
+        $person->setGender($this->gender);
+        $person->setJobTitle($this->jobTitle);
+        $person->setMiddleName($this->middleName);
+        $person->setPhoneNumber($this->phoneNumber);
+    }
     public function createNationality($country = null, $nricNumber = null, $passportNumber = null, $uuid = null)
     {
         $nat = new Nationality();
         $this->addNationality($nat);
         $nat->setCountry($country);
         $nat->setNricNumber($nricNumber);
-        $nat->setUuid($uuid);
-        $nat->setPassportNumber($passportNumber);
+        if (!empty($uuid)) {
+            $nat->setUuid($uuid);
+        }        $nat->setPassportNumber($passportNumber);
         return $nat;
     }
     /** @return  Nationality|bool */
@@ -104,6 +117,11 @@ class Person
      * @Groups({"read","write"})
      */
     private $gender;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $employerName;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
@@ -184,6 +202,18 @@ class Person
     public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getEmployerName(): ?string
+    {
+        return $this->employerName;
+    }
+
+    public function setEmployerName(?string $employerName): self
+    {
+        $this->employerName = $employerName;
 
         return $this;
     }

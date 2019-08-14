@@ -58,10 +58,28 @@ class Person
      */
     private $birthDate;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $employerName;
+
     public function __construct()
     {
         $this->registrations = new ArrayCollection();
         $this->individualMembers = new ArrayCollection();
+    }
+
+    public function copyScalarProperties($person)
+    {
+        $person->setEmail($this->email);
+        $person->setFamilyName($this->familyName);
+        $person->setGivenName($this->givenName);
+        $person->setBirthDate($this->birthDate);
+        $person->setEmployerName($this->employerName);
+        $person->setGender($this->gender);
+        $person->setJobTitle($this->jobTitle);
+        $person->setMiddleName($this->middleName);
+        $person->setPhoneNumber($this->phoneNumber);
     }
 
     public function getId(): ?int
@@ -187,6 +205,19 @@ class Person
     public function setBirthDate(?\DateTimeInterface $birthDate): self
     {
         $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+
+    public function getEmployerName(): ?string
+    {
+        return $this->employerName;
+    }
+
+    public function setEmployerName(?string $employerName): self
+    {
+        $this->employerName = $employerName;
 
         return $this;
     }

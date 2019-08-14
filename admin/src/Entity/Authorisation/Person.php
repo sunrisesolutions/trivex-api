@@ -52,6 +52,11 @@ class Person
      */
     private $birthDate;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $employerName;
+
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
@@ -94,6 +99,18 @@ class Person
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getEmployerName(): ?string
+    {
+        return $this->employerName;
+    }
+
+    public function setEmployerName(?string $employerName): self
+    {
+        $this->employerName = $employerName;
 
         return $this;
     }

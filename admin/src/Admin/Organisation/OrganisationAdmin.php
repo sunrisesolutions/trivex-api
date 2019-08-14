@@ -25,6 +25,7 @@ use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
 use Sonata\Form\Type\DatePickerType;
 use Sonata\FormatterBundle\Form\Type\FormatterType;
 use Sonata\FormatterBundle\Form\Type\SimpleFormatterType;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -32,8 +33,7 @@ use Symfony\Component\Validator\Constraints\Valid;
 
 class OrganisationAdmin extends BaseAdmin
 {
-
-    const CHILDREN = [];
+    const CHILDREN = [IndividualMemberAdmin::class => 'organisation'];
 
     protected $action;
 
@@ -64,6 +64,16 @@ class OrganisationAdmin extends BaseAdmin
         return $object;
     }
 
+    public function isGranted($name, $object = null)
+    {
+        /** @var ContainerInterface $container */
+        $container = $this->getConfigurationPool()->getContainer();
+        if ($container->get('security.authorization_checker')->isGranted('ROLE_SUPER_ADMIN')) {
+            return true;
+        }
+        return parent::isGranted($name, $object);
+    }
+
     public function toString($object)
     {
         return $object instanceof Organisation
@@ -88,7 +98,7 @@ class OrganisationAdmin extends BaseAdmin
     {
         parent::configureRoutes($collection);
 //        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
-        $collection->add('editCurrentOrganisation',  'edit-current-organisation');
+        $collection->add('editCurrentOrganisation', 'edit-current-organisation');
     }
 
     protected function configureShowFields(ShowMapper $showMapper)
@@ -102,22 +112,37 @@ class OrganisationAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->addIdentifier('foundedOn', null, ['label' => 'form.label_founded_on'])
-            ->addIdentifier('type', null, ['label' => 'form.label_type'])
-            ->addIdentifier('address', null, ['label' => 'form.label_address'])
+//            ->addIdentifier('foundedOn', null, ['label' => 'form.label_founded_on'])
             ->addIdentifier('name', null, ['label' => 'form.label_name'])
-            ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
+//            ->addIdentifier('registrationNumber', null, ['label' => 'form.label_registration_number'])
+//            ->add('type', null, ['label' => 'form.label_type'])
+            ->add('address', null, ['label' => 'form.label_address'])
 //            ->addIdentifier('logoName', null, ['label' => 'form.label_logo_name'])
-            ->addIdentifier('code', null, ['label' => 'form.label_code'])
-            ->addIdentifier('subdomain', null, ['label' => 'form.label_subdomain'])
-            ;
+            ->add('code', null, ['label' => 'form.label_code'])
+            ->add('subdomain', null, ['label' => 'form.label_subdomain'])
+//        templates/Admin/Organisation/IndividualMember/Action/list__action__impersonate.html.twig
+        ;
+
+        $listMapper->add('_action', 'actions', [
+                'actions' => [
+//					'impersonate' => array( 'template' => 'admin/user/list__action__impersonate.html.twig' ),
+                    'impersontate' => ['template' => 'Admin/Organisation/Organisation/Action/list__action__impersonate.html.twig'],
+                    'edit' => [],
+                    'delete' => [],
+
+//                ,
+//                    'view_description' => array('template' => '::admin/product/description.html.twig')
+//                ,
+//                    'view_tos' => array('template' => '::admin/product/tos.html.twig')
+                ],
+            ]
+        );
     }
 
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('General', ['class' => 'col-md-7'])->end()
-//            ->with('Description', ['class' => 'col-md-7'])->end()
+            ->with('General', ['class' => 'col-md-7'])->end()//            ->with('Description', ['class' => 'col-md-7'])->end()
         ;
 
         $formMapper
@@ -133,8 +158,7 @@ class OrganisationAdmin extends BaseAdmin
             ->add('registrationNumber')
 //            ->add('logoName')
             ->add('code')
-            ->add('subdomain')
-            ;
+            ->add('subdomain');
         $formMapper->end();
     }
 
@@ -196,8 +220,7 @@ class OrganisationAdmin extends BaseAdmin
             ->add('registrationNumber', null, ['label' => 'form.label_registration_number'])
             ->add('logoName', null, ['label' => 'form.label_logo_name'])
             ->add('code', null, ['label' => 'form.label_code'])
-            ->add('subdomain', null, ['label' => 'form.label_subdomain'])
-            ;
+            ->add('subdomain', null, ['label' => 'form.label_subdomain']);
     }
 
 

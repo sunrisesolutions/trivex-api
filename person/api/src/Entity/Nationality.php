@@ -68,6 +68,16 @@ class Nationality
      */
     private $uuid;
 
+    public function copyScalarProperties($dest)
+    {
+        if(!empty($this->uuid)){
+            $dest->setUuid($this->uuid);
+        }
+        $dest->setPassportNumber($this->passportNumber);
+        $dest->setNricNumber($this->nricNumber);
+        $dest->setCountry($this->country);
+    }
+
     /**
      * @ORM\PrePersist()
      * @ORM\PreUpdate()

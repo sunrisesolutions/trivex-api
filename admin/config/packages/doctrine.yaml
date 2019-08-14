@@ -25,13 +25,13 @@ doctrine:
                 alias: App
 
 services:
-#    magenta_user.user_event_subscriber:
-#        class: App\Doctrine\Subscriber\UserEventSubsriber
-#        arguments:
-#            - '@magenta_user.util.password_updater'
-#            - '@magenta_user.util.canonical_fields_updater'
-#            - '@service_container'
-#        tags: ['doctrine.event_subscriber']
+    magenta_user.user_event_subscriber:
+        class: App\Doctrine\Subscriber\UserEventSubsriber
+        arguments:
+            - '@magenta_user.util.password_updater'
+            - '@magenta_user.util.canonical_fields_updater'
+            - '@service_container'
+        tags: ['doctrine.event_subscriber']
 #
 #    magenta_user.orguser_event_subscriber:
 #        class: App\Doctrine\Subscriber\OrganisationUserEventSubsriber

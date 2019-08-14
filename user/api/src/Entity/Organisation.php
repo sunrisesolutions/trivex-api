@@ -53,6 +53,11 @@ class Organisation
     }
 
     /**
+     * @ORM\Column(type="string", length=128)
+     */
+    private $name;
+
+    /**
      * @var string The Universally Unique Id
      * @ORM\Column(type="string", length=191, unique=true)
      * @Assert\NotBlank()
@@ -65,6 +70,17 @@ class Organisation
      * @Assert\NotBlank()
      */
     private $code;
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+
+     */
+    private $type;
+
+    /**
+     * @ORM\Column(type="string", length=128, nullable=true)
+
+     */
+    private $subdomain;
 
     /**
      * @ORM\OneToMany(
@@ -134,5 +150,49 @@ class Organisation
     public function setCode(?string $code): void
     {
         $this->code = $code;
+    }  public function getName(): ?string
+{
+    return $this->name;
+}
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+    public function getAddress(): ?string
+    {
+        return $this->address;
+    }
+
+    public function setAddress(?string $address): self
+    {
+        $this->address = $address;
+
+        return $this;
+    }    public function getType(): ?string
+{
+    return $this->type;
+}
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+
+    public function getSubdomain(): ?string
+    {
+        return $this->subdomain;
+    }
+
+    public function setSubdomain(?string $subdomain): self
+    {
+        $this->subdomain = $subdomain;
+
+        return $this;
     }
 }

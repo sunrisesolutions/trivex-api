@@ -42,66 +42,7 @@ class PersonEventSubscriber implements ORMEventSubscriber
 
     private function updateEntity(Person $object)
     {
-        $person = $object;
-        if (!empty($person->getUuid())) {
-            return;
-        }
-        $email = $person->getEmail();
-        $phone = $person->getPhoneNumber();
-        $manager = $this->manager;
-        $pRepo = $manager->getRepository(\App\Entity\Person\Person::class);
-        /** @var \App\Entity\Person\Person $fPerson */
-        $fPerson = $pRepo->findOneBy(['email' => $email,
-        ]);
-        if (empty($fPerson)) {
-            $fPerson = $pRepo->findOneBy(['phoneNumber' => $phone,
-            ]);
-        }
-        if (!empty($fPerson)) {
-            AppUtil::copyObjectScalarProperties($fPerson, $person);
-        } else {
-            $fPerson = new \App\Entity\Person\Person();
-            AppUtil::copyObjectScalarProperties($person, $fPerson);
-            $manager->persist($fPerson);
-            $manager->flush();
-            AppUtil::copyObjectScalarProperties($fPerson, $person);
-        }
 
-        $upRepo = $manager->getRepository(\App\Entity\User\Person::class);
-        /** @var \App\Entity\User\Person $fuPerson */
-        $fuPerson = $upRepo->findOneBy(['email' => $email,
-        ]);
-        if (empty($fuPerson)) {
-            $fuPerson = $upRepo->findOneBy(['phoneNumber' => $phone,
-            ]);
-        }
-        if (empty($fuPerson)) {
-            $fuPerson = new \App\Entity\User\Person();
-            AppUtil::copyObjectScalarProperties($person, $fuPerson);
-            $manager->persist($fuPerson);
-            $manager->flush();
-        }
-
-        if (!empty($plainPassword = $person->getPassword()) && !empty($person->getEmail())) {
-            if (empty($user = $fuPerson->getUser())) {
-                $fuPerson = $this->manager->getRepository(\App\Entity\User\Person::class)->findOneBy(['uuid' => $person->getUuid()]);
-                $user = $fuPerson->getUser();
-                if (empty($user)) {
-                    $user = new  User();
-                    $user->setEmail($email);
-                    $user->setUsername($email);
-                    $fuPerson->setUser($user);
-                }
-                $user->setPlainPassword($plainPassword);
-                $manager->persist($user);
-                $manager->flush();
-
-                $fPerson->setUserUuid($user->getUuid());
-                $manager->persist($fPerson);
-                $manager->flush();
-            };
-        }
-        $object->setPassword(null);
     }
 
     public function prePersist(LifecycleEventArgs $args)

@@ -44,7 +44,7 @@ class NationalityEventSubscriber implements ORMEventSubscriber
 
     private function updateEntity(Nationality $object)
     {
-
+        $person = $object->getPerson();
     }
 
     public function prePersist(LifecycleEventArgs $args)
