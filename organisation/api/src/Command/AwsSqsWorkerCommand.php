@@ -74,14 +74,14 @@ class AwsSqsWorkerCommand extends Command
 
             $this->handleMemory($parameters['queue'], $parameters['limit']);
             $message = $this->awsSqsUtil->receiveMessage($queueUrl, $parameters['queue']);
-            
+
             if ($message instanceof Message) {
                 $output->writeln('Consuming a message ... '. $message->id. ' ...... '.$message->body);
                 $this->consumer->consume($message, $parameters['queue']);
 
                 ++$processed;
             } else {
-                $output->writeln('Sleeping for 10 seconds due to no message ... at '.$queueUrl);
+//                $output->writeln('Sleeping for 10 seconds due to no message ... at '.$queueUrl);
 
                 sleep(10);
             }
