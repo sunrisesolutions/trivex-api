@@ -114,7 +114,6 @@ class Organisation
             $acrole = new Role();
             $acrole->setName('ROLE_MSG_USER');
             $this->addRole($acrole);
-
         }
     }
 

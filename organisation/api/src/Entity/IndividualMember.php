@@ -70,12 +70,64 @@ class IndividualMember
     public $emailSubject;
 
     /**
+     * File name of the profilePicture.
+     *
+     * @ORM\Column(type="string", length=25, nullable=true)
+     * @Groups({"read", "write"})
+     */
+    private $profilePicture;
+
+    /**
+     * @Groups({"read"})
+     *
+     * @return mixed|string|null
+     */
+    public function getProfilePictureWriteForm()
+    {
+        $path = $this->buildProfilePicturePath();
+
+        return array_merge(['filePath' => AwsS3Util::getInstance()->getConfig()['directory'].'/'.$path], AwsS3Util::getInstance()->getObjectWriteForm($path));
+    }
+
+    private function buildProfilePicturePath()
+    {
+        return sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->uuid);
+    }
+
+    public function setProfilePicture(?string $profilePicture): self
+    {
+        if (empty($profilePicture) && !empty($this->profilePicture)) {
+            AwsS3Util::getInstance()->deleteObject($this->buildProfilePicturePath());
+        }
+
+        $this->profilePicture = $profilePicture;
+
+        return $this;
+    }
+
+    /**
+     * @Groups({"read"})
+     *
+     * @return mixed|string|null
+     */
+    public function getProfilePictureReadUrl()
+    {
+        if (empty($this->profilePicture)) {
+            return null;
+        }
+        $path = $this->buildProfilePicturePath();
+
+        return AwsS3Util::getInstance()->getObjectReadUrl($path);
+    }
+
+    /**
      * @Groups({"read_member"})
      * @return mixed|string
      */
     public function getProfilePicture()
     {
-        return AwsS3Util::getInstance()->getObjectReadUrl(sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->id));
+//        return AwsS3Util::getInstance()->getObjectReadUrl(sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->id));
+        return $this->getProfilePictureReadUrl();
     }
 
     /**
@@ -526,7 +578,8 @@ class IndividualMember
         return $this;
     }
 
-    public function hasRole(string $roleName): bool {
+    public function hasRole(string $roleName): bool
+    {
         $c = Criteria::create()->where(Criteria::expr()->eq('name', $roleName));
         return $this->roles->matching($c)->count() > 0;
     }

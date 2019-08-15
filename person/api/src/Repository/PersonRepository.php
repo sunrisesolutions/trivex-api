@@ -19,22 +19,23 @@ class PersonRepository extends ServiceEntityRepository
         parent::__construct($registry, Person::class);
     }
 
-    // /**
-    //  * @return Person[] Returns an array of Person objects
-    //  */
-    /*
-    public function findByExampleField($value)
+     /**
+      * @return Person[] Returns an array of Person objects
+      */
+    public function findByNricNumber($nric, $country ='Singapore')
     {
         return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
+            ->join('p.nationalities', 'nationality')
+            ->andWhere('nationality.nricNumber = :val')
+            ->andWhere('nationality.country = :country')
+            ->setParameter('val', $nric)
+            ->setParameter('country', $country)
             ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->setMaxResults(100)
             ->getQuery()
             ->getResult()
         ;
     }
-    */
 
     /*
     public function findOneBySomeField($value): ?Person

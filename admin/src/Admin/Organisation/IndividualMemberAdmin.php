@@ -217,17 +217,26 @@ class IndividualMemberAdmin extends BaseAdmin
         }
 
         // update Person
-        if (!empty($oPerson->getUuid())) {
-            return;
-        }
         $email = $oPerson->getEmail();
         $phone = $oPerson->getPhoneNumber();
         $pRepo = $manager->getRepository(\App\Entity\Person\Person::class);
-        /** @var \App\Entity\Person\Person $fPerson */
-        $fPerson = $pRepo->findOneBy(['email' => $email,
-        ]);
+        $fPerson = null;
+        if (!empty($nricNumber = $oPerson->getNationality()->getNricNumber())) {
+            $fPersons = $pRepo->findByNricNumber($nricNumber);
+            if (count($fPersons) > 0) {
+                $fPerson = $fPersons[0];
+                /** @var \App\Entity\Person\Person $_fPerson */
+                foreach ($fPersons as $_fPerson) {
+                    if ($_fPerson->getEmail() === $email) {
+                        $fPerson = $_fPerson;
+                    }
+                }
+            }
+        }
+
         if (empty($fPerson)) {
-            $fPerson = $pRepo->findOneBy(['phoneNumber' => $phone,
+            /** @var \App\Entity\Person\Person $fPerson */
+            $fPerson = $pRepo->findOneBy(['email' => $email,
             ]);
         }
         if (!empty($fPerson)) {
@@ -242,7 +251,7 @@ class IndividualMemberAdmin extends BaseAdmin
 
         $oPerson->setUuid($fPerson->getUuid());
 
-        // update User
+        // update User person
         $upRepo = $manager->getRepository(\App\Entity\User\Person::class);
         /** @var \App\Entity\User\Person $fuPerson */
         $fuPerson = $upRepo->findOneBy(['uuid' => $fPerson->getUuid(),
@@ -277,6 +286,10 @@ class IndividualMemberAdmin extends BaseAdmin
                     $user->setUsername($email);
                 }
                 $fuPerson->setUser($user);
+                $user->setIdNumber($oPerson->getNationality()->getNricNumber());
+                $user->setBirthDate($oPerson->getBirthDate());
+                $user->setPhone($oPerson->getPhoneNumber());
+
                 $user->setPerson($fuPerson);
                 $user->setPlainPassword($plainPassword);
                 $manager->persist($fuPerson);
@@ -406,6 +419,7 @@ class IndividualMemberAdmin extends BaseAdmin
         // update Message
         $mMember = $manager->getRepository(\App\Entity\Messaging\IndividualMember::class)->findOneBy(['uuid' => $object->getUuid()]);
         $mPerson = $manager->getRepository(\App\Entity\Messaging\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
+        $mOrganisation =  $manager->getRepository(\App\Entity\Messaging\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
 
         if (empty($mPerson)) {
             $mPerson = new \App\Entity\Messaging\Person();
@@ -417,6 +431,8 @@ class IndividualMemberAdmin extends BaseAdmin
         }
         $mMember->setUuid($object->getUuid());
         $mMember->setPerson($mPerson);
+        $mMember->setOrganisation($mOrganisation);
+
         $mPerson->addIndividualMember($mMember);
         $manager->persist($mPerson);
         $manager->persist($mMember);
