@@ -22,19 +22,20 @@ class PersonRepository extends ServiceEntityRepository
      /**
       * @return Person[] Returns an array of Person objects
       */
-    public function findByNricNumber($value)
+    public function findByNricNumber($nric, $country ='Singapore')
     {
         return $this->createQueryBuilder('p')
             ->join('p.nationalities', 'nationality')
             ->andWhere('nationality.nricNumber = :val')
-            ->setParameter('val', $value)
+            ->andWhere('nationality.country = :country')
+            ->setParameter('val', $nric)
+            ->setParameter('country', $country)
             ->orderBy('p.id', 'ASC')
             ->setMaxResults(100)
             ->getQuery()
             ->getResult()
         ;
     }
-
 
     /*
     public function findOneBySomeField($value): ?Person

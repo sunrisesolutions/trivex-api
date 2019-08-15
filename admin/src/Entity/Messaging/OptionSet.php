@@ -52,7 +52,7 @@ class OptionSet
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Messaging\MessageOption", mappedBy="optionSet")
+     * @ORM\OneToMany(targetEntity="App\Entity\Messaging\MessageOption", mappedBy="optionSet", cascade={"persist","merge"})
      * @ApiSubresource()
      */
     private $messageOptions;
