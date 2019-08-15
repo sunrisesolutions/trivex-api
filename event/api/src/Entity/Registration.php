@@ -24,7 +24,7 @@ class Registration
     const GENDER_FEMALE = 'FEMALE';
 
     const ATTENDEE_INDIVIDUAL = 'INDIVIDUAL_MEMBER';
-    const ATTENDEE_MEMBER_INDIVIDUAL = 'INDIVIDUAL_NON_MEMBER';
+    const ATTENDEE_NON_MEMBER_INDIVIDUAL = 'INDIVIDUAL_NON_MEMBER';
 
     const LOCATION_ONLINE = 'ONLINE';
     const LOCATION_VENUE = 'VENUE';
@@ -141,7 +141,13 @@ class Registration
     private $phoneNumber;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read", "write"})
+     */
+    private $memberUuid;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read", "write"})
      */
     private $accessToken;
@@ -283,10 +289,24 @@ class Registration
         return $this;
     }
 
+    public function setMemberUuid(string $memberUuid): self
+    {
+        $this->memberUuid = $memberUuid;
+
+        return $this;
+    }
+
+
+    public function getMemberUuid(): ?string
+    {
+        return $this->memberUuid;
+    }
+
     public function getAccessToken(): ?string
     {
         return $this->accessToken;
     }
+
 
     public function setAccessToken(string $accessToken): self
     {
