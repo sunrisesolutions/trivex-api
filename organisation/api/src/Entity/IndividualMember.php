@@ -73,12 +73,12 @@ class IndividualMember
      * File name of the profilePicture.
      *
      * @ORM\Column(type="string", length=25, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read_member", "write"})
      */
     private $profilePicture;
 
     /**
-     * @Groups({"read"})
+     * @Groups({"read_member"})
      *
      * @return mixed|string|null
      */
