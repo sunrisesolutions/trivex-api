@@ -23,10 +23,13 @@ class Role
      */
     private $id;
 
+    /**
+     * @ORM\PrePersist
+     */
     public function initiateUuid()
     {
         if (empty($this->uuid)) {
-            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_IM');
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_ROLE');
         }
     }
 
@@ -59,7 +62,7 @@ class Role
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="roles")
-     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id", onDelete="CASCADE")
      */
     private $organisation;
 

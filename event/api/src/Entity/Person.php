@@ -63,6 +63,31 @@ class Person
      */
     private $employerName;
 
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $givenName;
+
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $middleName;
+
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $familyName;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $jobTitle;
+
+    /**
+     * @ORM\Column(type="string", length=16, nullable=true)
+     */
+    private $gender;
+
     public function __construct()
     {
         $this->registrations = new ArrayCollection();
@@ -218,6 +243,66 @@ class Person
     public function setEmployerName(?string $employerName): self
     {
         $this->employerName = $employerName;
+
+        return $this;
+    }
+
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?string $gender): self
+    {
+        $this->gender = $gender;
+
+        return $this;
+    }
+    public function getJobTitle(): ?string
+    {
+        return $this->jobTitle;
+    }
+
+    public function setJobTitle(?string $jobTitle): self
+    {
+        $this->jobTitle = $jobTitle;
+
+        return $this;
+    }
+
+    public function getMiddleName(): ?string
+    {
+        return $this->middleName;
+    }
+
+    public function setMiddleName(?string $middleName): self
+    {
+        $this->middleName = $middleName;
 
         return $this;
     }

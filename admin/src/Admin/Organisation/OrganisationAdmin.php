@@ -2,6 +2,8 @@
 
 namespace App\Admin\Organisation;
 
+use App\Entity\Organisation\Organisation;
+use App\Util\User\AppUtil;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -90,7 +92,6 @@ class OrganisationAdmin extends BaseAdmin
         }
 
 //        $query->andWhere()
-
         return $query;
     }
 
@@ -98,6 +99,7 @@ class OrganisationAdmin extends BaseAdmin
     {
         parent::configureRoutes($collection);
 //        $collection->add('contentEdit', $this->getRouterIdParameter() . '/edit-content');
+        $collection->remove('show');
         $collection->add('editCurrentOrganisation', 'edit-current-organisation');
     }
 
@@ -192,6 +194,49 @@ class OrganisationAdmin extends BaseAdmin
 //        if (!$object->isEnabled()) {
 //            $object->setEnabled(true);
 //        }
+    }
+
+    private function postUpdateEntity(Organisation $organisation)
+    {
+        $manager = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+        // update Messaging
+        /** @var \App\Entity\Messaging\Organisation $mOrg */
+        $mOrg = $manager->getRepository(\App\Entity\Messaging\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
+        if (empty($mOrg)) {
+            $mOrg = new \App\Entity\Messaging\Organisation();
+        }
+        AppUtil::copyObjectScalarProperties($organisation, $mOrg);
+        $manager->persist($mOrg);
+
+        // update Event
+        $eOrg = $manager->getRepository(\App\Entity\Event\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
+        if (empty($eOrg)) {
+            $eOrg = new \App\Entity\Event\Organisation();
+        }
+        AppUtil::copyObjectScalarProperties($organisation, $eOrg);
+        $manager->persist($eOrg);
+
+        // update User
+        $uOrg = $manager->getRepository(\App\Entity\User\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
+        if (empty($uOrg)) {
+            $uOrg = new \App\Entity\User\Organisation();
+        }
+        AppUtil::copyObjectScalarProperties($organisation, $uOrg);
+        $manager->persist($uOrg);
+
+        $manager->flush();
+    }
+
+    public function postPersist($object)
+    {
+        parent::postPersist($object);
+        $this->postUpdateEntity($object);
+    }
+
+    public function postUpdate($object)
+    {
+        parent::postUpdate($object);
+        $this->postUpdateEntity($object);
     }
 
     ///////////////////////////////////

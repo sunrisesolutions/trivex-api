@@ -55,6 +55,7 @@ class Person
     }
     public function copyScalarProperties($person)
     {
+        $person->setUuid($this->uuid?:'');
         $person->setEmail($this->email);
         $person->setFamilyName($this->familyName);
         $person->setGivenName($this->givenName);

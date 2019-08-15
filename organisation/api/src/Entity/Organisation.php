@@ -82,9 +82,15 @@ class Organisation
 //        $org->setFoundedOn($this->foundedOn);
 //        $org->setLogoName($this->logoName);
 //        $org->setRegistrationNumber($this->registrationNumber);
-        $org->setSubdomain($this->subdomain);
-        $org->setCode($this->code);
-        $org->setType($this->type);
+        if (method_exists($org, 'setSubdomain')) {
+            $org->setSubdomain($this->subdomain);
+        }
+        if (method_exists($org, 'setType')) {
+            $org->setType($this->type);
+        }
+        if (method_exists($org, 'setCode')) {
+            $org->setCode($this->code);
+        }
     }
 
     /**
@@ -94,29 +100,21 @@ class Organisation
     {
         if ($this->roles->count() === 0) {
             $acrole = new Role();
-            $acrole->setName('ROLE_ADMIN');
-            $this->addRole($acrole);
-            $acrole = new Role();
             $acrole->setName('ROLE_ORG_ADMIN');
             $this->addRole($acrole);
+
             $acrole = new Role();
             $acrole->setName('ROLE_EVENT_ADMIN');
             $this->addRole($acrole);
+
             $acrole = new Role();
             $acrole->setName('ROLE_MSG_ADMIN');
             $this->addRole($acrole);
 
-
-            $acrole = new Role();
-            $acrole->setName('ROLE_EVENT_ADMIN');
-            $this->addRole($acrole);
             $acrole = new Role();
             $acrole->setName('ROLE_MSG_USER');
             $this->addRole($acrole);
 
-            $acrole = new Role();
-            $acrole->setName('ROLE_USER');
-            $this->addRole($acrole);
         }
     }
 
@@ -219,7 +217,7 @@ class Organisation
     private $subdomain;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="organisation")
+     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="organisation", cascade={"persist", "merge"})
      */
     private $roles;
 

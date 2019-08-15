@@ -617,9 +617,11 @@ trait BaseAdminTrait
     {
         $classname = $this->getClass();
         $reflection = new \ReflectionObject(new $classname);
-        $orgProp = $reflection->getProperty('organisation');
-        if (!empty($orgProp)) {
+        if ($reflection->hasProperty('organisation')) {
+//            $orgProp = $reflection->getProperty('organisation');
+//            if (!empty($orgProp)) {
             $object->setOrganisation($this->getCurrentOrganisation());
+//            }
         }
     }
 

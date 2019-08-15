@@ -242,10 +242,15 @@ class IndividualMemberAdmin extends BaseAdmin
 
         $oPerson->setUuid($fPerson->getUuid());
 
+        // update User
         $upRepo = $manager->getRepository(\App\Entity\User\Person::class);
         /** @var \App\Entity\User\Person $fuPerson */
-        $fuPerson = $upRepo->findOneBy(['email' => $email,
+        $fuPerson = $upRepo->findOneBy(['uuid' => $fPerson->getUuid(),
         ]);
+        if (empty($fuPerson)) {
+            $fuPerson = $upRepo->findOneBy(['email' => $email,
+            ]);
+        }
         if (empty($fuPerson)) {
             $fuPerson = $upRepo->findOneBy(['phoneNumber' => $phone,
             ]);
@@ -259,7 +264,7 @@ class IndividualMemberAdmin extends BaseAdmin
             $manager->flush($fuPerson);
         }
 
-        // update User
+        // update User user
         if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
             if (empty($user = $fuPerson->getUser())) {
                 $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
@@ -349,6 +354,9 @@ class IndividualMemberAdmin extends BaseAdmin
     {
         $oPerson = $object->getPerson();
         $manager = $this->getContainer()->get('doctrine.orm.default_entity_manager');
+
+
+        // update User
         /** @var \App\Entity\User\Person $uPerson */
         $uPerson = $manager->getRepository(\App\Entity\User\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
         $user = $uPerson->getUser();
@@ -390,6 +398,46 @@ class IndividualMemberAdmin extends BaseAdmin
 
         $manager->persist($uMember);
         $manager->flush($uMember);
+
+
+        // update Message
+        $mMember = $manager->getRepository(\App\Entity\Messaging\IndividualMember::class)->findOneBy(['uuid' => $object->getUuid()]);
+        $mPerson = $manager->getRepository(\App\Entity\Messaging\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
+
+        if (empty($mPerson)) {
+            $mPerson = new \App\Entity\Messaging\Person();
+        }
+        AppUtil::copyObjectScalarProperties($oPerson, $mPerson);
+
+        if (empty($mMember)) {
+            $mMember = new \App\Entity\Messaging\IndividualMember();
+        }
+        $mMember->setUuid($object->getUuid());
+        $mMember->setPerson($mPerson);
+        $mPerson->addIndividualMember($mMember);
+        $manager->persist($mPerson);
+        $manager->persist($mMember);
+
+        // update Event
+        $eMember = $manager->getRepository(\App\Entity\Event\IndividualMember::class)->findOneBy(['uuid' => $object->getUuid()]);
+        $ePerson = $manager->getRepository(\App\Entity\Event\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
+
+        if (empty($ePerson)) {
+            $ePerson = new \App\Entity\Event\Person();
+        }
+
+        AppUtil::copyObjectScalarProperties($oPerson, $ePerson);
+
+        if (empty($eMember)) {
+            $eMember = new \App\Entity\Event\IndividualMember();
+        }
+        $eMember->setUuid($object->getUuid());
+        $eMember->setPerson($ePerson);
+        $ePerson->addIndividualMember($eMember);
+        $manager->persist($ePerson);
+        $manager->persist($eMember);
+
+        $manager->flush();
     }
 
     ///////////////////////////////////
