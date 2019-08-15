@@ -270,6 +270,9 @@ class IndividualMemberAdmin extends BaseAdmin
                 $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
 //                $user = $fuPerson->getUser();
                 if (empty($user)) {
+                    $user = $manager->getRepository(User::class)->findOneBy(['username' => $oPerson->getEmail()]);
+                }
+                if (empty($user)) {
                     $user = new  User();
                     $user->setEmail($email);
                     $user->setUsername($email);
@@ -279,6 +282,7 @@ class IndividualMemberAdmin extends BaseAdmin
                 $user->setPlainPassword($plainPassword);
                 $manager->persist($fuPerson);
                 $manager->persist($user);
+                $manager->flush($fuPerson);
                 $manager->flush($user);
 
                 $fPerson->setUserUuid($user->getUuid());
