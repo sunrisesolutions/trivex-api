@@ -258,11 +258,10 @@ class IndividualMemberAdmin extends BaseAdmin
         if (empty($fuPerson)) {
             $fuPerson = new \App\Entity\User\Person();
             AppUtil::copyObjectScalarProperties($oPerson, $fuPerson);
-            $fuPerson->setUuid($fPerson->getUuid());
-
-            $manager->persist($fuPerson);
-            $manager->flush($fuPerson);
         }
+        $fuPerson->setUuid($fPerson->getUuid());
+        $manager->persist($fuPerson);
+        $manager->flush($fuPerson);
 
         // update User user
         if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
