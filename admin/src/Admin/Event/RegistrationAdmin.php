@@ -138,27 +138,7 @@ class RegistrationAdmin extends BaseAdmin
 
         $formMapper
             ->with('General')
-//                ->add('username')
-            ->add('name', null, ['label' => 'form.label_name'])
-            ->add('title', null, ['label' => 'form.label_title'])
-            ->add('startedAt', DateTimePickerType::class, ['label' => 'form.label_started_at',
-//                'locale' => 'en_SG',
-                'view_timezone' => 'Asia/Singapore',
-                'format' => 'd M Y, H:mm:ss'
-            ])
-            ->add('endedAt', DateTimePickerType::class, ['label' => 'form.label_ended_at',
-//                'locale' => 'en_SG',
-                'view_timezone' => 'Asia/Singapore',
-                'format' => 'd M Y, H:mm:ss'
-            ])
-            ->add('timezone', ChoiceType::class, array(
-                'required' => false,
-                'choices' => ['Singapore' => 'Asia/Singapore',
-                    'Yangon' => 'Asia/Rangoon',
-                    'Vietnam' => 'Asia/Saigon'
-                ],
-                'translation_domain' => $this->translationDomain
-            ))//                ->add('admin')
+
         ;
 //      ['label' => 'list.label_date_time',
 //                'locale' => 'en_SG',
@@ -227,8 +207,8 @@ class RegistrationAdmin extends BaseAdmin
      */
     protected function configureDatagridFilters(DatagridMapper $filterMapper)
     {
-        $filterMapper
-            ->add('name');
+//        $filterMapper
+//            ->add('name');
         //			->add('groups')
 //		;
     }
