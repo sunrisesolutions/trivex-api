@@ -116,7 +116,9 @@ class RegistrationAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('givenName', null, ['label' => 'form.label_name'])
+            ->add('givenName', null, ['label' => 'form.label_given_name'])
+            ->add('familyName', null, ['label' => 'form.label_family_name'])
+            ->add('individualMember.uuid', null, ['label' => 'form.label_member'])
 ;
         $listMapper->add('_action', 'actions', [
                 'label' => 'form.label_action',
@@ -212,6 +214,4 @@ class RegistrationAdmin extends BaseAdmin
         //			->add('groups')
 //		;
     }
-
-
 }
