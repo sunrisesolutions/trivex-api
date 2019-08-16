@@ -91,7 +91,7 @@ class IndividualMember
 
     private function buildProfilePicturePath()
     {
-        return sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->uuid);
+        return sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%s.jpg', $this->uuid);
     }
 
     public function setProfilePicture(?string $profilePicture): self
