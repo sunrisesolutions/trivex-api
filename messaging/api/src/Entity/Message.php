@@ -207,6 +207,21 @@ class Message
      */
     private $optionSet;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $expireAt;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $expireIn;
+
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     */
+    private $expireInUnit;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -352,6 +367,42 @@ class Message
     public function setOptionSet(?OptionSet $optionSet): self
     {
         $this->optionSet = $optionSet;
+
+        return $this;
+    }
+
+    public function getExpireAt(): ?\DateTimeInterface
+    {
+        return $this->expireAt;
+    }
+
+    public function setExpireAt(?\DateTimeInterface $expireAt): self
+    {
+        $this->expireAt = $expireAt;
+
+        return $this;
+    }
+
+    public function getExpireIn(): ?int
+    {
+        return $this->expireIn;
+    }
+
+    public function setExpireIn(?int $expireIn): self
+    {
+        $this->expireIn = $expireIn;
+
+        return $this;
+    }
+
+    public function getExpireInUnit(): ?string
+    {
+        return $this->expireInUnit;
+    }
+
+    public function setExpireInUnit(?string $expireInUnit): self
+    {
+        $this->expireInUnit = $expireInUnit;
 
         return $this;
     }
