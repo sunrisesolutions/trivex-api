@@ -152,6 +152,11 @@ class Registration
      */
     private $accessToken;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="registrations")
+     */
+    private $individualMember;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -335,6 +340,18 @@ class Registration
     public function setLocationType(string $type): self
     {
         $this->locationType = $type;
+
+        return $this;
+    }
+
+    public function getIndividualMember(): ?IndividualMember
+    {
+        return $this->individualMember;
+    }
+
+    public function setIndividualMember(?IndividualMember $individualMember): self
+    {
+        $this->individualMember = $individualMember;
 
         return $this;
     }
