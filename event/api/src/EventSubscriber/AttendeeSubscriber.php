@@ -4,6 +4,7 @@ namespace App\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
 use App\Entity\Attendee;
+use App\Entity\IndividualMember;
 use App\Security\JWTUser;
 use http\Exception\InvalidArgumentException;
 use Magenta\Bundle\SWarrantyApiBundle\Dto\Customer\RegistrationEmail;
@@ -40,6 +41,7 @@ class AttendeeSubscriber implements EventSubscriberInterface
 
     public function onKernelView(GetResponseForControllerResultEvent $event)
     {
+        /** @var Attendee $attendee */
         $attendee = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
 
@@ -51,6 +53,17 @@ class AttendeeSubscriber implements EventSubscriberInterface
         $user = $this->security->getUser();
         if (empty($user)) {
             return;
+        }
+
+        $imUuid = $user->getImUuid();
+        $reg = $attendee->getRegistration();
+        $reg->setMemberUuid($imUuid);
+        /** @var IndividualMember $im */
+        $im = $this->registry->getRepository(IndividualMember::class)->findOneBy(['uuid' => $imUuid,
+        ]);
+
+        if (!empty($im)) {
+            $im->addRegistration($reg);
         }
 
 //        throw new InvalidArgumentException('hello');

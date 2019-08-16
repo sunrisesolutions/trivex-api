@@ -32,10 +32,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class EventAdmin extends BaseAdmin
+class AttendeeAdmin extends BaseAdmin
 {
 
-    const CHILDREN = [RegistrationAdmin::class => 'event'];
+    const CHILDREN = [];
 
     protected $action;
 
@@ -145,12 +145,12 @@ class EventAdmin extends BaseAdmin
             ->add('startedAt', DateTimePickerType::class, ['label' => 'form.label_started_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
-                'format' => 'd-M-Y, H:mm:ss'
+                'format' => 'd M Y, H:mm:ss'
             ])
             ->add('endedAt', DateTimePickerType::class, ['label' => 'form.label_ended_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
-                'format' => 'd-M-Y, H:mm:ss'
+                'format' => 'd M Y, H:mm:ss'
             ])
             ->add('timezone', ChoiceType::class, array(
                 'required' => false,

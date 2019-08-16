@@ -43,6 +43,7 @@ class IndividualMember
         $this->notifSubscriptions = new ArrayCollection();
         $this->roles = new ArrayCollection();
         $this->freeOnMessages = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
     }
 
     public function isMessageDelivered(Message $message)
@@ -129,6 +130,11 @@ class IndividualMember
      * @ORM\OneToMany(targetEntity="App\Entity\FreeOnMessage", mappedBy="sender")
      */
     private $freeOnMessages;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Registration", mappedBy="individualMember")
+     */
+    private $registrations;
 
     public function getId(): ?int
     {
@@ -343,6 +349,37 @@ class IndividualMember
             // set the owning side to null (unless already changed)
             if ($freeOnMessage->getSender() === $this) {
                 $freeOnMessage->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Registration[]
+     */
+    public function getRegistrations(): Collection
+    {
+        return $this->registrations;
+    }
+
+    public function addRegistration(Registration $registration): self
+    {
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations[] = $registration;
+            $registration->setIndividualMember($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRegistration(Registration $registration): self
+    {
+        if ($this->registrations->contains($registration)) {
+            $this->registrations->removeElement($registration);
+            // set the owning side to null (unless already changed)
+            if ($registration->getIndividualMember() === $this) {
+                $registration->setIndividualMember(null);
             }
         }
 

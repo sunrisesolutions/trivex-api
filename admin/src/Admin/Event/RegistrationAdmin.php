@@ -4,6 +4,7 @@ namespace App\Admin\Event;
 
 use App\Entity\Event\Event;
 use App\Entity\Event\Organisation;
+use App\Entity\Event\Registration;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Knp\Menu\ItemInterface as MenuItemInterface;
 use App\Admin\BaseAdmin;
@@ -32,10 +33,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Validator\Constraints\Valid;
 
-class EventAdmin extends BaseAdmin
+class RegistrationAdmin extends BaseAdmin
 {
 
-    const CHILDREN = [RegistrationAdmin::class => 'event'];
+    const CHILDREN = [];
 
     protected $action;
 
@@ -61,7 +62,7 @@ class EventAdmin extends BaseAdmin
 
     public function getNewInstance()
     {
-        /** @var Event $object */
+        /** @var Registration $object */
         $object = parent::getNewInstance();
 
         return $object;
@@ -115,16 +116,14 @@ class EventAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('name', null, ['label' => 'form.label_name'])
-            ->add('title', null, ['label' => 'form.label_title'])
-            ->add('startedAt', null, ['label' => 'form.label_started_at'])
-            ->add('endedAt', null, ['label' => 'form.label_ended_at']);
+            ->add('givenName', null, ['label' => 'form.label_name'])
+;
         $listMapper->add('_action', 'actions', [
                 'label' => 'form.label_action',
                 'actions' => [
-                    'event_page' => ['template' => 'Admin/Event/Event/Action/list__action__event_page.html.twig'],
-                    'edit' => [],
-                    'delete' => [],
+//                    'event_page' => ['template' => 'Admin/Event/Event/Action/list__action__event_page.html.twig'],
+//                    'edit' => [],
+//                    'delete' => [],
                 ],
             ]
         );
@@ -145,12 +144,12 @@ class EventAdmin extends BaseAdmin
             ->add('startedAt', DateTimePickerType::class, ['label' => 'form.label_started_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
-                'format' => 'd-M-Y, H:mm:ss'
+                'format' => 'd M Y, H:mm:ss'
             ])
             ->add('endedAt', DateTimePickerType::class, ['label' => 'form.label_ended_at',
 //                'locale' => 'en_SG',
                 'view_timezone' => 'Asia/Singapore',
-                'format' => 'd-M-Y, H:mm:ss'
+                'format' => 'd M Y, H:mm:ss'
             ])
             ->add('timezone', ChoiceType::class, array(
                 'required' => false,
@@ -197,7 +196,7 @@ class EventAdmin extends BaseAdmin
     }
 
     /**
-     * @param Event $object
+     * @param Registration $object
      */
     public function prePersist($object)
     {
@@ -205,7 +204,7 @@ class EventAdmin extends BaseAdmin
     }
 
     /**
-     * @param Event $object
+     * @param Registration $object
      */
     public function preUpdate($object)
     {
