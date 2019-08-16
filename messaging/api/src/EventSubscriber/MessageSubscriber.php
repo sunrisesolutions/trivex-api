@@ -56,7 +56,8 @@ class MessageSubscriber implements EventSubscriberInterface
             $event->setResponse(new JsonResponse(['Unauthorised access! Empty user or Member'], 401));
         }
 
-        if (!in_array('ROLE_ORG_ADMIN', $user->getRoles()) && $message->getPublished() === true) {
+        $roles = $user->getRoles();
+        if (!in_array('ROLE_ORG_ADMIN', $roles) && !in_array('ROLE_MSG_ADMIN', $roles) && $message->getPublished() === true) {
             $message->setStatus(Message::STATUS_PENDING_APPROVAL);
         }
 
@@ -64,7 +65,7 @@ class MessageSubscriber implements EventSubscriberInterface
         $im = $imRepo->findOneBy(['uuid' => $imUuid]);
         if (empty($im)) {
             $token = $event->getRequest()->headers->get('Authorization');
-            $imData = $this->request('https://' . getenv('ORG_SERVICE_HOST') . '/individual_members?uuid=' . $imUuid, $token);
+            $imData = $this->request('https://'.getenv('ORG_SERVICE_HOST').'/individual_members?uuid='.$imUuid, $token);
 
             if (empty($personUuid = $imData['personData']['uuid']) || empty($orgUuid = $imData['organisationUuid'])) {
                 throw new \Exception('personUuid | organisationUuid not found');
@@ -84,7 +85,7 @@ class MessageSubscriber implements EventSubscriberInterface
 
             $org = $this->registry->getRepository(Organisation::class)->findOneBy(['uuid' => $orgUuid]);
             if (empty($org)) {
-                $orgData = $this->request('https://' . getenv('ORG_SERVICE_HOST') . '/organisations?uuid=' . $orgUuid, $token);
+                $orgData = $this->request('https://'.getenv('ORG_SERVICE_HOST').'/organisations?uuid='.$orgUuid, $token);
                 $org = new Organisation();
                 $org->setUuid($orgData['uuid']);
                 $org->setName($orgData['name']);
@@ -112,7 +113,8 @@ class MessageSubscriber implements EventSubscriberInterface
 //            'username' => $user->getUsername(), 'org' => $user->getOrgUuid()]], 200));
     }
 
-    private function request($url, $token = null): array {
+    private function request($url, $token = null): array
+    {
         $client = new Client([
             'verify' => false,
             'http_errors' => false,

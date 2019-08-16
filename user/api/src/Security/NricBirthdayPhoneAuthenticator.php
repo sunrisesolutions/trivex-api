@@ -77,6 +77,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
                 'idNumber' => $credentials['id-number'],
                 'birthDate' => $credentials['birth-date'],
             ]);
+
             $user = null;
             /** @var User $u */
             foreach ($users as $u) {
