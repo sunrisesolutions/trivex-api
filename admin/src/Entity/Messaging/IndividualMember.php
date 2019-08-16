@@ -348,4 +348,5 @@ class IndividualMember
 
         return $this;
     }
+
 }
