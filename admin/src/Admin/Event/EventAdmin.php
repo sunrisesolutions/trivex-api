@@ -98,8 +98,8 @@ class EventAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
-        $collection->remove('edit');
-        $collection->remove('delete');
+        $collection->remove('show');
+//        $collection->remove('delete');
 
         $collection->add('publish', $this->getRouterIdParameter().'/publish');
     }
