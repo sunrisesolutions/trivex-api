@@ -27,7 +27,7 @@ use App\Controller\SendEmailToIndividualMember;
  *     itemOperations={
  *     "get",
  *     "delete"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
- *     "put"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
+ *     "put"={"access_control"="is_granted('ROLE_USER')"},
  *     "put_email"={
  *         "method"="PUT",
  *         "path"="/individual_members/{id}/email",
