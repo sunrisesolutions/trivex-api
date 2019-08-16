@@ -115,7 +115,7 @@ class EventAdmin extends BaseAdmin
     protected function configureListFields(ListMapper $listMapper)
     {
         $listMapper
-            ->add('name', null, ['label' => 'form.label_name'])
+            ->addIdentifier('name', null, ['label' => 'form.label_name'])
             ->add('title', null, ['label' => 'form.label_title'])
             ->add('startedAt', null, ['label' => 'form.label_started_at'])
             ->add('endedAt', null, ['label' => 'form.label_ended_at']);
