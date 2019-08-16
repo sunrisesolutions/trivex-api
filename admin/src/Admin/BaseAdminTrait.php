@@ -465,9 +465,11 @@ trait BaseAdminTrait
         if (!empty($organisation)) { // && ! empty($organisation)
             $classname = $this->getClass();
             $reflection = new \ReflectionObject(new $classname);
-            $orgProp = $reflection->getProperty('organisation');
-            if (!empty($orgProp)) {
+            if ($reflection->hasProperty('organisation')) {
+//                $orgProp = $reflection->getProperty('organisation');
+//                if (!empty($orgProp)) {
                 $this->filterQueryByOrganisation($query, $organisation);
+//                }
             }
         } else {
             // TODO: change this so that 1 person can manage multiple organisations
