@@ -80,8 +80,14 @@ class Delivery
     private $createdAt;
 
     /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    private $read;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups("read")
      */
     private $readAt;
 
@@ -201,5 +207,21 @@ class Delivery
         $this->selectedOptions = $selectedOptions;
 
         return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getRead(): ?bool
+    {
+        return $this->read;
+    }
+
+    /**
+     * @param bool|null $read
+     */
+    public function setRead(?bool $read): void
+    {
+        $this->read = $read;
     }
 }

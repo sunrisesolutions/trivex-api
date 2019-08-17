@@ -45,7 +45,7 @@ class DeliverySubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($delivery->getReadAt()) {
+        if ($delivery->getRead()) {
             $delivery->setReadAt(new \DateTime());
         }
 
