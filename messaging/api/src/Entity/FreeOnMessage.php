@@ -62,7 +62,7 @@ class FreeOnMessage
 
     public function getSubject()
     {
-        return $this->fromHour.':'.($this->fromMinute ?: '00').' - '.$this->toHour.':'.($this->toMinute ?: '00').'   '.self::DAYS[$this->fromDay].' - '.self::DAYS[$this->toDay];
+        return $this->fromHour.':'.($this->fromMinute ?: '00').' - '.$this->toHour.':'.($this->toMinute ?: '00').'   ';
     }
 
     /**
@@ -112,18 +112,6 @@ class FreeOnMessage
     private $toMinute;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $fromDay;
-
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $toDay;
-
-    /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
      */
@@ -157,6 +145,48 @@ class FreeOnMessage
      * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
      */
     private $sender;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnMondays;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnTuesdays;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnWednesdays;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnThursdays;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnFridays;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnSaturdays;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $freeOnSundays;
 
     public function getId(): ?int
     {
@@ -235,29 +265,6 @@ class FreeOnMessage
         return $this;
     }
 
-    public function getFromDay(): ?int
-    {
-        return $this->fromDay;
-    }
-
-    public function setFromDay(?int $fromDay): self
-    {
-        $this->fromDay = $fromDay;
-
-        return $this;
-    }
-
-    public function getToDay(): ?int
-    {
-        return $this->toDay;
-    }
-
-    public function setToDay(?int $toDay): self
-    {
-        $this->toDay = $toDay;
-
-        return $this;
-    }
 
     public function getEffectiveFrom(): ?\DateTimeInterface
     {
@@ -327,6 +334,90 @@ class FreeOnMessage
     public function setSender(?IndividualMember $sender): self
     {
         $this->sender = $sender;
+
+        return $this;
+    }
+
+    public function getFreeOnMondays(): ?bool
+    {
+        return $this->freeOnMondays;
+    }
+
+    public function setFreeOnMondays(?bool $freeOnMondays): self
+    {
+        $this->freeOnMondays = $freeOnMondays;
+
+        return $this;
+    }
+
+    public function getFreeOnTuesdays(): ?bool
+    {
+        return $this->freeOnTuesdays;
+    }
+
+    public function setFreeOnTuesdays(?bool $freeOnTuesdays): self
+    {
+        $this->freeOnTuesdays = $freeOnTuesdays;
+
+        return $this;
+    }
+
+    public function getFreeOnWednesdays(): ?bool
+    {
+        return $this->freeOnWednesdays;
+    }
+
+    public function setFreeOnWednesdays(?bool $freeOnWednesdays): self
+    {
+        $this->freeOnWednesdays = $freeOnWednesdays;
+
+        return $this;
+    }
+
+    public function getFreeOnThursdays(): ?bool
+    {
+        return $this->freeOnThursdays;
+    }
+
+    public function setFreeOnThursdays(?bool $freeOnThursdays): self
+    {
+        $this->freeOnThursdays = $freeOnThursdays;
+
+        return $this;
+    }
+
+    public function getFreeOnFridays(): ?bool
+    {
+        return $this->freeOnFridays;
+    }
+
+    public function setFreeOnFridays(?bool $freeOnFridays): self
+    {
+        $this->freeOnFridays = $freeOnFridays;
+
+        return $this;
+    }
+
+    public function getFreeOnSaturdays(): ?bool
+    {
+        return $this->freeOnSaturdays;
+    }
+
+    public function setFreeOnSaturdays(?bool $freeOnSaturdays): self
+    {
+        $this->freeOnSaturdays = $freeOnSaturdays;
+
+        return $this;
+    }
+
+    public function getFreeOnSundays(): ?bool
+    {
+        return $this->freeOnSundays;
+    }
+
+    public function setFreeOnSundays(?bool $freeOnSundays): self
+    {
+        $this->freeOnSundays = $freeOnSundays;
 
         return $this;
     }
