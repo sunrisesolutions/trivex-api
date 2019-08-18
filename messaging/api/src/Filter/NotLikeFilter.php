@@ -18,7 +18,7 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
-            if (!empty($value)) {
+            if ($property === 'messageSenderUuid' && !empty($value)) {
 //                $alias = 'messageSender';
 //                $queryBuilder->join('message.sender', 'messageSender');
                 [$alias, $field, $associations] = $this->addJoinsForNestedProperty('message.sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
