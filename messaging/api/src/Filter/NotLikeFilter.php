@@ -52,7 +52,7 @@ final class NotLikeFilter extends AbstractContextAwareFilter
                 'required' => false,
                 'swagger' => [
                     'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
-                    'name' => 'Message Sender UUID',
+                    'name' => 'messageSenderUuid',
                     'type' => 'Will appear below the name in the Swagger documentation',
                 ],
             ];
