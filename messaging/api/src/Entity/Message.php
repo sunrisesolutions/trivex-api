@@ -92,7 +92,7 @@ class Message
             }
             /** @var IndividualMember $member */
             foreach ($members as $member) {
-                if ($member->isMessageDelivered($message) || $member->getUuid() === $message->getSender()->getUuid()) {
+                if ($member->isMessageDelivered($message)) { // || $member->getUuid() === $message->getSender()->getUuid() // can the sender receives his own messages
                     continue;
                 }
 
