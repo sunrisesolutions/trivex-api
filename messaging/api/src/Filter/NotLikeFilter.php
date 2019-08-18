@@ -16,7 +16,7 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
             if (!empty($value)) {
-                $queryBuilder->join('message.sender', 'messageSender');
+//                $queryBuilder->join('message.sender', 'messageSender');
                 $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
             }
         }
