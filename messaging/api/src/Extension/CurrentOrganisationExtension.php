@@ -7,12 +7,13 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
 use App\Entity\IndividualMember;
+use App\Entity\Organisation;
 use App\Security\JWTUser;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Security;
 
-final class CurrentIndividualMemberExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
+final class CurrentOrganisationExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
 
@@ -35,18 +36,23 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
     {
         /** @var JWTUser $user */
         $user = $this->security->getUser();
-        if (empty($user)) {
-            throw new UnauthorizedHttpException('Empty JWTUser');
-        }
+        $supported = $this->supportClass($resourceClass);
 
-        if (!$this->supportClass($resourceClass) || $this->security->isGranted('ROLE_MSG_ADMIN') || null === $objectUuid = $user->getImUuid()) {
+        if (!$supported || $this->security->isGranted('ROLE_ADMIN')) {
             return;
         }
 
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->join($rootAlias.'.recipient', 'recipient');
-        $queryBuilder->andWhere('recipient.uuid like :current_object');
-        $queryBuilder->setParameter('current_object', $objectUuid);
+        if ($supported && empty($user) || null === $objectUuid = $user->getOrgUuid()) {
+            throw new UnauthorizedHttpException('Please login');
+        }
+
+        if ($resourceClass === Delivery::class) {
+            $rootAlias = $queryBuilder->getRootAliases()[0];
+            $queryBuilder->join($rootAlias.'.message', 'message');
+            $queryBuilder->join($rootAlias.'.organisation', 'organisation');
+            $queryBuilder->andWhere('organisation.uuid like :current_object');
+            $queryBuilder->setParameter('current_object', $objectUuid);
+        }
 
 //        echo $queryBuilder->getQuery()->getSQL();
     }
