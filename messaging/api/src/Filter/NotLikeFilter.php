@@ -5,6 +5,7 @@ namespace App\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Entity\Delivery;
 use Doctrine\ORM\QueryBuilder;
 
 final class NotLikeFilter extends AbstractContextAwareFilter
@@ -35,23 +36,25 @@ final class NotLikeFilter extends AbstractContextAwareFilter
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
-        $description["not_like_messageSenderUuid"] = [
-            'property' => 'messageSenderUuid',
-            'type' => 'string',
-            'required' => false,
-            'swagger' => [
-                'description' => 'Filter using a NOT LIKE operator. This will appear in the Swagger documentation!',
-                'name' => 'Not-Like Filter',
-                'type' => 'Will appear below the name in the Swagger documentation',
-            ],
-        ];
+        $description = [];
+        if ($resourceClass === Delivery::class) {
+            $description["not_like_messageSenderUuid"] = [
+                'property' => 'messageSenderUuid',
+                'type' => 'string',
+                'required' => false,
+                'swagger' => [
+                    'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
+                    'name' => 'Message Sender UUID',
+                    'type' => 'Will appear below the name in the Swagger documentation',
+                ],
+            ];
+        }
 
         if (!$this->properties) {
             return $description;
 //            return [];
         }
 
-        $description = [];
         foreach ($this->properties as $property => $strategy) {
             $description["not_like_$property"] = [
                 'property' => $property,
