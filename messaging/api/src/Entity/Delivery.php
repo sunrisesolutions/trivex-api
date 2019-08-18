@@ -7,7 +7,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Filter\NotLikeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
@@ -25,6 +25,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "selectedOptions": "partial"})
+ * @ApiFilter(BooleanFilter::class, properties={"selfDelivery"})
  *
  * @ORM\Entity(repositoryClass="App\Repository\DeliveryRepository")
  * @ORM\Table(name="messaging__delivery")
