@@ -34,7 +34,7 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
     {
         /** @var JWTUser $user */
         $user = $this->security->getUser();
-        if (!$this->supportClass($resourceClass) || $this->security->isGranted('ROLE_ADMIN') || null === $objectUuid = $user->getImUuid()) {
+        if (!$this->supportClass($resourceClass) || $this->security->isGranted('ROLE_MSG_ADMIN') || null === $objectUuid = $user->getImUuid()) {
             return;
         }
 
