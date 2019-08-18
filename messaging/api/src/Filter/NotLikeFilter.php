@@ -19,17 +19,17 @@ final class NotLikeFilter extends AbstractContextAwareFilter
             return;
         }
 
-        $parameterName = $queryNameGenerator->generateParameterName($property); // Generate a unique parameter name to avoid collisions with other filters
-        $expr = $queryBuilder->expr();
-        if ($property === 'messageSenderUuid') {
-//            $queryBuilder->join('o.message', 'message')->join('message.sender', 'messageSender');
-//            $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
-        } else {
-            $queryBuilder
-                ->andWhere($expr->notLike('o.'.$property, $parameterName))
-//            ->andWhere(sprintf('REGEXP(o.%s, :%s) = 1', $property, $parameterName))
-                ->setParameter($parameterName, $value);
-        }
+//        $parameterName = $queryNameGenerator->generateParameterName($property); // Generate a unique parameter name to avoid collisions with other filters
+//        $expr = $queryBuilder->expr();
+//        if ($property === 'messageSenderUuid') {
+////            $queryBuilder->join('o.message', 'message')->join('message.sender', 'messageSender');
+////            $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
+//        } else {
+//            $queryBuilder
+//                ->andWhere($expr->notLike('o.'.$property, $parameterName))
+////            ->andWhere(sprintf('REGEXP(o.%s, :%s) = 1', $property, $parameterName))
+//                ->setParameter($parameterName, $value);
+//        }
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
