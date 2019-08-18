@@ -39,15 +39,18 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
             throw new UnauthorizedHttpException('Empty JWTUser');
         }
 
-        if (!$this->supportClass($resourceClass) || $this->security->isGranted('ROLE_MSG_ADMIN') || null === $objectUuid = $user->getImUuid()) {
+        if (!$this->supportClass($resourceClass) || null === $objectUuid = $user->getImUuid()) {
             return;
         }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->join($rootAlias.'.recipient', 'recipient');
-        $queryBuilder->andWhere('recipient.uuid like :current_object');
-        $queryBuilder->setParameter('current_object', $objectUuid);
-
+        if ($this->security->isGranted('ROLE_MSG_ADMIN')) {
+            $queryBuilder->groupBy($rootAlias.'.message');
+        } else {
+            $queryBuilder->join($rootAlias.'.recipient', 'recipient');
+            $queryBuilder->andWhere('recipient.uuid like :current_object');
+            $queryBuilder->setParameter('current_object', $objectUuid);
+        }
 //        echo $queryBuilder->getQuery()->getSQL();
     }
 
