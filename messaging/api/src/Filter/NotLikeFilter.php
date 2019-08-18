@@ -22,8 +22,10 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
-            $queryBuilder->join($rootAlias.'.message', 'message')->join('message.sender', 'messageSender');
-            $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
+            if (!empty($value)) {
+                $queryBuilder->join('message.sender', 'messageSender');
+                $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
+            }
         }
 
 //        $parameterName = $queryNameGenerator->generateParameterName($property); // Generate a unique parameter name to avoid collisions with other filters
