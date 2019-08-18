@@ -20,9 +20,16 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         }
 
         $parameterName = $queryNameGenerator->generateParameterName($property); // Generate a unique parameter name to avoid collisions with other filters
-        $queryBuilder
-            ->andWhere(sprintf('REGEXP(o.%s, :%s) = 1', $property, $parameterName))
-            ->setParameter($parameterName, $value);
+        $expr = $queryBuilder->expr();
+        if ($property === 'messageSenderUuid') {
+            $queryBuilder->join('o.message', 'message')->join('message.sender', 'messageSender');
+            $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
+        } else {
+            $queryBuilder
+                ->andWhere($expr->notLike('o.'.$property, $parameterName))
+//            ->andWhere(sprintf('REGEXP(o.%s, :%s) = 1', $property, $parameterName))
+                ->setParameter($parameterName, $value);
+        }
     }
 
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
@@ -34,17 +41,27 @@ final class NotLikeFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["regexp_$property"] = [
+            $description["not_like_$property"] = [
                 'property' => $property,
                 'type' => 'string',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter using a regex. This will appear in the Swagger documentation!',
-                    'name' => 'Custom name to use in the Swagger documentation',
+                    'description' => 'Filter using a NOT LIKE operator. This will appear in the Swagger documentation!',
+                    'name' => 'Not-Like Filter',
                     'type' => 'Will appear below the name in the Swagger documentation',
                 ],
             ];
         }
+        $description["not_like_message_sender_uuid"] = [
+            'property' => 'messageSenderUuid',
+            'type' => 'string',
+            'required' => false,
+            'swagger' => [
+                'description' => 'Filter using a NOT LIKE operator. This will appear in the Swagger documentation!',
+                'name' => 'Not-Like Filter',
+                'type' => 'Will appear below the name in the Swagger documentation',
+            ],
+        ];
 
         return $description;
     }
