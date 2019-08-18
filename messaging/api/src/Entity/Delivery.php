@@ -54,7 +54,8 @@ class Delivery
         $this->createdAt = new \DateTime();
     }
 
-    public function getUnreadDeliveryCount(){
+    public function getUnreadDeliveryCount()
+    {
 
     }
 
@@ -65,6 +66,19 @@ class Delivery
     {
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_DELIV');
+        }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function fixData()
+    {
+        if ($this->message->getSenderUuid() === $this->recipient->getUuid()) {
+            $this->selfDelivery = true;
+        } else {
+            $this->selfDelivery = false;
         }
     }
 
@@ -120,6 +134,11 @@ class Delivery
      * @Groups({"read", "write"})
      */
     private $selectedOptions = [];
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true, options={"default":false})
+     */
+    private $selfDelivery;
 
     public function getId(): ?int
     {
@@ -224,5 +243,17 @@ class Delivery
     public function setRead(?bool $read): void
     {
         $this->read = $read;
+    }
+
+    public function getSelfDelivery(): ?bool
+    {
+        return $this->selfDelivery;
+    }
+
+    public function setSelfDelivery(?bool $selfDelivery): self
+    {
+        $this->selfDelivery = $selfDelivery;
+
+        return $this;
     }
 }
