@@ -24,7 +24,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "selectedOptions": "partial"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "message.sender.uuid": "exact", "selectedOptions": "partial"})
  * @ApiFilter(BooleanFilter::class, properties={"selfDelivery"})
  *
  * @ORM\Entity(repositoryClass="App\Repository\DeliveryRepository")
