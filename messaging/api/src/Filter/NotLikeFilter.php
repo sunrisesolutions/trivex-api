@@ -35,8 +35,20 @@ final class NotLikeFilter extends AbstractContextAwareFilter
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
+        $description["not_like_messageSenderUuid"] = [
+            'property' => 'messageSenderUuid',
+            'type' => 'string',
+            'required' => false,
+            'swagger' => [
+                'description' => 'Filter using a NOT LIKE operator. This will appear in the Swagger documentation!',
+                'name' => 'Not-Like Filter',
+                'type' => 'Will appear below the name in the Swagger documentation',
+            ],
+        ];
+
         if (!$this->properties) {
-            return [];
+            return $description;
+//            return [];
         }
 
         $description = [];
@@ -52,16 +64,7 @@ final class NotLikeFilter extends AbstractContextAwareFilter
                 ],
             ];
         }
-        $description["not_like_messageSenderUuid"] = [
-            'property' => 'messageSenderUuid',
-            'type' => 'string',
-            'required' => false,
-            'swagger' => [
-                'description' => 'Filter using a NOT LIKE operator. This will appear in the Swagger documentation!',
-                'name' => 'Not-Like Filter',
-                'type' => 'Will appear below the name in the Swagger documentation',
-            ],
-        ];
+
 
 //        $description["not_like_message_sender_uuid"] = [
 //            'property' => 'messageSenderUuid',
