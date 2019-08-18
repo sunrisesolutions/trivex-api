@@ -198,6 +198,7 @@ class Message
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Delivery", mappedBy="message")
+    * @ApiSubresource()
      */
     private $deliveries;
 
