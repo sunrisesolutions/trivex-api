@@ -4,19 +4,25 @@
 namespace App\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
 use Doctrine\ORM\QueryBuilder;
 
 final class NotLikeFilter extends AbstractContextAwareFilter
 {
+    use PropertyHelperTrait;
+
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
             if (!empty($value)) {
+//                $alias = 'messageSender';
 //                $queryBuilder->join('message.sender', 'messageSender');
+                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('message.sender', 'messageSender', $queryBuilder, $queryNameGenerator, $resourceClass);
+
                 $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
             }
         }
