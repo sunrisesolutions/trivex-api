@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Delivery;
+use App\Entity\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -49,6 +50,24 @@ class FixDataCommand extends Command
         foreach ($deliveries as $delivery) {
             $delivery->fixData();
             $this->manager->persist($delivery);
+        }
+        $messages = $this->manager->getRepository(Message::class)->findBy(['status' => Message::STATUS_DELIVERY_SUCCESSFUL]);
+        /** @var Message $message */
+        foreach ($messages as $message) {
+            $deliveries = $message->getDeliveries();
+            $found = false;
+            /** @var Delivery $delivery */
+            foreach ($deliveries as $delivery) {
+                if ($delivery->getRecipient()->getUuid() === $message->getSenderUuid()) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $delivery = $delivery = Delivery::createInstance($message, $message->getSender());
+                $this->manager->persist($delivery);
+            }
         }
         $this->manager->flush();
 
