@@ -12,13 +12,6 @@ final class NotLikeFilter extends AbstractContextAwareFilter
 {
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        // otherwise filter is applied to order and page as well
-        if (
-            !$this->isPropertyEnabled($property, $resourceClass) ||
-            !$this->isPropertyMapped($property, $resourceClass)
-        ) {
-            return;
-        }
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
@@ -26,6 +19,14 @@ final class NotLikeFilter extends AbstractContextAwareFilter
                 $queryBuilder->join('message.sender', 'messageSender');
                 $queryBuilder->andWhere($expr->notLike('messageSender.uuid', $expr->literal($value)));
             }
+        }
+
+        // otherwise filter is applied to order and page as well
+        if (
+            !$this->isPropertyEnabled($property, $resourceClass) ||
+            !$this->isPropertyMapped($property, $resourceClass)
+        ) {
+            return;
         }
 
 //        $parameterName = $queryNameGenerator->generateParameterName($property); // Generate a unique parameter name to avoid collisions with other filters
