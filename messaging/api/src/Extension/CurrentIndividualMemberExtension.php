@@ -9,6 +9,7 @@ use App\Entity\Delivery;
 use App\Entity\IndividualMember;
 use App\Security\JWTUser;
 use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Security;
 
 final class CurrentIndividualMemberExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
@@ -34,6 +35,9 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
     {
         /** @var JWTUser $user */
         $user = $this->security->getUser();
+        if (empty($user)) {
+            throw new UnauthorizedHttpException('Empty JWTUser');
+        }
         if (!$this->supportClass($resourceClass) || $this->security->isGranted('ROLE_MSG_ADMIN') || null === $objectUuid = $user->getImUuid()) {
             return;
         }
