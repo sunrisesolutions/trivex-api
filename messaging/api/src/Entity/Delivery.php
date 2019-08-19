@@ -107,6 +107,9 @@ class Delivery
         } else {
             $this->selfDelivery = false;
         }
+        if (empty($this->selectedOptionsReadAt) && !empty($this->selectedOptions)) {
+            $this->selectedOptionsReadAt = new \DateTime();
+        }
     }
 
     /**
