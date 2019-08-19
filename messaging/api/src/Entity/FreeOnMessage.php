@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Parent_;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -58,6 +59,7 @@ class FreeOnMessage extends Message
     public function __construct()
     {
         $this->type = Message::TYPE_FREE_ON;
+        parent::__construct();
     }
 
     /**
