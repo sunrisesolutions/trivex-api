@@ -11,6 +11,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
 use App\Filter\NotLikeFilter;
+use App\Filter\GroupByFilter;
 
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
@@ -31,6 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiFilter(BooleanFilter::class, properties={"selfDelivery"})
  * @ApiFilter(OrderFilter::class, properties={"recipient.person.name", "readAt"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(NotLikeFilter::class)
+ * @ApiFilter(GroupByFilter::class)
  *
  * @ORM\Entity(repositoryClass="App\Repository\DeliveryRepository")
  * @ORM\Table(name="messaging__delivery")
