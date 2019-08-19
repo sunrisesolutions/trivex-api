@@ -47,9 +47,9 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
         if ($this->security->isGranted('ROLE_MSG_ADMIN')) {
 
         } else {
-            $queryBuilder->join($rootAlias.'.recipient', 'recipient');
-            $queryBuilder->andWhere('recipient.uuid like :current_object');
-            $queryBuilder->setParameter('current_object', $objectUuid);
+//            $queryBuilder->join($rootAlias.'.recipient', 'recipient');
+//            $queryBuilder->andWhere('recipient.uuid like :current_object');
+//            $queryBuilder->setParameter('current_object', $objectUuid);
         }
 //        echo $queryBuilder->getQuery()->getSQL();
     }
