@@ -48,10 +48,11 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
 
         if ($resourceClass === Delivery::class) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
+            $expr = $queryBuilder->expr();
             $queryBuilder->join($rootAlias.'.message', 'message');
             $queryBuilder->join('message.organisation', 'organisation');
-            $queryBuilder->andWhere('organisation.uuid like :current_object');
-            $queryBuilder->setParameter('current_object', $objectUuid);
+            $queryBuilder->andWhere($expr->like('organisation.uuid', $expr->literal($objectUuid)));
+//            $queryBuilder->setParameter('current_object', $objectUuid);
         }
 
 //        echo $queryBuilder->getQuery()->getSQL();
