@@ -63,6 +63,15 @@ class Delivery
     }
 
     /**
+     * @return integer|null
+     * @Groups("read")
+     */
+    public function getMessageId()
+    {
+        return $this->message->getId();
+    }
+
+    /**
      * @return string|null
      * @Groups("read")
      */
