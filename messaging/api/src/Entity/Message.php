@@ -16,8 +16,8 @@ use App\Controller\MessageApprovalController;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}},
+ *     normalizationContext={"groups"={"read_message"}},
+ *     denormalizationContext={"groups"={"write_message"}},
  *     itemOperations={
  *      "get",
  *      "post_message_approval"={
@@ -128,7 +128,7 @@ class Message
     }
 
     /**
-     * @Groups("write")
+     * @Groups("write_message")
      */
     protected $published;
 
@@ -144,13 +144,13 @@ class Message
 
     /**
      * @ORM\Column(type="string", length=191)
-     * @Groups("read")
+     * @Groups("read_message")
      */
     protected $uuid;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("read_message")
      */
     protected $createdAt;
 
@@ -177,7 +177,7 @@ class Message
 
     /**
      * @return string
-     * @Groups("read")
+     * @Groups("read_message")
      */
     public function getSenderUuid()
     {
@@ -186,20 +186,20 @@ class Message
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read_message", "write_message"})
      */
     protected $subject;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read_message", "write_message"})
      */
     protected $body;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=64, nullable=true)
-     * @Groups("read")
+     * @Groups("read_message")
      */
     protected $status;
 
@@ -211,7 +211,7 @@ class Message
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\OptionSet", inversedBy="messages")
-     * @Groups({"read", "write"})
+     * @Groups({"read_message", "write_message"})
      */
     protected $optionSet;
 
