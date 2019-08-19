@@ -45,6 +45,7 @@ class Delivery
      * @ORM\Id
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups("read")
      */
     private $id;
 
