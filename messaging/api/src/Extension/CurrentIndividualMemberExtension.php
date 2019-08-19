@@ -50,6 +50,7 @@ final class CurrentIndividualMemberExtension implements QueryCollectionExtension
             $queryBuilder->join($rootAlias.'.recipient', 'recipient');
 //            $queryBuilder->andWhere('recipient.uuid like :current_object');
 //            $queryBuilder->setParameter('current_object', $objectUuid);
+            echo 'hello ' .$objectUuid;
         }
 //        echo $queryBuilder->getQuery()->getSQL();
     }
