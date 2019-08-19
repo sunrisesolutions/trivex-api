@@ -23,18 +23,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
  * @ORM\Entity(repositoryClass="App\Repository\FreeOnMessageRepository")
- * @ORM\Table(name="messaging__free_on")
+ * @ORM\Table(name="messaging__message__free_on")
  * @ORM\HasLifecycleCallbacks()
  */
-class FreeOnMessage
+class FreeOnMessage extends Message
 {
-    /**
-     * @var int|null
-     * @ORM\Id
-     * @ORM\Column(type="integer",options={"unsigned":true})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+//    /**
+//     * @var int|null
+//     * @ORM\Id
+//     * @ORM\Column(type="integer",options={"unsigned":true})
+//     * @ORM\GeneratedValue(strategy="AUTO")
+//     */
+//    protected $id;
 
     const DAYS = [
         'SATURDAY',
@@ -57,12 +57,7 @@ class FreeOnMessage
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
-    }
-
-    public function getSubject()
-    {
-        return $this->fromHour.':'.($this->fromMinute ?: '00').' - '.$this->toHour.':'.($this->toMinute ?: '00').'   ';
+        $this->type = Message::TYPE_FREE_ON;
     }
 
     /**
@@ -79,143 +74,73 @@ class FreeOnMessage
      * @ORM\Column(type="string", length=191)
      * @Groups("read")
      */
-    private $uuid;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $text;
+    protected $uuid;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $fromHour;
+    protected $fromHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $toHour;
+    protected $toHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $fromMinute;
+    protected $fromMinute;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
-    private $toMinute;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $effectiveFrom;
-
-    /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $expireOn;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups("read")
-     */
-    private $timezone = 'Asia/Singapore';
-
-    /**
-     * @ORM\Column(type="datetime")
-     */
-    private $createdAt;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organisation", inversedBy="freeOnMessages")
-     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
-     */
-    private $organisation;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\IndividualMember", inversedBy="freeOnMessages")
-     * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
-     */
-    private $sender;
+    protected $toMinute;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnMondays;
+    protected $freeOnMondays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnTuesdays;
+    protected $freeOnTuesdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnWednesdays;
+    protected $freeOnWednesdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnThursdays;
+    protected $freeOnThursdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnFridays;
+    protected $freeOnFridays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnSaturdays;
+    protected $freeOnSaturdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
      */
-    private $freeOnSundays;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(?string $text): self
-    {
-        $this->text = $text;
-
-        return $this;
-    }
+    protected $freeOnSundays;
 
     public function getFromHour(): ?int
     {
@@ -261,79 +186,6 @@ class FreeOnMessage
     public function setToMinute(?int $toMinute): self
     {
         $this->toMinute = $toMinute;
-
-        return $this;
-    }
-
-
-    public function getEffectiveFrom(): ?\DateTimeInterface
-    {
-        return $this->effectiveFrom;
-    }
-
-    public function setEffectiveFrom(?\DateTimeInterface $effectiveFrom): self
-    {
-        $this->effectiveFrom = $effectiveFrom;
-
-        return $this;
-    }
-
-    public function getExpireOn(): ?\DateTimeInterface
-    {
-        return $this->expireOn;
-    }
-
-    public function setExpireOn(?\DateTimeInterface $expireOn): self
-    {
-        $this->expireOn = $expireOn;
-
-        return $this;
-    }
-
-    public function getTimezone(): ?string
-    {
-        return $this->timezone;
-    }
-
-    public function setTimezone(string $timezone): self
-    {
-        $this->timezone = $timezone;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeInterface
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getOrganisation(): ?Organisation
-    {
-        return $this->organisation;
-    }
-
-    public function setOrganisation(?Organisation $organisation): self
-    {
-        $this->organisation = $organisation;
-
-        return $this;
-    }
-
-    public function getSender(): ?IndividualMember
-    {
-        return $this->sender;
-    }
-
-    public function setSender(?IndividualMember $sender): self
-    {
-        $this->sender = $sender;
 
         return $this;
     }

@@ -167,6 +167,11 @@ class Delivery
      */
     private $selfDelivery;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $selectedOptionsReadAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -280,6 +285,18 @@ class Delivery
     public function setSelfDelivery(?bool $selfDelivery): self
     {
         $this->selfDelivery = $selfDelivery;
+
+        return $this;
+    }
+
+    public function getSelectedOptionsReadAt(): ?\DateTimeInterface
+    {
+        return $this->selectedOptionsReadAt;
+    }
+
+    public function setSelectedOptionsReadAt(?\DateTimeInterface $selectedOptionsReadAt): self
+    {
+        $this->selectedOptionsReadAt = $selectedOptionsReadAt;
 
         return $this;
     }
