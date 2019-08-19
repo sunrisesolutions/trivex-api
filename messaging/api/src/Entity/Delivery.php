@@ -23,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "access_control"="is_granted('ROLE_USER')",
  *     "order"={"id": "DESC"}
  * },
- *     normalizationContext={"groups"={"read"}},
+ *     normalizationContext={"groups"={"read", "read_message", "read_free_on"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
