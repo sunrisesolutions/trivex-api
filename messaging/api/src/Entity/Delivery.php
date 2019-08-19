@@ -27,7 +27,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
- * @ApiFilter(ExistsFilter::class, properties={"readAt"})
+ * @ApiFilter(ExistsFilter::class, properties={"readAt", "optionsSelectedAt", "selectedOptionsReadAt"})
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "message.sender.uuid": "exact", "selectedOptions": "partial"})
  * @ApiFilter(BooleanFilter::class, properties={"selfDelivery"})
  * @ApiFilter(OrderFilter::class, properties={"recipient.person.name", "readAt"}, arguments={"orderParameterName"="order"})
@@ -127,6 +127,13 @@ class Delivery
      */
     private $read;
 
+
+    /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    private $readSelectedOptions;
+
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("read")
@@ -169,8 +176,15 @@ class Delivery
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
      */
     private $selectedOptionsReadAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $optionsSelectedAt;
 
     public function getId(): ?int
     {
@@ -277,6 +291,22 @@ class Delivery
         $this->read = $read;
     }
 
+    /**
+     * @return bool|null
+     */
+    public function getReadSelectedOptions(): ?bool
+    {
+        return $this->readSelectedOptions;
+    }
+
+    /**
+     * @param bool|null $readSelectedOptions
+     */
+    public function setReadSelectedOptions(?bool $readSelectedOptions): void
+    {
+        $this->readSelectedOptions = $readSelectedOptions;
+    }
+
     public function getSelfDelivery(): ?bool
     {
         return $this->selfDelivery;
@@ -297,6 +327,18 @@ class Delivery
     public function setSelectedOptionsReadAt(?\DateTimeInterface $selectedOptionsReadAt): self
     {
         $this->selectedOptionsReadAt = $selectedOptionsReadAt;
+
+        return $this;
+    }
+
+    public function getOptionsSelectedAt(): ?\DateTimeInterface
+    {
+        return $this->optionsSelectedAt;
+    }
+
+    public function setOptionsSelectedAt(?\DateTimeInterface $optionsSelectedAt): self
+    {
+        $this->optionsSelectedAt = $optionsSelectedAt;
 
         return $this;
     }

@@ -45,12 +45,19 @@ class DeliverySubscriber implements EventSubscriberInterface
             return;
         }
 
-        if ($delivery->getRead()) {
+        if ($delivery->getRead() && empty($delivery->getReadAt())) {
             $delivery->setReadAt(new \DateTime());
         }
 
-//        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
+        if ($delivery->getReadSelectedOptions() && empty($delivery->getSelectedOptionsReadAt())) {
+            $delivery->setSelectedOptionsReadAt(new \DateTime());
+        }
 
+        if (!empty($delivery->getSelectedOptions()) && empty($delivery->getOptionsSelectedAt())) {
+            $delivery->setOptionsSelectedAt(new \DateTime());
+        }
+
+//        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
 
 
 //        $event->setControllerResult($connection);
