@@ -17,8 +17,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "access_control"="is_granted('ROLE_USER')",
  *     "order"={"id": "DESC"}
  * },
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"read_free_on"}},
+ *     denormalizationContext={"groups"={"write_free_on"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
@@ -72,73 +72,73 @@ class FreeOnMessage extends Message
 
     /**
      * @ORM\Column(type="string", length=191)
-     * @Groups("read")
+     * @Groups("read_free_on")
      */
     protected $uuid;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $fromHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $toHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $fromMinute;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $toMinute;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnMondays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnTuesdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnWednesdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnThursdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnFridays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnSaturdays;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
     protected $freeOnSundays;
 
