@@ -217,15 +217,18 @@ class Message
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read_message", "write_message"})
      */
     protected $expireAt;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read_message", "write_message"})
      */
     protected $expireIn;
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read_message", "write_message"})
      */
     protected $expireInUnit;
     /**
