@@ -71,6 +71,7 @@ class OptionSet
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Message", mappedBy="optionSet")
+     * @ApiSubresource()
      */
     private $messages;
 
