@@ -107,9 +107,9 @@ class Delivery
         } else {
             $this->selfDelivery = false;
         }
-        if (empty($this->optionsSelectedAt) && !empty($this->selectedOptions)) {
-            $this->optionsSelectedAt = new \DateTime();
-        }
+//        if (empty($this->optionsSelectedAt) && !empty($this->selectedOptions)) {
+//            $this->optionsSelectedAt = new \DateTime();
+//        }
     }
 
     /**
