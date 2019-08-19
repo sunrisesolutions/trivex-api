@@ -62,6 +62,15 @@ class Delivery
         $this->createdAt = new \DateTime();
     }
 
+    /**
+     * @return string|null
+     * @Groups("read")
+     */
+    public function getRecipientUuid()
+    {
+        return $this->recipient->getUuid();
+    }
+
     public function getUnreadDeliveryCount()
     {
 
