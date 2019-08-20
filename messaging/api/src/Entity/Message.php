@@ -68,6 +68,10 @@ class Message
         $this->deliveries = new ArrayCollection();
     }
 
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
     public function fixData()
     {
         if (empty($this->expireAt)) {
@@ -248,6 +252,7 @@ class Message
     /**
      * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read_message", "write_message"})
      */
     protected $effectiveFrom;
 
