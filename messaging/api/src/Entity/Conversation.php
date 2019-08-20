@@ -57,6 +57,7 @@ class Conversation
     {
         $this->messages = new ArrayCollection();
         $this->participants = new ArrayCollection();
+        $this->createdAt = new \DateTime();
     }
 
     /**
