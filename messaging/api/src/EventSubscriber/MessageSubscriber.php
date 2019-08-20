@@ -111,8 +111,11 @@ class MessageSubscriber implements EventSubscriberInterface
             if (empty($org)) {
                 $org = $im->getOrganisation();
             }
-
-
+            $msgAdmins = $org->getIndividualMembersWithMSGAdminRoleGranted();
+            /** @var IndividualMember $participant */
+            foreach ($msgAdmins as $participant) {
+                $conversation->addParticipant($participant);
+            }
         }
 
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));

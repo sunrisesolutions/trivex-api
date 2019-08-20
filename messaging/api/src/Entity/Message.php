@@ -156,8 +156,8 @@ class Message
 
     /**
      * @var Conversation
-     * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="messages")
-     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Conversation", inversedBy="messages", cascade={"persist", "merge"})
+     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $conversation;
 
