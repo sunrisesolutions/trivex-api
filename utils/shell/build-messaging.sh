@@ -16,6 +16,13 @@ cd ~/workspace/magenta/trivex/api/admin/src/Repository/Messaging
 sed -i -- 's/App\\Entity/App\\Entity\\Messaging/g' *
 sed -i -- 's/App\\Repository/App\\Repository\\Messaging/g' *
 
+echo 'copy Filter from messaging'
+cp -R -p ~/workspace/magenta/trivex/api/messaging/api/src/Filter/* ~/workspace/magenta/trivex/api/admin/src/Filter/Messaging
+cd ~/workspace/magenta/trivex/api/admin/src/Filter/Messaging
+sed -i -- 's/App\\Filter/App\\Filter\\Messaging/g' *
+cd ~/workspace/magenta/trivex/api/admin/src/Entity/Messaging
+sed -i -- 's/App\\Filter/App\\Filter\\Messaging/g' *
+
 echo 'copy Security from messaging'
 cp -p ~/workspace/magenta/trivex/api/messaging/api/src/Security/* ~/workspace/magenta/trivex/api/admin/src/Security
 

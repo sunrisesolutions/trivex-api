@@ -10,8 +10,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
-use App\Filter\NotLikeFilter;
-use App\Filter\GroupByFilter;
+use App\Filter\Messaging\NotLikeFilter;
+use App\Filter\Messaging\GroupByFilter;
 
 use App\Util\Messaging\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
