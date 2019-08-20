@@ -32,12 +32,36 @@ class Organisation
         $this->messages = new ArrayCollection();
         $this->optionSets = new ArrayCollection();
         $this->freeOnMessages = new ArrayCollection();
+        $this->roles = new ArrayCollection();
+    }
+
+    public function getRole($name)
+    {
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->getName() === $name) {
+                return $role;
+            }
+        }
+    }
+
+    public function getIndividualMembersWithMSGAdminRoleGranted()
+    {
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+        $c->andWhere($expr->eq('messageAdminGranted', true));
+        return $this->individualMembers->matching($c);
     }
 
     /**
      * @ORM\Column(type="string", length=191)
      */
     private $uuid;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Messaging\Role", mappedBy="organisation", cascade={"persist", "merge"})
+     */
+    private $roles;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -68,11 +92,6 @@ class Organisation
      * @ORM\Column(type="date", nullable=true)
      */
     private $foundedOn;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Messaging\FreeOnMessage", mappedBy="organisation")
-     */
-    private $freeOnMessages;
 
     public function getIndividualMembersByPage($page = null, $limit = AppUtil::BATCH_SIZE)
     {
@@ -247,30 +266,30 @@ class Organisation
     }
 
     /**
-     * @return Collection|FreeOnMessage[]
+     * @return Collection|Role[]
      */
-    public function getFreeOnMessages(): Collection
+    public function getRoles(): Collection
     {
-        return $this->freeOnMessages;
+        return $this->roles;
     }
 
-    public function addFreeOnMessage(FreeOnMessage $freeOnMessage): self
+    public function addRole(Role $role): self
     {
-        if (!$this->freeOnMessages->contains($freeOnMessage)) {
-            $this->freeOnMessages[] = $freeOnMessage;
-            $freeOnMessage->setOrganisation($this);
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->setOrganisation($this);
         }
 
         return $this;
     }
 
-    public function removeFreeOnMessage(FreeOnMessage $freeOnMessage): self
+    public function removeRole(Role $role): self
     {
-        if ($this->freeOnMessages->contains($freeOnMessage)) {
-            $this->freeOnMessages->removeElement($freeOnMessage);
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
             // set the owning side to null (unless already changed)
-            if ($freeOnMessage->getOrganisation() === $this) {
-                $freeOnMessage->setOrganisation(null);
+            if ($role->getOrganisation() === $this) {
+                $role->setOrganisation(null);
             }
         }
 

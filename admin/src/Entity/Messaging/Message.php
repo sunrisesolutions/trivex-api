@@ -16,8 +16,8 @@ use App\Controller\MessageApprovalController;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}},
+ *     normalizationContext={"groups"={"read_message"}},
+ *     denormalizationContext={"groups"={"write_message"}},
  *     itemOperations={
  *      "get",
  *      "post_message_approval"={
@@ -33,17 +33,24 @@ use App\Controller\MessageApprovalController;
  *     }
  * )
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\MessageRepository")
+ * @ORM\InheritanceType("JOINED")
+ * @ORM\DiscriminatorColumn(name="discr", type="string")
+ * @ORM\DiscriminatorMap({"free_on" = "App\Entity\Messaging\FreeOnMessage", "simple" = "App\Entity\Messaging\Message"})
  * @ORM\Table(name="messaging__message")
  * @ORM\HasLifecycleCallbacks()
  */
 class Message
 {
+    const TYPE_SIMPLE = 'SIMPLE';
+    const TYPE_FREE_ON = 'FREE_ON';
+
     const STATUS_DRAFT = 'MESSAGE_DRAFT';
     const STATUS_NEW = 'MESSAGE_NEW';
     const STATUS_PENDING_APPROVAL = 'MESSAGE_PENDING_APPROVAL';
     const STATUS_DELIVERY_IN_PROGRESS = 'DELIVERY_IN_PROGRESS';
     const STATUS_DELIVERY_SUCCESSFUL = 'DELIVERY_SUCCESSFUL';
     const STATUS_RECEIVED = 'MESSAGE_RECEIVED';
+
     const STATUS_READ = 'MESSAGE_READ';
 
     /**
@@ -52,7 +59,7 @@ class Message
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $id;
+    protected $id;
 
     public function __construct()
     {
@@ -92,7 +99,7 @@ class Message
             }
             /** @var IndividualMember $member */
             foreach ($members as $member) {
-                if ($member->isMessageDelivered($message) || $member->getUuid() === $message->getSender()->getUuid()) {
+                if ($member->isMessageDelivered($message)) { // || $member->getUuid() === $message->getSender()->getUuid() // can the sender receives his own messages
                     continue;
                 }
 
@@ -121,9 +128,9 @@ class Message
     }
 
     /**
-     * @Groups("write")
+     * @Groups("write_message")
      */
-    private $published;
+    protected $published;
 
     public function setPublished(?bool $published): self
     {
@@ -137,40 +144,40 @@ class Message
 
     /**
      * @ORM\Column(type="string", length=191)
-     * @Groups("read")
+     * @Groups("read_message")
      */
-    private $uuid;
+    protected $uuid;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups("read")
+     * @Groups("read_message")
      */
-    private $createdAt;
+    protected $createdAt;
 
     /**
      * @var Conversation
-     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Conversation", inversedBy="messages")
-     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Conversation", inversedBy="messages", cascade={"persist", "merge"})
+     * @ORM\JoinColumn(name="id_conversation", referencedColumnName="id", onDelete="CASCADE")
      */
-    private $conversation;
+    protected $conversation;
 
     /**
      * @var Organisation
      * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Organisation", inversedBy="messages")
      * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
      */
-    private $organisation;
+    protected $organisation;
 
     /**
      * @var IndividualMember
      * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\IndividualMember", inversedBy="messages")
      * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
      */
-    private $sender;
+    protected $sender;
 
     /**
      * @return string
-     * @Groups("read")
+     * @Groups("read_message")
      */
     public function getSenderUuid()
     {
@@ -179,33 +186,65 @@ class Message
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read_message", "write_message"})
      */
-    private $subject;
+    protected $subject;
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups({"read_message", "write_message"})
      */
-    private $body;
+    protected $body;
 
     /**
      * @var string
      * @ORM\Column(type="string", length=64, nullable=true)
-     * @Groups("read")
+     * @Groups("read_message")
      */
-    private $status;
+    protected $status;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Messaging\Delivery", mappedBy="message")
+     * @ApiSubresource()
      */
-    private $deliveries;
+    protected $deliveries;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\OptionSet", inversedBy="messages")
-     * @Groups({"read", "write"})
+     * @Groups({"read_message", "write_message"})
      */
-    private $optionSet;
+    protected $optionSet;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read_message", "write_message"})
+     */
+    protected $expireAt;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read_message", "write_message"})
+     */
+    protected $expireIn;
+    /**
+     * @ORM\Column(type="string", length=64, nullable=true)
+     * @Groups({"read_message", "write_message"})
+     */
+    protected $expireInUnit;
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true, options={"default":"SIMPLE"})
+     */
+    protected $type = self::TYPE_SIMPLE;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $effectiveFrom;
+
+    /**
+     * @ORM\Column(type="string", length=128, options={"default": "Asia/Singapore"})
+     */
+    private $timezone = 'Asia/Singapore';
 
     public function getId(): ?int
     {
@@ -352,6 +391,78 @@ class Message
     public function setOptionSet(?OptionSet $optionSet): self
     {
         $this->optionSet = $optionSet;
+
+        return $this;
+    }
+
+    public function getExpireAt(): ?\DateTimeInterface
+    {
+        return $this->expireAt;
+    }
+
+    public function setExpireAt(?\DateTimeInterface $expireAt): self
+    {
+        $this->expireAt = $expireAt;
+
+        return $this;
+    }
+
+    public function getExpireIn(): ?int
+    {
+        return $this->expireIn;
+    }
+
+    public function setExpireIn(?int $expireIn): self
+    {
+        $this->expireIn = $expireIn;
+
+        return $this;
+    }
+
+    public function getExpireInUnit(): ?string
+    {
+        return $this->expireInUnit;
+    }
+
+    public function setExpireInUnit(?string $expireInUnit): self
+    {
+        $this->expireInUnit = $expireInUnit;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(?string $type): self
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    public function getEffectiveFrom(): ?\DateTimeInterface
+    {
+        return $this->effectiveFrom;
+    }
+
+    public function setEffectiveFrom(?\DateTimeInterface $effectiveFrom): self
+    {
+        $this->effectiveFrom = $effectiveFrom;
+
+        return $this;
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(string $timezone): self
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }

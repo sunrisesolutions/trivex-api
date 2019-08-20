@@ -45,6 +45,17 @@ class IndividualMember
         $this->freeOnMessages = new ArrayCollection();
     }
 
+    public function hasRole(string $roleName): bool
+    {
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->getName() === $roleName) {
+                return $role;
+            }
+        }
+        return null;
+    }
+
     /**
      * @ORM\PrePersist
      * @ORM\PreUpdate

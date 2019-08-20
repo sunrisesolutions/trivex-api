@@ -32,6 +32,17 @@ class Organisation
         $this->messages = new ArrayCollection();
         $this->optionSets = new ArrayCollection();
         $this->freeOnMessages = new ArrayCollection();
+        $this->roles = new ArrayCollection();
+    }
+
+    public function getRole($name)
+    {
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->getName() === $name) {
+                return $role;
+            }
+        }
     }
 
     public function getIndividualMembersWithMSGAdminRoleGranted()
@@ -46,6 +57,11 @@ class Organisation
      * @ORM\Column(type="string", length=191)
      */
     private $uuid;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Role", mappedBy="organisation", cascade={"persist", "merge"})
+     */
+    private $roles;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -245,6 +261,37 @@ class Organisation
     public function setAddress(?string $address): self
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Role[]
+     */
+    public function getRoles(): Collection
+    {
+        return $this->roles;
+    }
+
+    public function addRole(Role $role): self
+    {
+        if (!$this->roles->contains($role)) {
+            $this->roles[] = $role;
+            $role->setOrganisation($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRole(Role $role): self
+    {
+        if ($this->roles->contains($role)) {
+            $this->roles->removeElement($role);
+            // set the owning side to null (unless already changed)
+            if ($role->getOrganisation() === $this) {
+                $role->setOrganisation(null);
+            }
+        }
 
         return $this;
     }

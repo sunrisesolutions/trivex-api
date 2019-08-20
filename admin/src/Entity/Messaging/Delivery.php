@@ -6,6 +6,12 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+
+use App\Filter\NotLikeFilter;
+use App\Filter\GroupByFilter;
 
 use App\Util\Messaging\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
@@ -17,12 +23,17 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "access_control"="is_granted('ROLE_USER')",
  *     "order"={"id": "DESC"}
  * },
- *     normalizationContext={"groups"={"read"}},
+ *     normalizationContext={"groups"={"read", "read_message", "read_free_on"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
- * @ApiFilter(ExistsFilter::class, properties={"readAt"})
-
+ * @ApiFilter(ExistsFilter::class, properties={"readAt", "optionsSelectedAt", "selectedOptionsReadAt"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "message.sender.uuid": "exact", "selectedOptions": "partial"})
+ * @ApiFilter(BooleanFilter::class, properties={"selfDelivery"})
+ * @ApiFilter(OrderFilter::class, properties={"recipient.person.name", "readAt"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(NotLikeFilter::class)
+ * @ApiFilter(GroupByFilter::class)
+ *
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\DeliveryRepository")
  * @ORM\Table(name="messaging__delivery")
  * @ORM\HasLifecycleCallbacks()
@@ -34,6 +45,7 @@ class Delivery
      * @ORM\Id
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups("read")
      */
     private $id;
 
@@ -51,7 +63,26 @@ class Delivery
         $this->createdAt = new \DateTime();
     }
 
-    public function getUnreadDeliveryCount(){
+    /**
+     * @return integer|null
+     * @Groups("read")
+     */
+    public function getMessageId()
+    {
+        return $this->message->getId();
+    }
+
+    /**
+     * @return string|null
+     * @Groups("read")
+     */
+    public function getRecipientUuid()
+    {
+        return $this->recipient->getUuid();
+    }
+
+    public function getUnreadDeliveryCount()
+    {
 
     }
 
@@ -63,6 +94,22 @@ class Delivery
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_DELIV');
         }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function fixData()
+    {
+        if ($this->message->getSenderUuid() === $this->recipient->getUuid()) {
+            $this->selfDelivery = true;
+        } else {
+            $this->selfDelivery = false;
+        }
+//        if (empty($this->optionsSelectedAt) && !empty($this->selectedOptions)) {
+//            $this->optionsSelectedAt = new \DateTime();
+//        }
     }
 
     /**
@@ -78,8 +125,21 @@ class Delivery
     private $createdAt;
 
     /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    private $read;
+
+
+    /**
+     * @var boolean|null
+     * @Groups("write")
+     */
+    private $readSelectedOptions;
+
+    /**
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read", "write"})
+     * @Groups("read")
      */
     private $readAt;
 
@@ -111,6 +171,23 @@ class Delivery
      * @Groups({"read", "write"})
      */
     private $selectedOptions = [];
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true, options={"default":false})
+     */
+    private $selfDelivery;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $selectedOptionsReadAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("read")
+     */
+    private $optionsSelectedAt;
 
     public function getId(): ?int
     {
@@ -197,6 +274,74 @@ class Delivery
     public function setSelectedOptions(array $selectedOptions): self
     {
         $this->selectedOptions = $selectedOptions;
+
+        return $this;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getRead(): ?bool
+    {
+        return $this->read;
+    }
+
+    /**
+     * @param bool|null $read
+     */
+    public function setRead(?bool $read): void
+    {
+        $this->read = $read;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getReadSelectedOptions(): ?bool
+    {
+        return $this->readSelectedOptions;
+    }
+
+    /**
+     * @param bool|null $readSelectedOptions
+     */
+    public function setReadSelectedOptions(?bool $readSelectedOptions): void
+    {
+        $this->readSelectedOptions = $readSelectedOptions;
+    }
+
+    public function getSelfDelivery(): ?bool
+    {
+        return $this->selfDelivery;
+    }
+
+    public function setSelfDelivery(?bool $selfDelivery): self
+    {
+        $this->selfDelivery = $selfDelivery;
+
+        return $this;
+    }
+
+    public function getSelectedOptionsReadAt(): ?\DateTimeInterface
+    {
+        return $this->selectedOptionsReadAt;
+    }
+
+    public function setSelectedOptionsReadAt(?\DateTimeInterface $selectedOptionsReadAt): self
+    {
+        $this->selectedOptionsReadAt = $selectedOptionsReadAt;
+
+        return $this;
+    }
+
+    public function getOptionsSelectedAt(): ?\DateTimeInterface
+    {
+        return $this->optionsSelectedAt;
+    }
+
+    public function setOptionsSelectedAt(?\DateTimeInterface $optionsSelectedAt): self
+    {
+        $this->optionsSelectedAt = $optionsSelectedAt;
 
         return $this;
     }

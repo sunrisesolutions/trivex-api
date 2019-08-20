@@ -27,7 +27,7 @@ use App\Controller\SendEmailToIndividualMember;
  *     itemOperations={
  *     "get",
  *     "delete"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
- *     "put"={"access_control"="is_granted('ROLE_ORG_ADMIN')"},
+ *     "put"={"access_control"="is_granted('ROLE_USER')"},
  *     "put_email"={
  *         "method"="PUT",
  *         "path"="/individual_members/{id}/email",
@@ -91,7 +91,7 @@ class IndividualMember
 
     private function buildProfilePicturePath()
     {
-        return sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%d.jpg', $this->uuid);
+        return sprintf('organisation/individual/profile-picture/ORG_IM-UUID-%s.jpg', $this->uuid);
     }
 
     public function setProfilePicture(?string $profilePicture): self

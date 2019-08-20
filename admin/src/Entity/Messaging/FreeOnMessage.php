@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Messaging\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Parent_;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -17,24 +18,24 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "access_control"="is_granted('ROLE_USER')",
  *     "order"={"id": "DESC"}
  * },
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"read_free_on"}},
+ *     denormalizationContext={"groups"={"write_free_on"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\FreeOnMessageRepository")
- * @ORM\Table(name="messaging__free_on")
+ * @ORM\Table(name="messaging__message__free_on")
  * @ORM\HasLifecycleCallbacks()
  */
-class FreeOnMessage
+class FreeOnMessage extends Message
 {
-    /**
-     * @var int|null
-     * @ORM\Id
-     * @ORM\Column(type="integer",options={"unsigned":true})
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    private $id;
+//    /**
+//     * @var int|null
+//     * @ORM\Id
+//     * @ORM\Column(type="integer",options={"unsigned":true})
+//     * @ORM\GeneratedValue(strategy="AUTO")
+//     */
+//    protected $id;
 
     const DAYS = [
         'SATURDAY',
@@ -57,12 +58,8 @@ class FreeOnMessage
 
     public function __construct()
     {
-        $this->createdAt = new \DateTime();
-    }
-
-    public function getSubject()
-    {
-        return $this->fromHour.':'.($this->fromMinute ?: '00').' - '.$this->toHour.':'.($this->toMinute ?: '00').'   '.self::DAYS[$this->fromDay].' - '.self::DAYS[$this->toDay];
+        $this->type = Message::TYPE_FREE_ON;
+        parent::__construct();
     }
 
     /**
@@ -77,115 +74,75 @@ class FreeOnMessage
 
     /**
      * @ORM\Column(type="string", length=191)
-     * @Groups("read")
+     * @Groups("read_free_on")
      */
-    private $uuid;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $text;
+    protected $uuid;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $fromHour;
+    protected $fromHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $toHour;
+    protected $toHour;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $fromMinute;
+    protected $fromMinute;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $toMinute;
+    protected $toMinute;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $fromDay;
+    protected $freeOnMondays;
 
     /**
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $toDay;
+    protected $freeOnTuesdays;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $effectiveFrom;
+    protected $freeOnWednesdays;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read","write"})
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $expireOn;
+    protected $freeOnThursdays;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups("read")
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $timezone = 'Asia/Singapore';
+    protected $freeOnFridays;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $createdAt;
+    protected $freeOnSaturdays;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Organisation", inversedBy="freeOnMessages")
-     * @ORM\JoinColumn(name="id_organisation", referencedColumnName="id")
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_free_on","write_free_on"})
      */
-    private $organisation;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\IndividualMember", inversedBy="freeOnMessages")
-     * @ORM\JoinColumn(name="id_sender", referencedColumnName="id")
-     */
-    private $sender;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getUuid(): ?string
-    {
-        return $this->uuid;
-    }
-
-    public function setUuid(string $uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
-    }
-
-    public function getText(): ?string
-    {
-        return $this->text;
-    }
-
-    public function setText(?string $text): self
-    {
-        $this->text = $text;
-
-        return $this;
-    }
+    protected $freeOnSundays;
 
     public function getFromHour(): ?int
     {
@@ -235,98 +192,86 @@ class FreeOnMessage
         return $this;
     }
 
-    public function getFromDay(): ?int
+    public function getFreeOnMondays(): ?bool
     {
-        return $this->fromDay;
+        return $this->freeOnMondays;
     }
 
-    public function setFromDay(?int $fromDay): self
+    public function setFreeOnMondays(?bool $freeOnMondays): self
     {
-        $this->fromDay = $fromDay;
+        $this->freeOnMondays = $freeOnMondays;
 
         return $this;
     }
 
-    public function getToDay(): ?int
+    public function getFreeOnTuesdays(): ?bool
     {
-        return $this->toDay;
+        return $this->freeOnTuesdays;
     }
 
-    public function setToDay(?int $toDay): self
+    public function setFreeOnTuesdays(?bool $freeOnTuesdays): self
     {
-        $this->toDay = $toDay;
+        $this->freeOnTuesdays = $freeOnTuesdays;
 
         return $this;
     }
 
-    public function getEffectiveFrom(): ?\DateTimeInterface
+    public function getFreeOnWednesdays(): ?bool
     {
-        return $this->effectiveFrom;
+        return $this->freeOnWednesdays;
     }
 
-    public function setEffectiveFrom(?\DateTimeInterface $effectiveFrom): self
+    public function setFreeOnWednesdays(?bool $freeOnWednesdays): self
     {
-        $this->effectiveFrom = $effectiveFrom;
+        $this->freeOnWednesdays = $freeOnWednesdays;
 
         return $this;
     }
 
-    public function getExpireOn(): ?\DateTimeInterface
+    public function getFreeOnThursdays(): ?bool
     {
-        return $this->expireOn;
+        return $this->freeOnThursdays;
     }
 
-    public function setExpireOn(?\DateTimeInterface $expireOn): self
+    public function setFreeOnThursdays(?bool $freeOnThursdays): self
     {
-        $this->expireOn = $expireOn;
+        $this->freeOnThursdays = $freeOnThursdays;
 
         return $this;
     }
 
-    public function getTimezone(): ?string
+    public function getFreeOnFridays(): ?bool
     {
-        return $this->timezone;
+        return $this->freeOnFridays;
     }
 
-    public function setTimezone(string $timezone): self
+    public function setFreeOnFridays(?bool $freeOnFridays): self
     {
-        $this->timezone = $timezone;
+        $this->freeOnFridays = $freeOnFridays;
 
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getFreeOnSaturdays(): ?bool
     {
-        return $this->createdAt;
+        return $this->freeOnSaturdays;
     }
 
-    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    public function setFreeOnSaturdays(?bool $freeOnSaturdays): self
     {
-        $this->createdAt = $createdAt;
+        $this->freeOnSaturdays = $freeOnSaturdays;
 
         return $this;
     }
 
-    public function getOrganisation(): ?Organisation
+    public function getFreeOnSundays(): ?bool
     {
-        return $this->organisation;
+        return $this->freeOnSundays;
     }
 
-    public function setOrganisation(?Organisation $organisation): self
+    public function setFreeOnSundays(?bool $freeOnSundays): self
     {
-        $this->organisation = $organisation;
-
-        return $this;
-    }
-
-    public function getSender(): ?IndividualMember
-    {
-        return $this->sender;
-    }
-
-    public function setSender(?IndividualMember $sender): self
-    {
-        $this->sender = $sender;
+        $this->freeOnSundays = $freeOnSundays;
 
         return $this;
     }

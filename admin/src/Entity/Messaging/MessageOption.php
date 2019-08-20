@@ -2,6 +2,9 @@
 
 namespace App\Entity\Messaging;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use App\Util\Messaging\AppUtil;
@@ -15,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\MessageOptionRepository")
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact"})
  * @ORM\Table(name="messaging__option")
  * @ORM\HasLifecycleCallbacks()
  */
