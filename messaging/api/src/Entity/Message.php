@@ -12,6 +12,7 @@ use phpDocumentor\Reflection\Types\Self_;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Exception\UnsupportedException;
 use App\Controller\MessageApprovalController;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 /**
  * @ApiResource(
@@ -66,6 +67,14 @@ class Message
         $this->createdAt = new \DateTime();
         $this->status = self::STATUS_DRAFT;
         $this->deliveries = new ArrayCollection();
+    }
+
+    public function fixData()
+    {
+        if (empty($this->expireAt)) {
+            $this->expireAt = new DateTime();
+            $this->expireAt->modify('+30 days');
+        }
     }
 
     public function getDecisionStatus(): string
