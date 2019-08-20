@@ -216,6 +216,7 @@ class Message
     protected $optionSet;
 
     /**
+     * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_message", "write_message"})
      */
@@ -237,14 +238,15 @@ class Message
     protected $type = self::TYPE_SIMPLE;
 
     /**
+     * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      */
-    private $effectiveFrom;
+    protected $effectiveFrom;
 
     /**
      * @ORM\Column(type="string", length=128, options={"default": "Asia/Singapore"})
      */
-    private $timezone = 'Asia/Singapore';
+    protected $timezone = 'Asia/Singapore';
 
     public function getId(): ?int
     {

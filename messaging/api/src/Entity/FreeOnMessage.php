@@ -70,7 +70,13 @@ class FreeOnMessage extends Message
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_FREE_ON');
         }
-        $this->subject = 'Free-on Messages from '.$this->sender->getPerson()->getName();
+        $this->subject = 'Free-on Messages from '.($name = $this->sender->getPerson()->getName());
+        $this->body = sprintf('%s is free from %s:%s to %s:%s on%s starting from %s to %s.', $name, $this->fromHour, $this->fromMinute, $this->toHour, $this->toMinute, $this->getFreeDays(), $this->effectiveFrom ? $this->effectiveFrom->format('d-m-Y') : 'Unknown Date', $this->expireAt ? $this->expireAt->format('d-m-Y') : 'Unknown Date');
+    }
+
+    private function getFreeDays()
+    {
+        return $this->freeOnMondays ? ' Mondays' : ''.$this->freeOnTuesdays ? ' Tuesdays' : ''.$this->freeOnWednesdays ? ' Wednesdays' : ''.$this->freeOnThursdays ? ' Thursdays' : ''.$this->freeOnFridays ? ' Fridays' : ''.$this->freeOnSaturdays ? ' Saturdays' : ''.$this->freeOnSundays ? ' Sundays' : '';
     }
 
     /**
