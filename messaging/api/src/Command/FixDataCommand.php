@@ -3,6 +3,7 @@
 namespace App\Command;
 
 use App\Entity\Delivery;
+use App\Entity\IndividualMember;
 use App\Entity\Message;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Command\Command;
@@ -68,6 +69,13 @@ class FixDataCommand extends Command
                 $delivery = $delivery = Delivery::createInstance($message, $message->getSender());
                 $this->manager->persist($delivery);
             }
+        }
+        $members = $this->manager->getRepository(IndividualMember::class)->findBy(['messageAdminGranted' => null,
+        ]);
+        /** @var IndividualMember $member */
+        foreach ($members as $member) {
+            $member->fixData();
+            $this->manager->persist($members);
         }
         $this->manager->flush();
 

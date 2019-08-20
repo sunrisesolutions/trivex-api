@@ -3,6 +3,8 @@
 namespace App\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Entity\Conversation;
+use App\Entity\FreeOnMessage;
 use App\Entity\IndividualMember;
 use App\Entity\Message;
 use App\Entity\OptionSet;
@@ -58,7 +60,9 @@ class MessageSubscriber implements EventSubscriberInterface
 
         $roles = $user->getRoles();
         if (!in_array('ROLE_ORG_ADMIN', $roles) && !in_array('ROLE_MSG_ADMIN', $roles) && $message->getPublished() === true) {
-            $message->setStatus(Message::STATUS_PENDING_APPROVAL);
+            if (!$message instanceof FreeOnMessage) {
+                $message->setStatus(Message::STATUS_PENDING_APPROVAL);
+            }
         }
 
         $imRepo = $this->registry->getRepository(IndividualMember::class);
@@ -97,6 +101,18 @@ class MessageSubscriber implements EventSubscriberInterface
             $im->setOrganisation($org);
             $im->setPerson($person);
             $manager->persist($im);
+        }
+
+        if ($message instanceof FreeOnMessage) {
+            $conversation = new Conversation();
+            $conversation->addMessage($message);
+            $conversation->addParticipant($message->getSender());
+
+            if (empty($org)) {
+                $org = $im->getOrganisation();
+            }
+
+
         }
 
 //        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));

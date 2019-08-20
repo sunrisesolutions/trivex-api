@@ -34,6 +34,14 @@ class Organisation
         $this->freeOnMessages = new ArrayCollection();
     }
 
+    public function getIndividualMembersWithMSGAdminRoleGranted()
+    {
+        $c = Criteria::create();
+        $expr = Criteria::expr();
+        $c->andWhere($expr->eq('messageAdminGranted', true));
+        return $this->individualMembers->matching($c);
+    }
+
     /**
      * @ORM\Column(type="string", length=191)
      */
@@ -68,11 +76,6 @@ class Organisation
      * @ORM\Column(type="date", nullable=true)
      */
     private $foundedOn;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\FreeOnMessage", mappedBy="organisation")
-     */
-    private $freeOnMessages;
 
     public function getIndividualMembersByPage($page = null, $limit = AppUtil::BATCH_SIZE)
     {
@@ -242,37 +245,6 @@ class Organisation
     public function setAddress(?string $address): self
     {
         $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|FreeOnMessage[]
-     */
-    public function getFreeOnMessages(): Collection
-    {
-        return $this->freeOnMessages;
-    }
-
-    public function addFreeOnMessage(FreeOnMessage $freeOnMessage): self
-    {
-        if (!$this->freeOnMessages->contains($freeOnMessage)) {
-            $this->freeOnMessages[] = $freeOnMessage;
-            $freeOnMessage->setOrganisation($this);
-        }
-
-        return $this;
-    }
-
-    public function removeFreeOnMessage(FreeOnMessage $freeOnMessage): self
-    {
-        if ($this->freeOnMessages->contains($freeOnMessage)) {
-            $this->freeOnMessages->removeElement($freeOnMessage);
-            // set the owning side to null (unless already changed)
-            if ($freeOnMessage->getOrganisation() === $this) {
-                $freeOnMessage->setOrganisation(null);
-            }
-        }
 
         return $this;
     }

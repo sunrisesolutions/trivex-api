@@ -45,6 +45,26 @@ class IndividualMember
         $this->freeOnMessages = new ArrayCollection();
     }
 
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function fixData()
+    {
+        $foundMsgAdmin = false;
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if ($role->getName() === 'ROLE_MSG_ADMIN' or $role->getName() === 'ROLE_ORG_ADMIN') {
+                $foundMsgAdmin = true;
+                break;
+            }
+        }
+        $this->messageAdminGranted = $foundMsgAdmin;
+//        if (empty($this->optionsSelectedAt) && !empty($this->selectedOptions)) {
+//            $this->optionsSelectedAt = new \DateTime();
+//        }
+    }
+
     public function isMessageDelivered(Message $message)
     {
         if (empty($this->getMessageDelivery($message))) {
@@ -129,6 +149,11 @@ class IndividualMember
      * @ORM\OneToMany(targetEntity="App\Entity\FreeOnMessage", mappedBy="sender")
      */
     private $freeOnMessages;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $messageAdminGranted;
 
     public function getId(): ?int
     {
@@ -345,6 +370,18 @@ class IndividualMember
                 $freeOnMessage->setSender(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getMessageAdminGranted(): ?bool
+    {
+        return $this->messageAdminGranted;
+    }
+
+    public function setMessageAdminGranted(?bool $messageAdminGranted): self
+    {
+        $this->messageAdminGranted = $messageAdminGranted;
 
         return $this;
     }
