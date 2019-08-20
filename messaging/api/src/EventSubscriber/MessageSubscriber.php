@@ -120,6 +120,7 @@ class MessageSubscriber implements EventSubscriberInterface
             $conversation = new Conversation();
             $conversation->addMessage($message);
             $conversation->addParticipant($message->getSender());
+            $message->setStatus(Message::STATUS_NEW);
 
             if (empty($org)) {
                 $org = $im->getOrganisation();
