@@ -138,6 +138,12 @@ class Person
     private $phoneNumber;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $alternateName;
+
+    /**
      * @ORM\Column(type="string", length=255)
      * @Groups("read")
      */
@@ -368,6 +374,18 @@ class Person
     public function setUserUuid(string $userUuid): self
     {
         $this->userUuid = $userUuid;
+
+        return $this;
+    }
+
+    public function getAlternateName(): ?string
+    {
+        return $this->alternateName;
+    }
+
+    public function setAlternateName(?string $alternateName): self
+    {
+        $this->alternateName = $alternateName;
 
         return $this;
     }

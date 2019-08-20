@@ -37,7 +37,10 @@ class Person
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $email;
-
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $alternateName;
     /**
      * @ORM\Column(type="string", length=25, nullable=true)
      */
@@ -303,6 +306,18 @@ class Person
     public function setMiddleName(?string $middleName): self
     {
         $this->middleName = $middleName;
+
+        return $this;
+    }
+
+    public function getAlternateName(): ?string
+    {
+        return $this->alternateName;
+    }
+
+    public function setAlternateName(?string $alternateName): self
+    {
+        $this->alternateName = $alternateName;
 
         return $this;
     }

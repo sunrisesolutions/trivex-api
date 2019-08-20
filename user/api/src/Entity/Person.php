@@ -92,7 +92,10 @@ class Person
      * @Groups("read_user")
      */
     private $user;
-
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $alternateName;
     /**
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -101,7 +104,6 @@ class Person
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"read","write"})
      */
     private $givenName;
 
@@ -112,13 +114,11 @@ class Person
 
     /**
      * @ORM\Column(type="string", length=64, nullable=true)
-     * @Groups({"read","write"})
      */
     private $familyName;
 
     /**
      * @ORM\Column(type="string", length=16, nullable=true)
-     * @Groups({"read","write"})
      */
     private $gender;
 
@@ -372,4 +372,15 @@ class Person
         return $this;
     }
 
+    public function getAlternateName(): ?string
+    {
+        return $this->alternateName;
+    }
+
+    public function setAlternateName(?string $alternateName): self
+    {
+        $this->alternateName = $alternateName;
+
+        return $this;
+    }
 }
