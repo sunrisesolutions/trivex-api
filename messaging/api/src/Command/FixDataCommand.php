@@ -75,7 +75,7 @@ class FixDataCommand extends Command
         /** @var IndividualMember $member */
         foreach ($members as $member) {
             $member->fixData();
-            $this->manager->persist($members);
+            $this->manager->persist($member);
         }
         $this->manager->flush();
 
