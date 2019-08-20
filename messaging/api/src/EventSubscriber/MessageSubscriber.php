@@ -103,6 +103,19 @@ class MessageSubscriber implements EventSubscriberInterface
             $manager->persist($im);
         }
 
+//        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
+
+        $message->setSender($im);
+        $message->setOrganisation($im->getOrganisation());
+
+//        $event->setControllerResult($connection);
+
+//        throw new InvalidArgumentException('hello');
+
+//        $event->setResponse(new JsonResponse(['attendee'=>$attendee->getRegistration()->getFamilyName(), 'user' => [
+//            'im' => $user->getImUuid(),
+//            'username' => $user->getUsername(), 'org' => $user->getOrgUuid()]], 200));
+
         if ($message instanceof FreeOnMessage) {
             $conversation = new Conversation();
             $conversation->addMessage($message);
@@ -117,19 +130,6 @@ class MessageSubscriber implements EventSubscriberInterface
                 $conversation->addParticipant($participant);
             }
         }
-
-//        $event->setResponse(new JsonResponse(['hello'=>'im','im'=>$im], 200));
-
-        $message->setSender($im);
-        $message->setOrganisation($im->getOrganisation());
-
-//        $event->setControllerResult($connection);
-
-//        throw new InvalidArgumentException('hello');
-
-//        $event->setResponse(new JsonResponse(['attendee'=>$attendee->getRegistration()->getFamilyName(), 'user' => [
-//            'im' => $user->getImUuid(),
-//            'username' => $user->getUsername(), 'org' => $user->getOrgUuid()]], 200));
     }
 
     private function request($url, $token = null): array
