@@ -70,6 +70,7 @@ class FreeOnMessage extends Message
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_FREE_ON');
         }
+        $this->subject = 'Free-on Messages from '.$this->sender->getPerson()->getName();
     }
 
     /**
