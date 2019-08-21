@@ -19,7 +19,7 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
-            if ($property === 'senderUuid' && !empty($value)) {
+            if ($property === 'senderUuidNotLike' && !empty($value)) {
 //                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
                 $alias = 'sender';
                 $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
@@ -59,13 +59,13 @@ final class NotLikeFilter extends AbstractContextAwareFilter
     {
         $description = [];
         if ($resourceClass === Delivery::class) {
-            $description["not_like_messageSenderUuid"] = [
-                'property' => 'messageSenderUuid',
+            $description["not_like_senderUuidNotLike"] = [
+                'property' => 'senderUuidNotLike',
                 'type' => 'string',
                 'required' => false,
                 'swagger' => [
                     'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
-                    'name' => 'messageSenderUuid',
+                    'name' => 'senderUuidNotLike',
                     'type' => 'Will appear below the name in the Swagger documentation',
                 ],
             ];
