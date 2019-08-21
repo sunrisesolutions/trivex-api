@@ -14,7 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read", "read_option"}},
+ *     normalizationContext={"groups"={"read", "read_message", "read_option"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\MessageOptionRepository")
