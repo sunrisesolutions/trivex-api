@@ -276,6 +276,12 @@ class Message
      */
     protected $timezone = 'Asia/Singapore';
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_message", "write_message"})
+     */
+    private $decisionReasons;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -493,6 +499,18 @@ class Message
     public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getDecisionReasons(): ?string
+    {
+        return $this->decisionReasons;
+    }
+
+    public function setDecisionReasons(?string $decisionReasons): self
+    {
+        $this->decisionReasons = $decisionReasons;
 
         return $this;
     }
