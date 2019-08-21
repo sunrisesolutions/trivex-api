@@ -155,6 +155,9 @@ class Message
         if ($this->senderMessageAdmin === null) {
             $this->senderMessageAdmin = $this->sender->isMessageAdmin();
         }
+        if (empty($this->approvalDecidedAt) && $this->status === self::STATUS_DELIVERY_SUCCESSFUL) {
+            $this->approvalDecidedAt = $this->createdAt;
+        }
     }
 
     public function getDecisionStatus(): string
