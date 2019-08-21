@@ -7,6 +7,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
+use App\Entity\Message;
 use Doctrine\ORM\QueryBuilder;
 
 final class NotLikeFilter extends AbstractContextAwareFilter
@@ -18,6 +19,11 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
+            if ($property === 'senderUuid' && !empty($value)) {
+//                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
+                $alias = 'sender';
+                $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
+            }
             if ($property === 'messageSenderUuid' && !empty($value)) {
 //                $alias = 'messageSender';
 //                $queryBuilder->join('message.sender', 'messageSender');
@@ -60,6 +66,18 @@ final class NotLikeFilter extends AbstractContextAwareFilter
                 'swagger' => [
                     'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
                     'name' => 'messageSenderUuid',
+                    'type' => 'Will appear below the name in the Swagger documentation',
+                ],
+            ];
+        }
+        if ($resourceClass === Message::class) {
+            $description["not_like_senderUuid"] = [
+                'property' => 'senderUuid',
+                'type' => 'string',
+                'required' => false,
+                'swagger' => [
+                    'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
+                    'name' => 'senderUuid',
                     'type' => 'Will appear below the name in the Swagger documentation',
                 ],
             ];
