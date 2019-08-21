@@ -50,13 +50,8 @@ final class PendingApprovalMessageExtension implements QueryCollectionExtensionI
 
         } else {
             $queryBuilder->join($rootAlias.'.sender', 'sender');
-            $queryBuilder->andWhere($expr->orX(
-                $expr->andX(
-                    $expr->notLike($rootAlias.'.status', $expr->literal(Message::STATUS_PENDING_APPROVAL)),
-                    $expr->notLike($rootAlias.'.status', $expr->literal(Message::STATUS_DRAFT))
-                ),
+            $queryBuilder->andWhere(
                 $expr->like('sender.uuid', $expr->literal($objectUuid))
-            )
             );
 //            $queryBuilder->setParameter('current_object', $objectUuid);
 //            echo 'hello ' .$objectUuid;

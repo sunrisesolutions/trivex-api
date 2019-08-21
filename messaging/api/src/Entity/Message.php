@@ -47,6 +47,8 @@ use App\Controller\MessageApprovalController;
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "sender.uuid": "exact", "optionSet.uuid": "uuid", "status":"exact"})
  * @ApiFilter(BooleanFilter::class, properties={"senderAdmin"})
  * @ApiFilter(NotLikeFilter::class)
+ * @ApiFilter(ExistsFilter::class, properties={"approvalDecidedAt", "approvalDecisionReadAt"})
+ *
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -77,6 +79,58 @@ class Message
      * @Groups("read_message")
      */
     protected $id;
+
+    /**
+     * @var boolean $approved
+     * @Groups("write_message")
+     */
+    protected $approved;
+
+    /**
+     * @var boolean $rejected
+     * @Groups("write_message")
+     */
+    protected $rejected;
+
+    /**
+     * @return bool
+     */
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    /**
+     * @param bool $approved
+     */
+    public function setApproved(bool $approved): void
+    {
+        $this->approved = $approved;
+        if ($approved && empty($this->approvalDecidedAt)) {
+            $this->status = self::STATUS_NEW;
+            $this->approvalDecidedAt = new \DateTime();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRejected(): bool
+    {
+        return $this->rejected;
+    }
+
+    /**
+     * @param bool $rejected
+     */
+    public function setRejected(bool $rejected): void
+    {
+        $this->rejected = $rejected;
+        if ($rejected && empty($this->approvalDecidedAt)) {
+            $this->status = self::STATUS_DELIVERY_DENIED;
+            $this->approvalDecidedAt = new \DateTime();
+        }
+    }
 
     public function __construct()
     {
