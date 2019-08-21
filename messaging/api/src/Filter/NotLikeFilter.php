@@ -19,16 +19,18 @@ final class NotLikeFilter extends AbstractContextAwareFilter
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === Delivery::class) {
-            if ($property === 'senderUuid' && !empty($value)) {
-//                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
-                $alias = 'sender';
-                $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
-            }
             if ($property === 'messageSenderUuid' && !empty($value)) {
 //                $alias = 'messageSender';
 //                $queryBuilder->join('message.sender', 'messageSender');
                 [$alias, $field, $associations] = $this->addJoinsForNestedProperty('message.sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
 
+                $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
+            }
+        }
+        if ($resourceClass === Message::class) {
+            if ($property === 'senderUuid' && !empty($value)) {
+//                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
+                $alias = 'sender';
                 $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
             }
         }
