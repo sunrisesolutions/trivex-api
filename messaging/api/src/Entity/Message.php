@@ -23,7 +23,10 @@ use App\Controller\MessageApprovalController;
 
 /**
  * @ApiResource(
- *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     attributes={
+ *     "access_control"="is_granted('ROLE_USER')",
+ *     "order"={"id": "DESC"}
+ * },
  *     normalizationContext={"groups"={"read_message"}},
  *     denormalizationContext={"groups"={"write_message"}},
  *     itemOperations={
