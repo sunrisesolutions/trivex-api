@@ -44,7 +44,7 @@ use App\Controller\MessageApprovalController;
  *      "delete",
  *     }
  * )
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "sender.uuid": "exact", "optionSet.uuid": "uuid", "status":"exact"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "sender.uuid": "exact", "optionSet.uuid": "uuid", "status":"exact", "type":"exact"})
  * @ApiFilter(BooleanFilter::class, properties={"senderMessageAdmin"})
  * @ApiFilter(NotLikeFilter::class)
  * @ApiFilter(ExistsFilter::class, properties={"approvalDecidedAt", "approvalDecisionReadAt"})
