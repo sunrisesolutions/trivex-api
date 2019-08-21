@@ -39,7 +39,7 @@ class MessageOption
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read", "read_option","write"})
+     * @Groups({"read", "read_message", "read_option","write"})
      */
     private $name;
 
