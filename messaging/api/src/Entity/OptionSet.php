@@ -13,8 +13,8 @@ use App\Util\AppUtil;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"read","read_message"}},
+ *     denormalizationContext={"groups"={"write","write_message"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\OptionSetRepository")
  * @ORM\Table(name="messaging__option_set")
@@ -53,6 +53,7 @@ class OptionSet
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\MessageOption", mappedBy="optionSet", cascade={"persist","merge"})
+     * @Groups({"read","write","read_message","write_message"})
      * @ApiSubresource()
      */
     private $messageOptions;
