@@ -190,7 +190,10 @@ class IndividualMember
     {
         $c = Criteria::create();
         $expr = Criteria::expr();
-        $c->andWhere($expr->eq('name', 'ROLE_MSG_ADMIN'));
+        $c->andWhere($expr->orX(
+            $expr->eq('name', 'ROLE_MSG_ADMIN'),
+            $expr->eq('name', 'ROLE_ORG_ADMIN')
+        ));
         $this->messageAdmin = $this->roles->matching($c)->count() > 0;
         return $this->messageAdmin;
     }
