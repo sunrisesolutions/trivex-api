@@ -49,12 +49,15 @@ final class PendingApprovalMessageExtension implements QueryCollectionExtensionI
         if ($this->security->isGranted('ROLE_MSG_ADMIN')) {
 
         } else {
-//            $queryBuilder->join($rootAlias.'.recipient', 'recipient');
+            $queryBuilder->join($rootAlias.'.sender', 'sender');
             $queryBuilder->andWhere($expr->orX(
                 $expr->andX(
                     $expr->notLike($rootAlias.'.status', $expr->literal(Message::STATUS_PENDING_APPROVAL)),
                     $expr->notLike($rootAlias.'.status', $expr->literal(Message::STATUS_DRAFT))
-                )));
+                ),
+                $expr->like('sender.uuid', $expr->literal($objectUuid))
+            )
+            );
 //            $queryBuilder->setParameter('current_object', $objectUuid);
 //            echo 'hello ' .$objectUuid;
         }
