@@ -68,6 +68,7 @@ class Message
      * @ORM\Id
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups("read_message")
      */
     protected $id;
 
