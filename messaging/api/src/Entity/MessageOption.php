@@ -14,8 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read", "read_set_from_option", "read_message", "read_option"}},
- *     denormalizationContext={"groups"={"write", "write_set_from_option"}}
+ *     normalizationContext={"groups"={"read_set_from_option", "read_message", "read_option"}},
+ *     denormalizationContext={"groups"={"write_set_from_option"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\MessageOptionRepository")
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact"})
