@@ -45,7 +45,7 @@ use App\Controller\MessageApprovalController;
  *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "sender.uuid": "exact", "optionSet.uuid": "uuid", "status":"exact"})
- * @ApiFilter(BooleanFilter::class, properties={"senderAdmin"})
+ * @ApiFilter(BooleanFilter::class, properties={"senderMessageAdmin"})
  * @ApiFilter(NotLikeFilter::class)
  * @ApiFilter(ExistsFilter::class, properties={"approvalDecidedAt", "approvalDecisionReadAt"})
  *
@@ -152,8 +152,8 @@ class Message
             $this->expireAt = new \DateTime();
             $this->expireAt->modify('+30 days');
         }
-        if ($this->senderAdmin === null) {
-            $this->senderAdmin = $this->sender->isMessageAdmin();
+        if ($this->senderMessageAdmin === null) {
+            $this->senderMessageAdmin = $this->sender->isMessageAdmin();
         }
     }
 
@@ -348,7 +348,7 @@ class Message
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read_message"})
      */
-    private $senderAdmin;
+    private $senderMessageAdmin;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -593,14 +593,14 @@ class Message
         return $this;
     }
 
-    public function getSenderAdmin(): ?bool
+    public function getSenderMessageAdmin(): ?bool
     {
-        return $this->senderAdmin;
+        return $this->senderMessageAdmin;
     }
 
-    public function setSenderAdmin(?bool $senderAdmin): self
+    public function setSenderMessageAdmin(?bool $senderMessageAdmin): self
     {
-        $this->senderAdmin = $senderAdmin;
+        $this->senderMessageAdmin = $senderMessageAdmin;
 
         return $this;
     }
