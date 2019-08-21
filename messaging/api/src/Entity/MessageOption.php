@@ -33,13 +33,13 @@ class MessageOption
 
     /**
      * @ORM\Column(type="string", length=191)
-     * @Groups("read_option")
+     * @Groups("read", "read_option")
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_option","write"})
+     * @Groups({"read", "read_option","write"})
      */
     private $name;
 
