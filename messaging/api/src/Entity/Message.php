@@ -91,6 +91,9 @@ class Message
      */
     public function fixData()
     {
+        if (empty($this->effectiveFrom)) {
+            $this->effectiveFrom = $this->createdAt;
+        }
         if (empty($this->expireAt)) {
             $this->expireAt = new \DateTime();
             $this->expireAt->modify('+30 days');
