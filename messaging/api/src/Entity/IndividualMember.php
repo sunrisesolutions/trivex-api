@@ -51,10 +51,10 @@ class IndividualMember
         /** @var Role $role */
         foreach ($this->roles as $role) {
             if ($role->getName() === $roleName) {
-                return $role;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     public function hasRoles($roleNames = []): bool
@@ -62,10 +62,10 @@ class IndividualMember
         /** @var Role $role */
         foreach ($this->roles as $role) {
             if (in_array($role->getName(), $roleNames)) {
-                return $role;
+                return true;
             }
         }
-        return null;
+        return false;
     }
 
     /**
