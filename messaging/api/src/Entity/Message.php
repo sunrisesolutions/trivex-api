@@ -296,6 +296,16 @@ class Message
      */
     private $senderAdmin;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $approvalDecidedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $approvalDecisionReadAt;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -537,6 +547,30 @@ class Message
     public function setSenderAdmin(?bool $senderAdmin): self
     {
         $this->senderAdmin = $senderAdmin;
+
+        return $this;
+    }
+
+    public function getApprovalDecidedAt(): ?\DateTimeInterface
+    {
+        return $this->approvalDecidedAt;
+    }
+
+    public function setApprovalDecidedAt(?\DateTimeInterface $approvalDecidedAt): self
+    {
+        $this->approvalDecidedAt = $approvalDecidedAt;
+
+        return $this;
+    }
+
+    public function getApprovalDecisionReadAt(): ?\DateTimeInterface
+    {
+        return $this->approvalDecisionReadAt;
+    }
+
+    public function setApprovalDecisionReadAt(?\DateTimeInterface $approvalDecisionReadAt): self
+    {
+        $this->approvalDecisionReadAt = $approvalDecisionReadAt;
 
         return $this;
     }
