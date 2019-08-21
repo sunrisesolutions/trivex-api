@@ -9,6 +9,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 
+use App\Filter\NotLikeFilter;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
@@ -44,6 +45,7 @@ use App\Controller\MessageApprovalController;
  *     }
  * )
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "sender.uuid": "exact", "optionSet.uuid": "uuid", "status":"exact"})
+ * @ApiFilter(NotLikeFilter::class)
 
  * @ORM\Entity(repositoryClass="App\Repository\MessageRepository")
  * @ORM\InheritanceType("JOINED")
