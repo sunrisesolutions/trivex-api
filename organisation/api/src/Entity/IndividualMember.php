@@ -50,6 +50,7 @@ class IndividualMember
 
     /**
      * @var int|null The Event Id
+     * @Groups({"read_member"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
