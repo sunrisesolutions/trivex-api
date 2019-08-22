@@ -64,7 +64,7 @@ class Message
     const STATUS_DRAFT = 'MESSAGE_DRAFT';
     const STATUS_NEW = 'MESSAGE_NEW';
     const STATUS_PENDING_APPROVAL = 'MESSAGE_PENDING_APPROVAL';
-    const STATUS_DELIVERY_DENIED = 'DELIVERY_DENIED';
+    const STATUS_DELIVERY_REJECTED = 'DELIVERY_REJECTED';
     const STATUS_DELIVERY_IN_PROGRESS = 'DELIVERY_IN_PROGRESS';
     const STATUS_DELIVERY_SUCCESSFUL = 'DELIVERY_SUCCESSFUL';
     const STATUS_RECEIVED = 'MESSAGE_RECEIVED';
@@ -127,7 +127,7 @@ class Message
     {
         $this->rejected = $rejected;
         if ($rejected && empty($this->approvalDecidedAt)) {
-            $this->status = self::STATUS_DELIVERY_DENIED;
+            $this->status = self::STATUS_DELIVERY_REJECTED;
             $this->approvalDecidedAt = new \DateTime();
         }
     }
