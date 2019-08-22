@@ -152,7 +152,7 @@ class Delivery
     /**
      * @var Message
      * @ORM\ManyToOne(targetEntity="App\Entity\Message", inversedBy="deliveries")
-     * @ORM\JoinColumn(name="id_message", referencedColumnName="id")
+     * @ORM\JoinColumn(name="id_message", referencedColumnName="id", onDelete="CASCADE")
      * @Groups("read")
      */
     private $message;
