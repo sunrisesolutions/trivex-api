@@ -28,8 +28,12 @@ final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
                         $expr->like($toAlias.'.uuid', $expr->literal($value))
                     )
                 );
+                $sql = $queryBuilder->getQuery()->getSQL();
+                echo $sql; exit();
             }
         }
+
+
 
         // otherwise filter is applied to order and page as well
         if (
