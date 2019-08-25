@@ -23,16 +23,17 @@ final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
                 [$fromAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.toMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
                 [$toAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.fromMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
                 $queryBuilder->andWhere(
-                    $expr->orX(
-                        $expr->like($fromAlias.'.uuid', $expr->literal($value)),
-                        $expr->like($toAlias.'.uuid', $expr->literal($value))
-                    )
+                    $expr->like($rootAlias.'.uuid', $expr->literal($value)),
+//                    $expr->orX(
+//                        $expr->like($fromAlias.'.uuid', $expr->literal($value)),
+//                        $expr->like($toAlias.'.uuid', $expr->literal($value))
+//                    )
                 );
                 $sql = $queryBuilder->getQuery()->getSQL();
-                echo $sql; exit();
+                echo $sql;
+                exit();
             }
         }
-
 
 
         // otherwise filter is applied to order and page as well
