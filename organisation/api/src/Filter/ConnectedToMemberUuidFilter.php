@@ -20,8 +20,8 @@ final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === IndividualMember::class) {
             if ($property === 'connectedToMemberUuid' && !empty($value)) {
-                [$fromAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.fromMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
-                [$toAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.toMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
+                [$fromAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.toMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
+                [$toAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.fromMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
                 $queryBuilder->andWhere(
                     $expr->orX(
                         $expr->like($fromAlias.'.uuid', $expr->literal($value)),
