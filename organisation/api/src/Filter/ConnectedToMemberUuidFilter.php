@@ -8,7 +8,6 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
 use App\Entity\IndividualMember;
-use App\Entity\Message;
 use Doctrine\ORM\QueryBuilder;
 
 final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
@@ -57,7 +56,7 @@ final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
     public function getDescription(string $resourceClass): array
     {
         $description = [];
-        if ($resourceClass === Message::class) {
+        if ($resourceClass === IndividualMember::class) {
             $description["connected_to_memberUuid"] = [
                 'property' => 'connectedToMemberUuid',
                 'type' => 'string',
