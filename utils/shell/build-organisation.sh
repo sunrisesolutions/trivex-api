@@ -16,6 +16,13 @@ cd ~/workspace/magenta/trivex/api/admin/src/Repository/Organisation
 sed -i -- 's/App\\Entity/App\\Entity\\Organisation/g' *
 sed -i -- 's/App\\Repository/App\\Repository\\Organisation/g' *
 
+echo 'copy Filter from organisation'
+cp -R -p ~/workspace/magenta/trivex/api/organisation/api/src/Filter/* ~/workspace/magenta/trivex/api/admin/src/Filter/Organisation
+cd ~/workspace/magenta/trivex/api/admin/src/Filter/Organisation
+sed -i -- 's/App\\Filter/App\\Filter\\Organisation/g' *
+cd ~/workspace/magenta/trivex/api/admin/src/Entity/Organisation
+sed -i -- 's/App\\Filter/App\\Filter\\Organisation/g' *
+
 echo 'copy Security from organisation'
 cp -p ~/workspace/magenta/trivex/api/organisation/api/src/Security/* ~/workspace/magenta/trivex/api/admin/src/Security
 

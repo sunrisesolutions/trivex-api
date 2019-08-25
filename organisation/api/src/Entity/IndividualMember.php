@@ -5,6 +5,7 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Filter\ConnectedToMemberUuidFilter;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\AppUtil;
@@ -40,6 +41,8 @@ use App\Controller\SendEmailToIndividualMember;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
+ * @ApiFilter(ConnectedToMemberUuidFilter::class)
+ *
  * @ORM\Entity(repositoryClass="App\Repository\IndividualMemberRepository")
  * @ORM\Table(name="organisation__individual_member")
  * @ORM\HasLifecycleCallbacks()
