@@ -8,6 +8,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
 use App\Entity\IndividualMember;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
 final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
@@ -20,8 +21,9 @@ final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
         $rootAlias = $queryBuilder->getRootAliases()[0];
         if ($resourceClass === IndividualMember::class) {
             if ($property === 'connectedToMemberUuid' && !empty($value)) {
-                [$fromAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.toMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
-                [$toAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.fromMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
+                [$fromAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.toMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
+                [$toAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.fromMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
+//                $queryBuilder->leftJoin($join, $alias)
                 $queryBuilder->andWhere(
                     $expr->like($rootAlias.'.uuid', $expr->literal($value)),
 //                    $expr->orX(
