@@ -377,46 +377,46 @@ class IndividualMemberAdmin extends BaseAdmin
         // update User
         /** @var \App\Entity\User\Person $uPerson */
         $uPerson = $manager->getRepository(\App\Entity\User\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
-        $user = $uPerson->getUser();
-        $ous = $user->getOrganisationUsers();
-        $organisation = $object->getOrganisation();
+        if (!empty($uPerson) && !empty($user = $uPerson->getUser())) {
+            $ous = $user->getOrganisationUsers();
+            $organisation = $object->getOrganisation();
 
-        /** @var OrganisationUser $uMember */
-        $uMember = null;
-        /** @var OrganisationUser $ou */
-        foreach ($ous as $ou) {
-            if ($ou->getOrganisation()->getUuid() === $organisation->getUuid()) {
-                $uMember = $ou;
-                break;
+            /** @var OrganisationUser $uMember */
+            $uMember = null;
+            /** @var OrganisationUser $ou */
+            foreach ($ous as $ou) {
+                if ($ou->getOrganisation()->getUuid() === $organisation->getUuid()) {
+                    $uMember = $ou;
+                    break;
+                }
             }
-        }
 
-        if (empty($uMember)) {
-            /** @var \App\Entity\User\Organisation $uOrganisation */
-            $uOrganisation = $manager->getRepository(\App\Entity\User\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
-            if (empty($uOrganisation)) {
-                $uOrganisation = new \App\Entity\User\Organisation();
-                AppUtil::copyObjectScalarProperties($organisation, $uOrganisation);
+            if (empty($uMember)) {
+                /** @var \App\Entity\User\Organisation $uOrganisation */
+                $uOrganisation = $manager->getRepository(\App\Entity\User\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
+                if (empty($uOrganisation)) {
+                    $uOrganisation = new \App\Entity\User\Organisation();
+                    AppUtil::copyObjectScalarProperties($organisation, $uOrganisation);
+                }
+                $uMember = new OrganisationUser();
+                $uMember->setOrganisation($uOrganisation);
+                $manager->persist($uOrganisation);
+                $manager->flush($uOrganisation);
             }
-            $uMember = new OrganisationUser();
-            $uMember->setOrganisation($uOrganisation);
-            $manager->persist($uOrganisation);
-            $manager->flush($uOrganisation);
+
+            $uMember->setUser($user);
+            $uMember->setUuid($object->getUuid());
+            $roles = $object->getRoles();
+            $roleArrays = [];
+            /** @var Role $role */
+            foreach ($roles as $role) {
+                $roleArrays[] = $role->getName();
+            }
+            $uMember->setRoles($roleArrays);
+
+            $manager->persist($uMember);
+            $manager->flush($uMember);
         }
-
-        $uMember->setUser($user);
-        $uMember->setUuid($object->getUuid());
-        $roles = $object->getRoles();
-        $roleArrays = [];
-        /** @var Role $role */
-        foreach ($roles as $role) {
-            $roleArrays[] = $role->getName();
-        }
-        $uMember->setRoles($roleArrays);
-
-        $manager->persist($uMember);
-        $manager->flush($uMember);
-
 
         // update Message
 
