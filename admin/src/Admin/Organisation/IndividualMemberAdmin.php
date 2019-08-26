@@ -277,7 +277,7 @@ class IndividualMemberAdmin extends BaseAdmin
 
         // update User user
 //        if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
-        if (empty($plainPassword = $oPerson->getPassword())) {
+        if (empty($plainPassword = $oPerson->getPassword()) && empty($oPerson->getId())) {
             $plainPassword = 'p@ssword!@#$%^';
             $oPerson->setPassword($plainPassword);
         }
@@ -301,21 +301,22 @@ class IndividualMemberAdmin extends BaseAdmin
                 $user->setUsername($email);
             }
             $fuPerson->setUser($user);
-            $user->setIdNumber($oPerson->getNationality()->getNricNumber());
-            $user->setBirthDate($oPerson->getBirthDate());
-            $user->setPhone($oPerson->getPhoneNumber());
 
-            $user->setPerson($fuPerson);
-            $user->setPlainPassword($plainPassword);
-            $manager->persist($fuPerson);
-            $manager->persist($user);
-            $manager->flush($fuPerson);
-            $manager->flush($user);
-
-            $fPerson->setUserUuid($user->getUuid());
-            $manager->persist($fPerson);
-            $manager->flush($fPerson);
         }
+        $user->setIdNumber($oPerson->getNationality()->getNricNumber());
+        $user->setBirthDate($oPerson->getBirthDate());
+        $user->setPhone($oPerson->getPhoneNumber());
+
+        $user->setPerson($fuPerson);
+        $user->setPlainPassword($plainPassword);
+        $manager->persist($fuPerson);
+        $manager->persist($user);
+        $manager->flush($fuPerson);
+        $manager->flush($user);
+
+        $fPerson->setUserUuid($user->getUuid());
+        $manager->persist($fPerson);
+        $manager->flush($fPerson);
 //        }
         $oPerson->setPassword(null);
 
