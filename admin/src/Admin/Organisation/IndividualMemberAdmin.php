@@ -273,35 +273,42 @@ class IndividualMemberAdmin extends BaseAdmin
         $manager->flush($fuPerson);
 
         // update User user
-        if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
-            if (empty($user = $fuPerson->getUser()) && !empty($oPerson->getEmail())) {
-                $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
-//                $user = $fuPerson->getUser();
-                if (empty($user) && !empty($oPerson->getEmail())) {
-                    $user = $manager->getRepository(User::class)->findOneBy(['username' => $oPerson->getEmail()]);
-                }
-                if (empty($user)) {
-                    $user = new  User();
-                    $user->setEmail($email);
-                    $user->setUsername($email);
-                }
-                $fuPerson->setUser($user);
-                $user->setIdNumber($oPerson->getNationality()->getNricNumber());
-                $user->setBirthDate($oPerson->getBirthDate());
-                $user->setPhone($oPerson->getPhoneNumber());
-
-                $user->setPerson($fuPerson);
-                $user->setPlainPassword($plainPassword);
-                $manager->persist($fuPerson);
-                $manager->persist($user);
-                $manager->flush($fuPerson);
-                $manager->flush($user);
-
-                $fPerson->setUserUuid($user->getUuid());
-                $manager->persist($fPerson);
-                $manager->flush($fPerson);
-            }
+//        if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
+        if (empty($plainPassword = $oPerson->getPassword())) {
+            $plainPassword = 'p@ssword!@#$%^';
+            $oPerson->setPassword($plainPassword);
         }
+
+        if (empty($user = $fuPerson->getUser()) && !empty($oPerson->getEmail())) {
+            if (!empty($oPerson->getEmail())) {
+                $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
+            }
+//                $user = $fuPerson->getUser();
+            if (empty($user) && !empty($oPerson->getEmail())) {
+                $user = $manager->getRepository(User::class)->findOneBy(['username' => $oPerson->getEmail()]);
+            }
+            if (empty($user)) {
+                $user = new  User();
+                $user->setEmail($email);
+                $user->setUsername($email);
+            }
+            $fuPerson->setUser($user);
+            $user->setIdNumber($oPerson->getNationality()->getNricNumber());
+            $user->setBirthDate($oPerson->getBirthDate());
+            $user->setPhone($oPerson->getPhoneNumber());
+
+            $user->setPerson($fuPerson);
+            $user->setPlainPassword($plainPassword);
+            $manager->persist($fuPerson);
+            $manager->persist($user);
+            $manager->flush($fuPerson);
+            $manager->flush($user);
+
+            $fPerson->setUserUuid($user->getUuid());
+            $manager->persist($fPerson);
+            $manager->flush($fPerson);
+        }
+//        }
         $oPerson->setPassword(null);
 
 
@@ -377,46 +384,46 @@ class IndividualMemberAdmin extends BaseAdmin
         // update User
         /** @var \App\Entity\User\Person $uPerson */
         $uPerson = $manager->getRepository(\App\Entity\User\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
-        if (!empty($uPerson) && !empty($user = $uPerson->getUser())) {
-            $ous = $user->getOrganisationUsers();
-            $organisation = $object->getOrganisation();
+        $user = $uPerson->getUser();
+        $ous = $user->getOrganisationUsers();
+        $organisation = $object->getOrganisation();
 
-            /** @var OrganisationUser $uMember */
-            $uMember = null;
-            /** @var OrganisationUser $ou */
-            foreach ($ous as $ou) {
-                if ($ou->getOrganisation()->getUuid() === $organisation->getUuid()) {
-                    $uMember = $ou;
-                    break;
-                }
+        /** @var OrganisationUser $uMember */
+        $uMember = null;
+        /** @var OrganisationUser $ou */
+        foreach ($ous as $ou) {
+            if ($ou->getOrganisation()->getUuid() === $organisation->getUuid()) {
+                $uMember = $ou;
+                break;
             }
-
-            if (empty($uMember)) {
-                /** @var \App\Entity\User\Organisation $uOrganisation */
-                $uOrganisation = $manager->getRepository(\App\Entity\User\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
-                if (empty($uOrganisation)) {
-                    $uOrganisation = new \App\Entity\User\Organisation();
-                    AppUtil::copyObjectScalarProperties($organisation, $uOrganisation);
-                }
-                $uMember = new OrganisationUser();
-                $uMember->setOrganisation($uOrganisation);
-                $manager->persist($uOrganisation);
-                $manager->flush($uOrganisation);
-            }
-
-            $uMember->setUser($user);
-            $uMember->setUuid($object->getUuid());
-            $roles = $object->getRoles();
-            $roleArrays = [];
-            /** @var Role $role */
-            foreach ($roles as $role) {
-                $roleArrays[] = $role->getName();
-            }
-            $uMember->setRoles($roleArrays);
-
-            $manager->persist($uMember);
-            $manager->flush($uMember);
         }
+
+        if (empty($uMember)) {
+            /** @var \App\Entity\User\Organisation $uOrganisation */
+            $uOrganisation = $manager->getRepository(\App\Entity\User\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
+            if (empty($uOrganisation)) {
+                $uOrganisation = new \App\Entity\User\Organisation();
+                AppUtil::copyObjectScalarProperties($organisation, $uOrganisation);
+            }
+            $uMember = new OrganisationUser();
+            $uMember->setOrganisation($uOrganisation);
+            $manager->persist($uOrganisation);
+            $manager->flush($uOrganisation);
+        }
+
+        $uMember->setUser($user);
+        $uMember->setUuid($object->getUuid());
+        $roles = $object->getRoles();
+        $roleArrays = [];
+        /** @var Role $role */
+        foreach ($roles as $role) {
+            $roleArrays[] = $role->getName();
+        }
+        $uMember->setRoles($roleArrays);
+
+        $manager->persist($uMember);
+        $manager->flush($uMember);
+
 
         // update Message
 
