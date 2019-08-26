@@ -136,6 +136,8 @@ class Person
         $this->nationalities = new ArrayCollection();
     }
 
+
+
     /** @return  Nationality|bool */
     public function getNationality()
     {
@@ -145,6 +147,18 @@ class Person
             $this->addNationality($nat);
         }
         return $nat;
+    }
+
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
     }
 
     public function getId(): ?int
