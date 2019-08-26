@@ -201,7 +201,10 @@ class IndividualMemberAdmin extends BaseAdmin
 
         $container = $this->getContainer();
         $manager = $container->get('doctrine.orm.default_entity_manager');
-        if (empty($oPerson->getId()) && !empty($oPerson->getEmail())) {
+        if (empty($oPerson->getId())) {
+            if (empty($oPerson->getEmail())) {
+                $oPerson->setEmail($oPerson->getPhoneNumber().'@magenta-wellness.com');
+            }
             $fopRepo = $manager->getRepository(Person::class);
             /** @var Person $foPerson */
             $foPerson = $fopRepo->findOneBy(['email' => $oPerson->getEmail(),
@@ -279,12 +282,17 @@ class IndividualMemberAdmin extends BaseAdmin
             $oPerson->setPassword($plainPassword);
         }
 
-        if (empty($user = $fuPerson->getUser()) && !empty($oPerson->getEmail())) {
-            if (!empty($oPerson->getEmail())) {
-                $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
+        if (empty($user = $fuPerson->getUser())) {
+            if (empty($oPerson->getEmail())) {
+                $oPerson->setEmail($oPerson->getPhoneNumber().'@magenta-wellness.com');
             }
+            $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
+
 //                $user = $fuPerson->getUser();
-            if (empty($user) && !empty($oPerson->getEmail())) {
+            if (empty($user)) {
+                if (empty($oPerson->getEmail())) {
+                    $oPerson->setEmail($oPerson->getPhoneNumber().'@magenta-wellness.com');
+                }
                 $user = $manager->getRepository(User::class)->findOneBy(['username' => $oPerson->getEmail()]);
             }
             if (empty($user)) {
