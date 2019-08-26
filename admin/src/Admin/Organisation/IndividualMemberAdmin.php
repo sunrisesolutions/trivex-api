@@ -329,6 +329,8 @@ class IndividualMemberAdmin extends BaseAdmin
             $oNationality->setUuid($fNationality->getUuid());
         }
 
+        // update Message
+
 
     }
 
@@ -417,48 +419,6 @@ class IndividualMemberAdmin extends BaseAdmin
 
 
         // update Message
-        /** @var \App\Entity\Messaging\IndividualMember $mMember */
-        $mMember = $manager->getRepository(\App\Entity\Messaging\IndividualMember::class)->findOneBy(['uuid' => $object->getUuid()]);
-        $mPerson = $manager->getRepository(\App\Entity\Messaging\Person::class)->findOneBy(['uuid' => $oPerson->getUuid()]);
-        /** @var \App\Entity\Messaging\Organisation $mOrganisation */
-        $mOrganisation =  $manager->getRepository(\App\Entity\Messaging\Organisation::class)->findOneBy(['uuid' => $organisation->getUuid()]);
-
-        /** @var Role $oRole */
-        foreach ($oRoles as $oRole) {
-            if (!$mMember->hasRole($role->getName())) {
-                $mRole = $mOrganisation->getRole($role->getName());
-                $mMember->addRole($mRole);
-                $manager->persist($mRole);
-            }
-        }
-
-        $mRoles = $mMember->getRoles();
-        /** @var \App\Entity\Messaging\Role $mRole */
-        foreach ($mRoles as $mRole) {
-            if (!$object->hasRole($role->getName())) {
-                $mMember->removeRole($role);
-                $manager->persist($role);
-            }
-        }
-
-        if (empty($mPerson)) {
-            $mPerson = new \App\Entity\Messaging\Person();
-        }
-        AppUtil::copyObjectScalarProperties($oPerson, $mPerson);
-
-        if (empty($mMember)) {
-            $mMember = new \App\Entity\Messaging\IndividualMember();
-        }
-        $mMember->setUuid($object->getUuid());
-        $mMember->setPerson($mPerson);
-        $mMember->setOrganisation($mOrganisation);
-
-
-
-
-        $mPerson->addIndividualMember($mMember);
-        $manager->persist($mPerson);
-        $manager->persist($mMember);
 
         // update Event
         $eMember = $manager->getRepository(\App\Entity\Event\IndividualMember::class)->findOneBy(['uuid' => $object->getUuid()]);
