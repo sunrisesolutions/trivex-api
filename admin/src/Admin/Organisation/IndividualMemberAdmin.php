@@ -201,7 +201,7 @@ class IndividualMemberAdmin extends BaseAdmin
 
         $container = $this->getContainer();
         $manager = $container->get('doctrine.orm.default_entity_manager');
-        if (empty($oPerson->getId())) {
+        if (empty($oPerson->getId()) && !empty($oPerson->getEmail())) {
             $fopRepo = $manager->getRepository(Person::class);
             /** @var Person $foPerson */
             $foPerson = $fopRepo->findOneBy(['email' => $oPerson->getEmail(),
@@ -234,7 +234,7 @@ class IndividualMemberAdmin extends BaseAdmin
             }
         }
 
-        if (empty($fPerson)) {
+        if (empty($fPerson) && !empty($email)) {
             /** @var \App\Entity\Person\Person $fPerson */
             $fPerson = $pRepo->findOneBy(['email' => $email,
             ]);
@@ -256,7 +256,7 @@ class IndividualMemberAdmin extends BaseAdmin
         /** @var \App\Entity\User\Person $fuPerson */
         $fuPerson = $upRepo->findOneBy(['uuid' => $fPerson->getUuid(),
         ]);
-        if (empty($fuPerson)) {
+        if (empty($fuPerson) && !empty($email)) {
             $fuPerson = $upRepo->findOneBy(['email' => $email,
             ]);
         }
@@ -274,10 +274,10 @@ class IndividualMemberAdmin extends BaseAdmin
 
         // update User user
         if (!empty($plainPassword = $oPerson->getPassword()) && !empty($oPerson->getEmail())) {
-            if (empty($user = $fuPerson->getUser())) {
+            if (empty($user = $fuPerson->getUser()) && !empty($oPerson->getEmail())) {
                 $user = $manager->getRepository(User::class)->findOneBy(['email' => $oPerson->getEmail()]);
 //                $user = $fuPerson->getUser();
-                if (empty($user)) {
+                if (empty($user) && !empty($oPerson->getEmail())) {
                     $user = $manager->getRepository(User::class)->findOneBy(['username' => $oPerson->getEmail()]);
                 }
                 if (empty($user)) {
