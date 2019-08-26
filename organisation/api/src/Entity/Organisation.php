@@ -233,6 +233,31 @@ class Organisation
      */
     private $updatedAt;
 
+    /**
+     * @ORM\Column(type="boolean", options={"default":true})
+     */
+    private $networkingEnabled = true;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default":false})
+     */
+    private $freeonMessagingEnabled = false;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private $eventEnabled = true;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private $adminAnnouncementEnabled = true;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default": true})
+     */
+    private $memberAnnouncementEnabled = true;
+
     public function getUpdatedAt(): ?\DateTimeInterface
     {
         return $this->updatedAt;
@@ -459,6 +484,66 @@ class Organisation
                 $role->setOrganisation(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getNetworkingEnabled(): ?bool
+    {
+        return $this->networkingEnabled;
+    }
+
+    public function setNetworkingEnabled(bool $networkingEnabled): self
+    {
+        $this->networkingEnabled = $networkingEnabled;
+
+        return $this;
+    }
+
+    public function getFreeonMessagingEnabled(): ?bool
+    {
+        return $this->freeonMessagingEnabled;
+    }
+
+    public function setFreeonMessagingEnabled(bool $freeonMessagingEnabled): self
+    {
+        $this->freeonMessagingEnabled = $freeonMessagingEnabled;
+
+        return $this;
+    }
+
+    public function getEventEnabled(): ?bool
+    {
+        return $this->eventEnabled;
+    }
+
+    public function setEventEnabled(bool $eventEnabled): self
+    {
+        $this->eventEnabled = $eventEnabled;
+
+        return $this;
+    }
+
+    public function getAdminAnnouncementEnabled(): ?bool
+    {
+        return $this->adminAnnouncementEnabled;
+    }
+
+    public function setAdminAnnouncementEnabled(bool $adminAnnouncementEnabled): self
+    {
+        $this->adminAnnouncementEnabled = $adminAnnouncementEnabled;
+
+        return $this;
+    }
+
+    public function getMemberAnnouncementEnabled(): ?bool
+    {
+        return $this->memberAnnouncementEnabled;
+    }
+
+    public function setMemberAnnouncementEnabled(bool $memberAnnouncementEnabled): self
+    {
+        $this->memberAnnouncementEnabled = $memberAnnouncementEnabled;
 
         return $this;
     }

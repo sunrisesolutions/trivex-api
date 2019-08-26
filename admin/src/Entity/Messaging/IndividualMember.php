@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
+use phpDocumentor\Reflection\Types\Self_;
 
 /**
  * ApiResource(
@@ -50,11 +51,37 @@ class IndividualMember
         /** @var Role $role */
         foreach ($this->roles as $role) {
             if ($role->getName() === $roleName) {
-                return $role;
+                return true;
             }
         }
-        return null;
+        return false;
     }
+
+    public function hasRoles($roleNames = []): bool
+    {
+        /** @var Role $role */
+        foreach ($this->roles as $role) {
+            if (in_array($role->getName(), $roleNames)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageAdmin(): bool
+    {
+        return !empty($this->getMessageAdmin());
+    }
+
+    public function getMessageAdmin(): ?bool
+    {
+        $this->messageAdmin = $this->hasRoles([Role::ROLE_MESSAGE_ADMIN, Role::ROLE_ORGANISATION_ADMIN]);
+        return $this->messageAdmin;
+    }
+
 
     /**
      * @ORM\PrePersist

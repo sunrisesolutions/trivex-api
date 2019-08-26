@@ -5,6 +5,7 @@ namespace App\Entity\Organisation;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Filter\Organisation\ConnectedToMemberUuidFilter;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Util\Organisation\AppUtil;
@@ -40,6 +41,8 @@ use App\Controller\SendEmailToIndividualMember;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "fulltextString": "partial"})
+ * @ApiFilter(ConnectedToMemberUuidFilter::class)
+ *
  * @ORM\Entity(repositoryClass="App\Repository\Organisation\IndividualMemberRepository")
  * @ORM\Table(name="organisation__individual_member")
  * @ORM\HasLifecycleCallbacks()
@@ -50,6 +53,7 @@ class IndividualMember
 
     /**
      * @var int|null The Event Id
+     * @Groups({"read_member"})
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer",options={"unsigned":true})
@@ -189,7 +193,10 @@ class IndividualMember
     {
         $c = Criteria::create();
         $expr = Criteria::expr();
-        $c->andWhere($expr->eq('name', 'ROLE_MSG_ADMIN'));
+        $c->andWhere($expr->orX(
+            $expr->eq('name', 'ROLE_MSG_ADMIN'),
+            $expr->eq('name', 'ROLE_ORG_ADMIN')
+        ));
         $this->messageAdmin = $this->roles->matching($c)->count() > 0;
         return $this->messageAdmin;
     }
@@ -337,6 +344,60 @@ class IndividualMember
         $this->toConnections = new ArrayCollection();
         $this->createdAt = new \DateTime();
         $this->roles = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $membershipNo;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $membershipType;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $membershipClass;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true, options={"default":false})
+     */
+    private $messagingExclusion = false;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $startedOn;
+
+    /**
+     * @ORM\Column(type="boolean", options={"default":true})
+     */
+    private $enabled = true;
+
+    public function getMembershipNo(): ?string
+    {
+        return $this->membershipNo;
+    }
+
+    public function setMembershipNo(?string $membershipNo): self
+    {
+        $this->membershipNo = $membershipNo;
+
+        return $this;
+    }
+
+    public function getMembershipType(): ?string
+    {
+        return $this->membershipType;
+    }
+
+    public function setMembershipType(?string $membershipType): self
+    {
+        $this->membershipType = $membershipType;
+
+        return $this;
     }
 
     public function getId(): ?int
@@ -583,4 +644,54 @@ class IndividualMember
         $c = Criteria::create()->where(Criteria::expr()->eq('name', $roleName));
         return $this->roles->matching($c)->count() > 0;
     }
+
+    public function getMembershipClass(): ?string
+    {
+        return $this->membershipClass;
+    }
+
+    public function setMembershipClass(?string $membershipClass): self
+    {
+        $this->membershipClass = $membershipClass;
+
+        return $this;
+    }
+
+    public function getMessagingExclusion(): ?bool
+    {
+        return $this->messagingExclusion;
+    }
+
+    public function setMessagingExclusion(?bool $messagingExclusion): self
+    {
+        $this->messagingExclusion = $messagingExclusion;
+
+        return $this;
+    }
+
+    public function getStartedOn(): ?\DateTimeInterface
+    {
+        return $this->startedOn;
+    }
+
+    public function setStartedOn(?\DateTimeInterface $startedOn): self
+    {
+        $this->startedOn = $startedOn;
+
+        return $this;
+    }
+
+    public function getEnabled(): ?bool
+    {
+        return $this->enabled;
+    }
+
+    public function setEnabled(bool $enabled): self
+    {
+        $this->enabled = $enabled;
+
+        return $this;
+    }
+
+
 }

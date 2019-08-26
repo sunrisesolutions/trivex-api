@@ -128,14 +128,15 @@ class IndividualMemberAdmin extends BaseAdmin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->with('General', ['class' => 'col-md-6'])->end()
-            ->with('Account', ['class' => 'col-md-6'])->end();
+            ->with('General', ['class' => 'col-md-4'])->end()
+            ->with('Profession', ['class' => 'col-md-4'])->end()
+            ->with('Account', ['class' => 'col-md-4'])->end();
         $this->getFilterByOrganisationQueryForModel(Role::class);
 //        $propertyAccessor = $this->getConfigurationPool()->getContainer()->get('access');
         $formMapper
             ->with('General')
             ->add('person.givenName', null, ['label' => 'form.label_given_name'])
-            ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
+//            ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('person.nationality.nricNumber', TextType::class, ['label' => 'form.label_nric_number'])
@@ -160,6 +161,10 @@ class IndividualMemberAdmin extends BaseAdmin
 //            ->add('createdAt', DateTimePickerType::class, ['label' => 'form.label_created_at'])
 
         ;
+        $formMapper->end();
+        $formMapper->with('Profession');
+        $formMapper->add('person.interestGroups');
+
         $formMapper->end();
         $formMapper
             ->with('Account');

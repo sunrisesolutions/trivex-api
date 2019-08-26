@@ -18,8 +18,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     "access_control"="is_granted('ROLE_USER')",
  *     "order"={"id": "DESC"}
  * },
- *     normalizationContext={"groups"={"read_free_on"}},
- *     denormalizationContext={"groups"={"write_free_on"}}
+ *     normalizationContext={"groups"={"read_free_on", "read_message"}},
+ *     denormalizationContext={"groups"={"write_free_on", "write_message"}}
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt"})
@@ -70,6 +70,22 @@ class FreeOnMessage extends Message
         if (empty($this->uuid)) {
             $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_FREE_ON');
         }
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function fixData()
+    {
+        parent::fixData();
+        $this->subject = 'Free-on Messages from '.($name = $this->sender->getPerson()->getName());
+        $this->body = sprintf('%s is free from %s:%s to %s:%s on%s starting from %s to %s.', $name, $this->fromHour, $this->fromMinute, $this->toHour, $this->toMinute, $this->getFreeDays(), $this->effectiveFrom ? $this->effectiveFrom->format('d-m-Y') : 'Unknown Date', $this->expireAt ? $this->expireAt->format('d-m-Y') : 'Unknown Date');
+    }
+
+    private function getFreeDays()
+    {
+        return ($this->freeOnMondays ? ' Mondays' : '').($this->freeOnTuesdays ? ' Tuesdays' : '').($this->freeOnWednesdays ? ' Wednesdays' : '').($this->freeOnThursdays ? ' Thursdays' : '').($this->freeOnFridays ? ' Fridays' : '').($this->freeOnSaturdays ? ' Saturdays' : '').($this->freeOnSundays ? ' Sundays' : '');
     }
 
     /**

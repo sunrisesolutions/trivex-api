@@ -28,7 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  * )
  * @ApiFilter(DateFilter::class, properties={"readAt"})
  * @ApiFilter(ExistsFilter::class, properties={"readAt", "optionsSelectedAt", "selectedOptionsReadAt"})
- * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "message.sender.uuid": "exact", "selectedOptions": "partial"})
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "message.sender.uuid": "exact", "message.type": "exact", "selectedOptions": "partial"})
  * @ApiFilter(BooleanFilter::class, properties={"selfDelivery"})
  * @ApiFilter(OrderFilter::class, properties={"recipient.person.name", "readAt"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(NotLikeFilter::class)
@@ -152,7 +152,7 @@ class Delivery
     /**
      * @var Message
      * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\Message", inversedBy="deliveries")
-     * @ORM\JoinColumn(name="id_message", referencedColumnName="id")
+     * @ORM\JoinColumn(name="id_message", referencedColumnName="id", onDelete="CASCADE")
      * @Groups("read")
      */
     private $message;

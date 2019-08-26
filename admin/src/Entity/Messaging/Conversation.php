@@ -3,6 +3,7 @@
 namespace App\Entity\Messaging;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Util\Messaging\AppUtil;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -56,6 +57,17 @@ class Conversation
     {
         $this->messages = new ArrayCollection();
         $this->participants = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+    }
+
+    /**
+     * @ORM\PrePersist
+     */
+    public function initiateUuid()
+    {
+        if (empty($this->uuid)) {
+            $this->uuid = AppUtil::generateUuid(AppUtil::APP_NAME.'_CONV');
+        }
     }
 
     public function getId(): ?int
@@ -143,5 +155,5 @@ class Conversation
 
         return $this;
     }
-    
+
 }

@@ -55,6 +55,9 @@ class FixDataCommand extends Command
         $messages = $this->manager->getRepository(Message::class)->findBy(['status' => Message::STATUS_DELIVERY_SUCCESSFUL]);
         /** @var Message $message */
         foreach ($messages as $message) {
+            $message->fixData();
+            $this->manager->persist($message);
+
             $deliveries = $message->getDeliveries();
             $found = false;
             /** @var Delivery $delivery */

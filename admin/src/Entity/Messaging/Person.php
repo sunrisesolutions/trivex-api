@@ -117,6 +117,11 @@ class Person
      */
     private $gender;
 
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $alternateName;
+
     public function __construct()
     {
         $this->individualMembers = new ArrayCollection();
@@ -324,6 +329,18 @@ class Person
     public function setGender(?string $gender): self
     {
         $this->gender = $gender;
+
+        return $this;
+    }
+
+    public function getAlternateName(): ?string
+    {
+        return $this->alternateName;
+    }
+
+    public function setAlternateName(?string $alternateName): self
+    {
+        $this->alternateName = $alternateName;
 
         return $this;
     }

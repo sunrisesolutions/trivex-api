@@ -14,8 +14,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ApiResource(
  *     attributes={"access_control"="is_granted('ROLE_USER')"},
- *     normalizationContext={"groups"={"read_option"}},
- *     denormalizationContext={"groups"={"write"}}
+ *     normalizationContext={"groups"={"read_set_from_option", "read_option"}},
+ *     denormalizationContext={"groups"={"write_set_from_option"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\MessageOptionRepository")
  * @ApiFilter(SearchFilter::class, properties={"uuid": "exact"})
@@ -33,20 +33,20 @@ class MessageOption
 
     /**
      * @ORM\Column(type="string", length=191)
-     * @Groups("read_option")
+     * @Groups({"read", "read_option"})
      */
     private $uuid;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read_option","write"})
+     * @Groups({"read", "read_message", "read_option","write"})
      */
     private $name;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Messaging\OptionSet", inversedBy="messageOptions", cascade={"persist"})
      * @ORM\JoinColumn(name="id_option_set", referencedColumnName="id", onDelete="CASCADE")
-     * @Groups({"read_option","write"})
+     * @Groups({"read_set_from_option","write_set_from_option"})
      */
     private $optionSet;
 

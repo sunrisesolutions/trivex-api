@@ -1,16 +1,17 @@
 <?php
 // api/src/Filter/RegexpFilter.php
 
-namespace App\Filter\Messaging;
+namespace App\Filter\Organisation;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\PropertyHelperTrait;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
-use App\Entity\Message;
+use App\Entity\IndividualMember;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-final class NotLikeFilter extends AbstractContextAwareFilter
+final class ConnectedToMemberUuidFilter extends AbstractContextAwareFilter
 {
     use PropertyHelperTrait;
 
@@ -18,21 +19,26 @@ final class NotLikeFilter extends AbstractContextAwareFilter
     {
         $expr = $queryBuilder->expr();
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        if ($resourceClass === Delivery::class) {
-            if ($property === 'messageSenderUuid' && !empty($value)) {
-//                $alias = 'messageSender';
-//                $queryBuilder->join('message.sender', 'messageSender');
-                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('message.sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
+        if ($resourceClass === IndividualMember::class) {
+            if ($property === 'connectedToMemberUuid' && !empty($value)) {
+                [$fromConnAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.toMember', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
+                [$fromAlias, $fromField, $fromAssociations] = $this->addJoinsForNestedProperty('fromConnections.toMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
+                [$toConnAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.fromMember', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
+                [$toAlias, $toField, $toAssociations] = $this->addJoinsForNestedProperty('toConnections.fromMember.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass, Join::LEFT_JOIN);
+//                $queryBuilder->leftJoin($join, $alias)
+                $queryBuilder->andWhere(
+                    $expr->like($rootAlias.'.uuid', $expr->literal($value))
+//                    $expr->orX(
+//                        $expr->like($fromAlias.'.uuid', $expr->literal($value)),
+//                        $expr->like($toAlias.'.uuid', $expr->literal($value))
+//                    )
+                );
+//                $sql = $queryBuilder->getQuery()->getSQL();
+//                echo $sql;
+//                exit();
+            }
+        }
 
-                $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
-            }
-        }
-        if ($resourceClass === Message::class) {
-            if ($property === 'senderUuid' && !empty($value)) {
-                [$alias, $field, $associations] = $this->addJoinsForNestedProperty('sender.uuid', $rootAlias, $queryBuilder, $queryNameGenerator, $resourceClass);
-                $queryBuilder->andWhere($expr->notLike($alias.'.uuid', $expr->literal($value)));
-            }
-        }
 
         // otherwise filter is applied to order and page as well
         if (
@@ -59,26 +65,14 @@ final class NotLikeFilter extends AbstractContextAwareFilter
     public function getDescription(string $resourceClass): array
     {
         $description = [];
-        if ($resourceClass === Delivery::class) {
-            $description["not_like_messageSenderUuid"] = [
-                'property' => 'messageSenderUuid',
+        if ($resourceClass === IndividualMember::class) {
+            $description["connected_to_memberUuid"] = [
+                'property' => 'connectedToMemberUuid',
                 'type' => 'string',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
-                    'name' => 'messageSenderUuid',
-                    'type' => 'Will appear below the name in the Swagger documentation',
-                ],
-            ];
-        }
-        if ($resourceClass === Message::class) {
-            $description["not_like_senderUuid"] = [
-                'property' => 'senderUuid',
-                'type' => 'string',
-                'required' => false,
-                'swagger' => [
-                    'description' => 'Filter Sender UUID of a delivery using a NOT LIKE operator.',
-                    'name' => 'senderUuid',
+                    'description' => 'Filter Members who are connected to the member with the given UUID',
+                    'name' => 'connectedToMemberUuid',
                     'type' => 'Will appear below the name in the Swagger documentation',
                 ],
             ];

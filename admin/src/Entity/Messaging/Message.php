@@ -2,6 +2,15 @@
 
 namespace App\Entity\Messaging;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+
+use App\Filter\Messaging\NotLikeFilter;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\Messaging\AppUtil;
@@ -15,7 +24,10 @@ use App\Controller\MessageApprovalController;
 
 /**
  * @ApiResource(
- *     attributes={"access_control"="is_granted('ROLE_USER')"},
+ *     attributes={
+ *     "access_control"="is_granted('ROLE_USER')",
+ *     "order"={"id": "DESC"}
+ * },
  *     normalizationContext={"groups"={"read_message"}},
  *     denormalizationContext={"groups"={"write_message"}},
  *     itemOperations={
@@ -32,6 +44,11 @@ use App\Controller\MessageApprovalController;
  *      "delete",
  *     }
  * )
+ * @ApiFilter(SearchFilter::class, properties={"uuid": "exact", "sender.uuid": "exact", "optionSet.uuid": "uuid", "status":"exact", "type":"exact"})
+ * @ApiFilter(BooleanFilter::class, properties={"senderMessageAdmin"})
+ * @ApiFilter(NotLikeFilter::class)
+ * @ApiFilter(ExistsFilter::class, properties={"approvalDecidedAt", "approvalDecisionReadAt"})
+ *
  * @ORM\Entity(repositoryClass="App\Repository\Messaging\MessageRepository")
  * @ORM\InheritanceType("JOINED")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -47,6 +64,7 @@ class Message
     const STATUS_DRAFT = 'MESSAGE_DRAFT';
     const STATUS_NEW = 'MESSAGE_NEW';
     const STATUS_PENDING_APPROVAL = 'MESSAGE_PENDING_APPROVAL';
+    const STATUS_DELIVERY_REJECTED = 'DELIVERY_REJECTED';
     const STATUS_DELIVERY_IN_PROGRESS = 'DELIVERY_IN_PROGRESS';
     const STATUS_DELIVERY_SUCCESSFUL = 'DELIVERY_SUCCESSFUL';
     const STATUS_RECEIVED = 'MESSAGE_RECEIVED';
@@ -58,14 +76,88 @@ class Message
      * @ORM\Id
      * @ORM\Column(type="integer",options={"unsigned":true})
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @Groups("read_message")
      */
     protected $id;
+
+    /**
+     * @var boolean $approved
+     * @Groups("write_message")
+     */
+    protected $approved;
+
+    /**
+     * @var boolean $rejected
+     * @Groups("write_message")
+     */
+    protected $rejected;
+
+    /**
+     * @return bool
+     */
+    public function isApproved(): bool
+    {
+        return $this->approved;
+    }
+
+    /**
+     * @param bool $approved
+     */
+    public function setApproved(bool $approved): void
+    {
+        $this->approved = $approved;
+        if ($approved && empty($this->approvalDecidedAt)) {
+            $this->status = self::STATUS_NEW;
+            $this->approvalDecidedAt = new \DateTime();
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRejected(): bool
+    {
+        return $this->rejected;
+    }
+
+    /**
+     * @param bool $rejected
+     */
+    public function setRejected(bool $rejected): void
+    {
+        $this->rejected = $rejected;
+        if ($rejected && empty($this->approvalDecidedAt)) {
+            $this->status = self::STATUS_DELIVERY_REJECTED;
+            $this->approvalDecidedAt = new \DateTime();
+        }
+    }
 
     public function __construct()
     {
         $this->createdAt = new \DateTime();
         $this->status = self::STATUS_DRAFT;
         $this->deliveries = new ArrayCollection();
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function fixData()
+    {
+        if (empty($this->effectiveFrom)) {
+            $this->effectiveFrom = $this->createdAt;
+        }
+        if (empty($this->expireAt)) {
+            $this->expireAt = new \DateTime();
+            $this->expireAt->modify('+30 days');
+        }
+        if ($this->senderMessageAdmin === null) {
+            $this->senderMessageAdmin = $this->sender->isMessageAdmin();
+        }
+        if (empty($this->approvalDecidedAt) && $this->status === self::STATUS_DELIVERY_SUCCESSFUL) {
+            $this->approvalDecidedAt = $this->createdAt;
+        }
     }
 
     public function getDecisionStatus(): string
@@ -216,6 +308,7 @@ class Message
     protected $optionSet;
 
     /**
+     * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_message", "write_message"})
      */
@@ -237,14 +330,38 @@ class Message
     protected $type = self::TYPE_SIMPLE;
 
     /**
+     * @var \DateTime|null
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"read_message", "write_message"})
      */
-    private $effectiveFrom;
+    protected $effectiveFrom;
 
     /**
      * @ORM\Column(type="string", length=128, options={"default": "Asia/Singapore"})
      */
-    private $timezone = 'Asia/Singapore';
+    protected $timezone = 'Asia/Singapore';
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_message", "write_message"})
+     */
+    private $decisionReasons;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read_message"})
+     */
+    private $senderMessageAdmin;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $approvalDecidedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $approvalDecisionReadAt;
 
     public function getId(): ?int
     {
@@ -463,6 +580,54 @@ class Message
     public function setTimezone(string $timezone): self
     {
         $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function getDecisionReasons(): ?string
+    {
+        return $this->decisionReasons;
+    }
+
+    public function setDecisionReasons(?string $decisionReasons): self
+    {
+        $this->decisionReasons = $decisionReasons;
+
+        return $this;
+    }
+
+    public function getSenderMessageAdmin(): ?bool
+    {
+        return $this->senderMessageAdmin;
+    }
+
+    public function setSenderMessageAdmin(?bool $senderMessageAdmin): self
+    {
+        $this->senderMessageAdmin = $senderMessageAdmin;
+
+        return $this;
+    }
+
+    public function getApprovalDecidedAt(): ?\DateTimeInterface
+    {
+        return $this->approvalDecidedAt;
+    }
+
+    public function setApprovalDecidedAt(?\DateTimeInterface $approvalDecidedAt): self
+    {
+        $this->approvalDecidedAt = $approvalDecidedAt;
+
+        return $this;
+    }
+
+    public function getApprovalDecisionReadAt(): ?\DateTimeInterface
+    {
+        return $this->approvalDecisionReadAt;
+    }
+
+    public function setApprovalDecisionReadAt(?\DateTimeInterface $approvalDecisionReadAt): self
+    {
+        $this->approvalDecisionReadAt = $approvalDecisionReadAt;
 
         return $this;
     }

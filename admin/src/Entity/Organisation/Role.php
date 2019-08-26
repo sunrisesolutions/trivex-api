@@ -14,6 +14,9 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Role
 {
+    const ROLE_MESSAGE_ADMIN = 'ROLE_MSG_ADMIN';
+    const ROLE_ORGANISATION_ADMIN = 'ROLE_ORG_ADMIN';
+
     /**
      * @var int|null The Event Id
      * @ORM\Id()
