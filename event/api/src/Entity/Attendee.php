@@ -21,8 +21,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\AttendeeRepository")
- * @ApiFilter(ExistsFilter::class, properties={"memberUuid"})
- * 
+ * @ApiFilter(ExistsFilter::class, properties={"registration.memberUuid"})
+ *
  * @ORM\Table(name="event__attendee")
  * @ORM\HasLifecycleCallbacks()
  */
