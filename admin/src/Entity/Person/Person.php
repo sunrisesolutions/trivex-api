@@ -332,86 +332,103 @@ class Person
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read","write"})
      */
     private $salutation;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $homeAddress;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $homePostalCode;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $residentCountry;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $mobileNumber;
 
     /**
      * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read","write"})
      */
     private $maritalStatus;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $academicInfo;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"read","write"})
      */
     private $yearsInPosition;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $jobFunction;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $alternateEmployerName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $jobIndustry;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $employerAddress;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $employerPostalCode;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $employerCountry;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $employerContact;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $interestGroups;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read","write"})
      */
     private $lifeStyle;
 

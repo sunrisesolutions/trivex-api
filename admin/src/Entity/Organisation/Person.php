@@ -136,6 +136,8 @@ class Person
         $this->nationalities = new ArrayCollection();
     }
 
+
+
     /** @return  Nationality|bool */
     public function getNationality()
     {
@@ -147,9 +149,33 @@ class Person
         return $nat;
     }
 
+    public function getPhoneNumber(): ?string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function setPhoneNumber(?string $phoneNumber): self
+    {
+        $this->phoneNumber = $phoneNumber;
+
+        return $this;
+    }
+
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getGivenName(): ?string
+    {
+        return $this->givenName;
+    }
+
+    public function setGivenName(string $givenName): self
+    {
+        $this->givenName = $givenName;
+
+        return $this;
     }
 
     public function getUuid(): ?string
@@ -412,7 +438,6 @@ class Person
         return $this;
     }
 
-
     public function getAlternateName(): ?string
     {
         return $this->alternateName;
@@ -615,5 +640,37 @@ class Person
         $this->lifeStyle = $lifeStyle;
 
         return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFamilyName()
+    {
+        return $this->familyName;
+    }
+
+    /**
+     * @param mixed $familyName
+     */
+    public function setFamilyName($familyName): void
+    {
+        $this->familyName = $familyName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param mixed $gender
+     */
+    public function setGender($gender): void
+    {
+        $this->gender = $gender;
     }
 }

@@ -119,6 +119,8 @@ class IndividualMemberAdmin extends BaseAdmin
             ->addIdentifier('person.name', null, ['label' => 'form.label_name'])
             ->add('person.email', null, ['label' => 'form.label_email'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
+            ->add('person.nationality.nricNumber', null, ['template'=>'Admin/Organisation/IndividualMember/CRUD/list__field__nric_number.html.twig',
+                'label' => 'form.label_nric_number'])
             ->add('roles', null, [
                 'label' => 'form.label_roles',
                 'associated_property' => 'nameTrans'])
@@ -140,6 +142,12 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('person.nationality.nricNumber', TextType::class, ['label' => 'form.label_nric_number'])
+            ->add('person.birthDate', DatePickerType::class, [
+                'label' => 'form.label_birth_date',
+                'format' => 'dd-MM-yyyy',
+                'placeholder' => 'dd-mm-yyyy',
+                'datepicker_use_button' => false,
+            ])
             ->add('person.gender', ChoiceType::class, [
                 'required' => false,
                 'label' => 'form.label_gender',
@@ -151,19 +159,35 @@ class IndividualMemberAdmin extends BaseAdmin
                 ],
                 'translation_domain' => $this->translationDomain,
             ])
-            ->add('person.birthDate', DatePickerType::class, [
-                'label' => 'form.label_birth_date',
-                'format' => 'dd-MM-yyyy',
-                'placeholder' => 'dd-mm-yyyy',
-                'datepicker_use_button' => false,
-            ])
 //            ->add('person')
 //            ->add('createdAt', DateTimePickerType::class, ['label' => 'form.label_created_at'])
 
         ;
         $formMapper->end();
         $formMapper->with('Profession');
-        $formMapper->add('person.interestGroups');
+        $formMapper->add('person.interestGroups', null,
+            [
+                'required' => false,
+                'label' => 'form.label_interest_groups'
+            ]);
+        $formMapper
+            ->add('person.jobTitle', null,
+                [
+                    'required' => false,
+                    'label' => 'form.label_job_title'
+                ]
+            )
+            ->add('person.jobIndustry', null,
+                [
+                    'required' => false,
+                    'label' => 'form.label_job_industry'
+                ]
+            )
+            ->add('person.employerName', null,
+                [
+                    'required' => false,
+                    'label' => 'form.label_employer_name'
+                ]);
 
         $formMapper->end();
         $formMapper

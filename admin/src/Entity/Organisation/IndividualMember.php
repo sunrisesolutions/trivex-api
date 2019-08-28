@@ -346,33 +346,41 @@ class IndividualMember
         $this->roles = new ArrayCollection();
     }
 
+
+
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_member"})
      */
     private $membershipNo;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_member"})
      */
     private $membershipType;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"read_member"})
      */
     private $membershipClass;
 
     /**
      * @ORM\Column(type="boolean", nullable=true, options={"default":false})
+     * @Groups({"read_member"})
      */
     private $messagingExclusion = false;
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Groups({"read_member"})
      */
     private $startedOn;
 
     /**
      * @ORM\Column(type="boolean", options={"default":true})
+     * @Groups({"read_member"})
      */
     private $enabled = true;
 

@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Util\AppUtil;
@@ -14,6 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
+ * @ApiFilter(ExistsFilter::class, properties={"readAt", "optionsSelectedAt", "selectedOptionsReadAt"})
  * @ORM\Entity(repositoryClass="App\Repository\RegistrationRepository")
  * @ORM\Table(name="event__registration")
  * @ORM\HasLifecycleCallbacks()

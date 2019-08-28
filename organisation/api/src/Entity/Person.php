@@ -641,4 +641,36 @@ class Person
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getFamilyName()
+    {
+        return $this->familyName;
+    }
+
+    /**
+     * @param mixed $familyName
+     */
+    public function setFamilyName($familyName): void
+    {
+        $this->familyName = $familyName;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param mixed $gender
+     */
+    public function setGender($gender): void
+    {
+        $this->gender = $gender;
+    }
 }
