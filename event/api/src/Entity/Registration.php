@@ -17,7 +17,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *     normalizationContext={"groups"={"read"}},
  *     denormalizationContext={"groups"={"write"}}
  * )
- * @ApiFilter(ExistsFilter::class, properties={"readAt", "optionsSelectedAt", "selectedOptionsReadAt"})
+ * @ApiFilter(ExistsFilter::class, properties={"memberUuid"})
  * @ORM\Entity(repositoryClass="App\Repository\RegistrationRepository")
  * @ORM\Table(name="event__registration")
  * @ORM\HasLifecycleCallbacks()

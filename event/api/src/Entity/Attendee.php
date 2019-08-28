@@ -2,7 +2,10 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\ExistsFilter;
+
 use App\Util\AppUtil;
 use Doctrine\ORM\Mapping as ORM;
 use phpDocumentor\Reflection\Types\Boolean;
@@ -18,6 +21,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *     denormalizationContext={"groups"={"write"}}
  * )
  * @ORM\Entity(repositoryClass="App\Repository\AttendeeRepository")
+ * @ApiFilter(ExistsFilter::class, properties={"memberUuid"})
+ * 
  * @ORM\Table(name="event__attendee")
  * @ORM\HasLifecycleCallbacks()
  */
