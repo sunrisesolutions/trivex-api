@@ -8,6 +8,7 @@ use App\Util\Organisation\AppUtil;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Organisation\NationalityRepository")
  * @ORM\Table(name="organisation__nationality")
+ * @ORM\HasLifecycleCallbacks()
  */
 class Nationality
 {
