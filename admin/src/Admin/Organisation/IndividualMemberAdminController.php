@@ -39,14 +39,39 @@ class IndividualMemberAdminController extends BaseCRUDAdminController
         return parent::redirectTo($object);
     }
 
+    public function editAction($id = null)
+    {
+        $request = $this->getRequest();
+        // the key used to lookup the template
+        $templateKey = 'edit';
+
+        $id = $request->get($this->admin->getIdParameter());
+        /** @var IndividualMember $existingObject */
+        $existingObject = $this->admin->getObject($id);
+
+        if (!$existingObject) {
+            throw $this->createNotFoundException(sprintf('unable to find the object with id: %s', $id));
+        }
+        $existingObject->setDraft(false);
+        return parent::editAction($id);
+    }
+
     public function createAction()
     {
 
 //        return parent::createAction();
-        parent::createAction();
-        $newObject = new IndividualMember();
-
-        return $this->redirectTo($newObject);
+       return parent::createAction();
+//        /** @var IndividualMember $newObject */
+//        $newObject = new IndividualMember();
+//        $person = new \App\Entity\Organisation\Person();
+//        $person->setGivenName('   ');
+//
+//        $newObject->setPerson($person);
+//        $newObject->initiateUuid();
+//        $this->admin->getModelManager()->create($newObject);
+//
+//
+//        return $this->redirectTo($newObject);
     }
 
     public function showAction($id = null)
@@ -62,7 +87,8 @@ class IndividualMemberAdminController extends BaseCRUDAdminController
         return parent::listAction();
     }
 
-    public function editCurrentOrganisationAction(){
+    public function editCurrentOrganisationAction()
+    {
         $org = $this->admin->getCurrentOrganisation();
         return $this->redirectTo($org);
     }

@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\Mapping as ORM;
-use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Serializer\Annotation\Groups;
 use App\Controller\SendEmailToIndividualMember;
 
@@ -227,6 +226,13 @@ class IndividualMember
     }
 
     /**
+     * @var string|null
+     * @ORM\Column(type="string", length=191, nullable=true)
+     * @Groups({"read_member", "write"})
+     */
+    private $groupName;
+
+    /**
      * @var string
      * @Groups({"read_member", "write"})
      */
@@ -310,6 +316,13 @@ class IndividualMember
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $fulltextString;
+
+    /**
+     * @var bool|null
+     * @ORM\Column(type="boolean", nullable=true, options={"default":false})
+     * @Groups("write")
+     */
+    private $draft = true;
 
     /**
      * @var boolean|null
@@ -699,5 +712,36 @@ class IndividualMember
         return $this;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getGroupName(): ?string
+    {
+        return $this->groupName;
+    }
+
+    /**
+     * @param string|null $groupName
+     */
+    public function setGroupName(?string $groupName): void
+    {
+        $this->groupName = $groupName;
+    }
+
+    /**
+     * @return bool|null
+     */
+    public function getDraft(): ?bool
+    {
+        return $this->draft;
+    }
+
+    /**
+     * @param bool|null $draft
+     */
+    public function setDraft(?bool $draft): void
+    {
+        $this->draft = $draft;
+    }
 
 }

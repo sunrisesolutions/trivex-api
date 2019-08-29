@@ -45,7 +45,7 @@ class BaseUtil
         return sprintf('%s-%s-%s', $prefix, uniqid(), date_format(new \DateTime(), 'HidmY'));
     }
 
-    public static function copyObjectScalarProperties($source, $dest, $nullable = true)
+    public static function copyObjectScalarProperties($source, $dest, $nullable = true, $empty = true)
     {
 //        $props = get_object_vars($source);
         if (method_exists($source, 'copyScalarProperties')) {
@@ -86,7 +86,7 @@ class BaseUtil
 
 //            echo 'prop is ' . $prop . '  ';
             if (is_scalar($val)) {
-                if (!$nullable && $val === null) {
+                if (!$nullable && $val === null || !$empty && empty($val)) {
                     continue;
                 }
                 $reflectionDest = new \ReflectionClass($dest);

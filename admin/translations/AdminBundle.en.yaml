@@ -133,6 +133,7 @@ form_group:
     grouping: Grouping
 
 form:
+    label_group_name: Group Name
     label_employer_name: Employer Name
     label_job_title: Job Title
     label_job_industry: Job Industry

@@ -29,9 +29,12 @@ class Person
     {
         $this->name = $this->givenName.' '.$this->middleName.' '.$this->familyName;
     }
+
     public function copyScalarProperties($person)
     {
-        $person->setUuid($this->uuid?:'');
+        if (!$person instanceof \App\Entity\Person\Person) {
+            $person->setUuid($this->uuid ?: '');
+        }
         $person->setEmail($this->email);
         $person->setFamilyName($this->familyName);
         $person->setGivenName($this->givenName);
@@ -42,6 +45,7 @@ class Person
         $person->setMiddleName($this->middleName);
         $person->setPhoneNumber($this->phoneNumber);
     }
+
     public function createNationality($country = null, $nricNumber = null, $passportNumber = null, $uuid = null)
     {
         $nat = new Nationality();
@@ -135,7 +139,6 @@ class Person
         $this->individualMembers = new ArrayCollection();
         $this->nationalities = new ArrayCollection();
     }
-
 
 
     /** @return  Nationality|bool */
