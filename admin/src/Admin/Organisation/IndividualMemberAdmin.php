@@ -511,9 +511,9 @@ class IndividualMemberAdmin extends BaseAdmin
         $mRoles = $mMember->getRoles();
         /** @var \App\Entity\Messaging\Role $mRole */
         foreach ($mRoles as $mRole) {
-            if (!$object->hasRole($role->getName())) {
-                $mMember->removeRole($role);
-                $manager->persist($role);
+            if (!$object->hasRole($mRole->getName())) {
+                $mMember->removeRole($mRole);
+                $manager->persist($mRole);
             }
         }
 
