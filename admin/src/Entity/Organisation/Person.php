@@ -41,6 +41,10 @@ class Person
         $person->setJobTitle($this->jobTitle);
         $person->setAlternateName($this->alternateName);
 
+        $person->setInterestGroups($this->interestGroups);
+        $person->setJobIndustry($this->jobIndustry);
+        $person->setEmployerName($this->employerName);
+
         $person->setMiddleName($this->middleName);
         $person->setPhoneNumber($this->phoneNumber);
     }
