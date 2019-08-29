@@ -39,6 +39,8 @@ class Person
         $person->setEmployerName($this->employerName);
         $person->setGender($this->gender);
         $person->setJobTitle($this->jobTitle);
+        $person->setAlternateName($this->alternateName);
+
         $person->setMiddleName($this->middleName);
         $person->setPhoneNumber($this->phoneNumber);
     }
