@@ -64,7 +64,15 @@ class Person
         $person->setGender($this->gender);
         $person->setJobTitle($this->jobTitle);
         $person->setAlternateName($this->alternateName);
-        $person->setInterestGroups($this->interestGroups);
+        if (property_exists($person, 'interestGroups')) {
+            $person->setInterestGroups($this->interestGroups);
+        }
+        if (property_exists($person, 'jobIndustry')) {
+            $person->setJobIndustry($this->jobIndustry);
+        }
+        if (property_exists($person, 'employerName')) {
+            $person->setEmployerName($this->employerName);
+        }
         $person->setJobIndustry($this->jobIndustry);
         $person->setEmployerName($this->employerName);
 
