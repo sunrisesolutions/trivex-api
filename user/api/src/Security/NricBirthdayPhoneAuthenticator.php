@@ -134,7 +134,7 @@ class NricBirthdayPhoneAuthenticator extends AbstractGuardAuthenticator
         $memberArr = json_decode(file_get_contents('https://org.api.trivesg.com/organisation/member-id-by-uuid/'.$request->attributes->get('imUid')));
         $data['im_id'] = -1;
         if (!empty($memberArr)) {
-            $imId = $memberArr['memberId'];
+            $imId = $memberArr->memberId;
             $data['im_id'] = $imId;//$user->findOrgUserByUuid($request->attributes->get('imUid'))->getId();
         }
 
