@@ -73,8 +73,7 @@ class Person
         if (property_exists($person, 'employerName')) {
             $person->setEmployerName($this->employerName);
         }
-        $person->setJobIndustry($this->jobIndustry);
-        $person->setEmployerName($this->employerName);
+
 
         $person->setMiddleName($this->middleName);
         $person->setPhoneNumber($this->phoneNumber);
