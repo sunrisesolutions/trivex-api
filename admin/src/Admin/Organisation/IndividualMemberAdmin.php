@@ -293,7 +293,7 @@ class IndividualMemberAdmin extends BaseAdmin
         $manager->persist($fPerson);
         $manager->flush($fPerson);
         AppUtil::copyObjectScalarProperties($fPerson, $oPerson);
-
+        $manager->persist($oPerson);
         $oPerson->setUuid($fPerson->getUuid());
 
         // update User person
@@ -381,10 +381,10 @@ class IndividualMemberAdmin extends BaseAdmin
                 $fNationality = $fPerson->createNationality($oNationality->getCountry(), $oNationality->getNricNumber(), $oNationality->getPassportNumber());
             }
             AppUtil::copyObjectScalarProperties($oNationality, $fNationality, false, false);
-            AppUtil::copyObjectScalarProperties($fNationality, $oNationality);
-
             $manager->persist($fNationality);
             $manager->flush($fNationality);
+            AppUtil::copyObjectScalarProperties($fNationality, $oNationality);
+
             $oNationality->setUuid($fNationality->getUuid());
         }
 
