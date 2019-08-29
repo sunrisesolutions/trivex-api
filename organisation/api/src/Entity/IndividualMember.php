@@ -256,7 +256,9 @@ class IndividualMember
         }
         return [
             'uuid' => $person->getUuid(),
-            'name' => $person->getGivenName(),
+            'name' => $person->getName(),
+            'givenName' => $person->getGivenName(),
+            'familyName' => $person->getFamilyName(),
             'jobTitle' => $person->getJobTitle(),
             'employerName' => $person->getEmployerName(),
             'dob' => $person->getBirthDate(),
