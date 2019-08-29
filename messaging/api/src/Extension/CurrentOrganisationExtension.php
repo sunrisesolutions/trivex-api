@@ -7,6 +7,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\Entity\Delivery;
 use App\Entity\IndividualMember;
+use App\Entity\Message;
 use App\Entity\Organisation;
 use App\Security\JWTUser;
 use Doctrine\ORM\QueryBuilder;
@@ -53,6 +54,11 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
             $queryBuilder->join('message.organisation', 'organisation');
             $queryBuilder->andWhere($expr->like('organisation.uuid', $expr->literal($objectUuid)));
 //            $queryBuilder->setParameter('current_object', $objectUuid);
+        } elseif ($resourceClass === Message::class) {
+            $rootAlias = $queryBuilder->getRootAliases()[0];
+            $expr = $queryBuilder->expr();
+            $queryBuilder->join($rootAlias.'.organisation', 'organisation');
+            $queryBuilder->andWhere($expr->like('organisation.uuid', $expr->literal($objectUuid)));
         }
 
 //        echo $queryBuilder->getQuery()->getSQL();
@@ -60,6 +66,6 @@ final class CurrentOrganisationExtension implements QueryCollectionExtensionInte
 
     private function supportClass($class)
     {
-        return in_array($class, [Delivery::class]);
+        return in_array($class, [Delivery::class, Message::class]);
     }
 }
