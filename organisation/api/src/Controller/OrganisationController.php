@@ -32,7 +32,10 @@ class OrganisationController extends AbstractController
     public function getMemberIdByUuid(Request $request, $uuid)
     {
         $repo = $this->getDoctrine()->getRepository(IndividualMember::class);
-        $member = $repo->findOneBy(['uuid' => $uuid]);
+        $qb = $repo->createQueryBuilder('im');
+        $expr = $qb->expr();
+        $qb->andWhere($expr->like('im.uuid', $expr->literal($uuid)));
+        $member = $qb->setFirstResult(0)->setMaxResults(1)->getQuery()->setMaxResults(1)->getSingleResult();
         if (empty($member)) {
             throw new NotFoundHttpException('Not Found');
         }
