@@ -101,6 +101,7 @@ class IndividualMemberAdmin extends BaseAdmin
     public function configureRoutes(RouteCollection $collection)
     {
         parent::configureRoutes($collection);
+        $collection->remove('show');
         $collection->add('contentEdit', $this->getRouterIdParameter().'/edit-content');
         $collection->add('publish', $this->getRouterIdParameter().'/publish');
     }

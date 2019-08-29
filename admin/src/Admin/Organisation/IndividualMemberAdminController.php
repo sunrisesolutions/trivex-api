@@ -32,9 +32,9 @@ class IndividualMemberAdminController extends BaseCRUDAdminController
     {
         $request = $this->getRequest();
 
-        if (null !== $request->get('btn_create_and_edit')) {
-            return new RedirectResponse($this->admin->generateUrl('show', ['id' => $object->getId()]));
-        }
+//        if (null !== $request->get('btn_create_and_edit')) {
+//            return new RedirectResponse($this->admin->generateUrl('show', ['id' => $object->getId()]));
+//        }
 
         return parent::redirectTo($object);
     }
