@@ -142,6 +142,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ->add('person.givenName', null, ['label' => 'form.label_given_name'])
 //            ->add('person.middleName', null, ['label' => 'form.label_middle_name'])
             ->add('person.familyName', null, ['label' => 'form.label_family_name'])
+            ->add('person.alternateName', null, ['label' => 'form.label_family_name'])
             ->add('person.phoneNumber', null, ['label' => 'form.label_telephone'])
             ->add('person.nationality.nricNumber', TextType::class, ['label' => 'form.label_nric_number'])
             ->add('person.birthDate', DatePickerType::class, [
