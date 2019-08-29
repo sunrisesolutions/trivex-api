@@ -202,7 +202,7 @@ class IndividualMemberAdmin extends BaseAdmin
             ->with('Account');
 
         $formMapper
-            ->add('person.email', null, ['label' => 'form.label_email'])
+            ->add('email', null, ['label' => 'form.label_email'])
             ->add('person.password', null, ['label' => 'form.label_password']);
 
         $formMapper
@@ -234,6 +234,9 @@ class IndividualMemberAdmin extends BaseAdmin
     {
         parent::preValidate($object);
         $oPerson = $object->getPerson();
+        if (!empty($object->getEmail())) {
+            $oPerson->setEmail($object->getEmail());
+        }
         $organisation = $object->getOrganisation();
         $oRoles = $organisation->getRoles();
 

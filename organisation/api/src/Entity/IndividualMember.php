@@ -81,6 +81,14 @@ class IndividualMember
     private $profilePicture;
 
     /**
+     * Member Email
+     * @var string|null $email
+     * @ORM\Column(type="string", length=128, nullable=true)
+     * @Groups({"read_member", "write"})
+     */
+    private $email;
+
+    /**
      * @Groups({"read_member"})
      *
      * @return mixed|string|null
@@ -746,4 +754,19 @@ class IndividualMember
         $this->draft = $draft;
     }
 
+    /**
+     * @return string|null
+     */
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string|null $email
+     */
+    public function setEmail(?string $email): void
+    {
+        $this->email = $email;
+    }
 }
