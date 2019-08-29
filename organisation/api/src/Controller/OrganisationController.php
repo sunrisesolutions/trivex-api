@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\IndividualMember;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -23,5 +24,18 @@ class OrganisationController extends AbstractController
             throw new NotFoundHttpException('Not Found');
         }
         return new JsonResponse(['logoReadUrl' => $org->getLogoReadUrl()]);
+    }
+
+    /**
+     * @Route("/organisation/member-id-by-uuid/{uuid}", name="member_id_by_uuid")
+     */
+    public function getMemberIdByUuid(Request $request, $uuid)
+    {
+        $repo = $this->getDoctrine()->getRepository(IndividualMember::class);
+        $member = $repo->findOneBy(['uuid' => $uuid]);
+        if (empty($member)) {
+            throw new NotFoundHttpException('Not Found');
+        }
+        return new JsonResponse(['memberId' => $member->getId()]);
     }
 }
